@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#08172d">
+  <meta name="description" content="RaceWise India — evidence-based Indian horse racing study, form analysis, pedigree insights and race results.">
+  <title>RaceWise India | Study Every Race</title>
+  <style>
+    :root {
+      --navy: #08172d;
+      --navy-light: #112849;
+      --gold: #d7b46a;
+      --cream: #f5f1e8;
+      --muted: #b8c4d5;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Arial, sans-serif;
+      background: var(--navy);
+      color: var(--cream);
+      line-height: 1.65;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    header {
+      padding: 20px 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #293a51;
+    }
+
+    .brand {
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .brand span { color: var(--gold); }
+
+    nav { display: flex; gap: 18px; flex-wrap: wrap; }
+
+    nav a { color: var(--muted); font-size: 13px; }
+
+    nav a:hover { color: var(--gold); }
+
+    .hero {
+      padding: 82px 7% 76px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse at top, #183456 0%, var(--navy) 68%);
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    h1 {
+      max-width: 850px;
+      margin: 18px auto;
+      font-size: clamp(36px, 7vw, 65px);
+      line-height: 1.12;
+      letter-spacing: -1.5px;
+    }
+
+    h1 span { color: var(--gold); }
+
+    .hero p {
+      max-width: 650px;
+      margin: 20px auto 28px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 13px 23px;
+      border-radius: 5px;
+      background: var(--gold);
+      color: var(--navy);
+      font-weight: 800;
+      margin: 5px;
+    }
+
+    .button-outline {
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      background: transparent;
+    }
+
+    section { padding: 55px 7%; }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(25px, 4vw, 36px);
+      margin: 8px 0;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 17px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .card {
+      background: var(--navy-light);
+      border: 1px solid #293f5b;
+      border-radius: 10px;
+      padding: 24px;
+    }
+
+    .card .number {
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .card h3 { margin: 10px 0; }
+
+    .card p { color: var(--muted); font-size: 14px; }
+
+    .standards {
+      background: #0d203b;
+      text-align: center;
+    }
+
+    .standards p {
+      max-width: 760px;
+      margin: auto;
+      color: var(--muted);
+    }
+
+    .notice {
+      max-width: 850px;
+      margin: 25px auto 0;
+      padding: 18px;
+      border-left: 3px solid var(--gold);
+      background: #142947;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    footer {
+      padding: 28px 6%;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid #293a51;
+    }
+
+    footer strong { color: var(--gold); }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="#home">RACEWISE <span>INDIA</span></a>
+    <nav aria-label="Main navigation">
+      <a href="#study">Our Study</a>
+      <a href="#standards">Our Standards</a>
+      <a href="#about">About Us</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="eyebrow">Indian Horse Racing Analysis</div>
+      <h1>Study Every Race.<br><span>Understand Every Runner.</span></h1>
+      <p>
+        A thoughtful approach to Indian horse racing through race form,
+        pedigree research, distance suitability and evidence-based analysis.
+      </p>
+      <a class="button" href="#study">Explore Our Study</a>
+      <a class="button button-outline" href="#standards">Our Promise</a>
+    </section>
+
+    <section id="study">
+      <div class="section-heading">
+        <div class="eyebrow">Look Beyond the Odds</div>
+        <h2>One Race. One Complete Study.</h2>
+        <p>
+          We aim to bring the important details together in one clear,
+          easy-to-read place for racegoers.
+        </p>
+      </div>
+
+      <div class="cards">
+        <article class="card">
+          <div class="number">01 / FORM</div>
+          <h3>Recent Performance</h3>
+          <p>
+            Review past runs, finishing positions, class, margins and
+            available race conditions.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="number">02 / PEDIGREE</div>
+          <h3>Bloodline Insights</h3>
+          <p>
+            Study sire, dam, siblings and available family performance
+            records for relevant clues.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="number">03 / FITNESS</div>
+          <h3>Distance & Conditions</h3>
+          <p>
+            Assess distance suitability, track conditions and verified
+            trackwork information when available.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="number">04 / REVIEW</div>
+          <h3>Results & Learning</h3>
+          <p>
+            Compare published results with our earlier analysis and learn
+            from what happened on race day.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="standards" id="standards">
+      <div class="section-heading">
+        <div class="eyebrow">Trust Through Transparency</div>
+        <h2>Evidence First. Always.</h2>
+      </div>
+      <p>
+        RaceWise India is being developed as an independent horse-racing
+        study platform. We aim to distinguish official information from
+        analysis and clearly identify unavailable or unverified data.
+      </p>
+      <div class="notice">
+        <strong>Our commitment:</strong> We will not invent missing racing
+        information or promise guaranteed winners. Horse racing involves
+        uncertainty. Our analysis is for research and informational purposes,
+        not a guarantee of results.
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="section-heading">
+        <div class="eyebrow">Welcome to RaceWise India</div>
+        <h2>For Racegoers Who Want to Study Deeper</h2>
+        <p>
+          Our goal is to make Indian racing information easier to explore,
+          understand and review, race by race.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <strong>RACEWISE INDIA</strong><br>
+    Study Every Race. Understand Every Runner.<br>
+    Independent research project · Information and analysis only
+  </footer>
+</body>
+</html>
