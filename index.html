@@ -44,15 +44,20 @@
       .brand {
   display: flex;
   align-items: center;
-  font-size: 23px;
+  gap: 14px;
+  font-size: 25px;
   font-weight: 800;
   letter-spacing: 1px;
+  line-height: 1.2;
 }
-      
-    
-    }
 
-    .brand span { color: var(--gold); }
+.brand-name {
+  color: var(--cream);
+}
+
+.brand-name span {
+  color: var(--gold);
+}
 
     nav { display: flex; gap: 18px; flex-wrap: wrap; }
 
@@ -186,14 +191,17 @@
 </head>
 <body>
   <header>
-    <a class="brand" href="#home">
+   <a class="brand" href="#home">
   <img
     src="https://raw.githubusercontent.com/racewiseindia/racewiseindia.github.io/main/BD3FBD67-3641-4C4B-A7C4-65B776CDC953.png"
-    alt="RaceWise India Logo"
-   style="width:100px;height:100px;object-fit:contain;vertical-align:middle;margin-right:12px;"
+    alt="RaceWise India horse and jockey logo"
+    style="width:120px;height:120px;object-fit:contain;flex-shrink:0;"
   >
-  RACEWISE <span>INDIA</span>
+  <span class="brand-name">
+    RACEWISE <span>INDIA</span>
+  </span>
 </a>
+
     <nav aria-label="Main navigation">
       <a href="#study">Our Study</a>
       <a href="#standards">Our Standards</a>
