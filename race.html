@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#081426">
+  <meta name="description" content="RaceWise India — evidence-based Indian horse racing analysis, form study and race results.">
+  <title>Race Analysis | RaceWise India</title>
+
+  <style>
+    :root {
+      --navy: #081426;
+      --panel: #11223a;
+      --gold: #d9b568;
+      --white: #f7f8fb;
+      --muted: #b8c3d3;
+      --line: #2b3d54;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--navy);
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 20px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .brand {
+      color: var(--gold);
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    nav a {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    nav a:hover { color: var(--gold); }
+
+    main {
+      width: min(100% - 28px, 900px);
+      margin: 30px auto;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 { font-size: clamp(27px, 6vw, 42px); line-height: 1.2; }
+    h2 { font-size: 21px; color: var(--gold); }
+    p { color: var(--muted); }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      margin: 18px 0;
+    }
+
+    .notice {
+      border-left: 4px solid var(--gold);
+      padding: 12px 14px;
+      background: #17253a;
+      color: var(--muted);
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .race-details {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .detail {
+      background: #0b192c;
+      padding: 13px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      overflow-wrap: anywhere;
+    }
+
+    .label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .value { font-weight: bold; }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 560px;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: var(--gold);
+      background: #0b192c;
+    }
+
+    td { color: var(--muted); }
+
+    .empty {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+    }
+
+    .tag {
+      display: inline-block;
+      color: var(--gold);
+      border: 1px solid #75623d;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+
+    footer {
+      text-align: center;
+      border-top: 1px solid var(--line);
+      padding: 24px 16px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .race-details { grid-template-columns: 1fr; }
+      .panel { padding: 16px; }
+      nav { gap: 12px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="brand">RACEWISE INDIA</div>
+    <div class="tagline">STUDY EVERY RACE. UNDERSTAND EVERY RUNNER.</div>
+  </header>
+
+  <nav aria-label="Main navigation">
+    <a href="index.html">Home</a>
+    <a href="race.html">Race Analysis</a>
+    <a href="#form">Horse Form</a>
+    <a href="#results">Results</a>
+  </nav>
+
+  <main>
+    <div class="eyebrow">Evidence-based race study</div>
+    <h1>Race Analysis</h1>
+    <p>
+      Study each race through verified information, past performances
+      and racing conditions. Every conclusion should have supporting evidence.
+    </p>
+
+    <div class="notice">
+      <strong>Data status:</strong> Race details have not yet been entered.
+      No selections or performance conclusions are being published.
+    </div>
+
+    <section class="panel">
+      <h2>Race Information</h2>
+
+      <div class="race-details">
+        <div class="detail">
+          <span class="label">Racecourse</span>
+          <span class="value">Awaiting verification</span>
+        </div>
+        <div class="detail">
+          <span class="label">Race date</span>
+          <span class="value">Not entered</span>
+        </div>
+        <div class="detail">
+          <span class="label">Race number / name</span>
+          <span class="value">Not entered</span>
+        </div>
+        <div class="detail">
+          <span class="label">Distance / class</span>
+          <span class="value">Not entered</span>
+        </div>
+        <div class="detail">
+          <span class="label">Track condition</span>
+          <span class="value">Not verified</span>
+        </div>
+        <div class="detail">
+          <span class="label">Official data source</span>
+          <span class="value">Not yet recorded</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="runners">
+      <h2>Declared Runners</h2>
+      <p>Runner details will be added after checking an authorised source.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Horse</th>
+              <th>Draw</th>
+              <th>Weight</th>
+              <th>Jockey</th>
+              <th>Data status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="6" class="empty">
+                No verified runner data entered yet.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" id="form">
+      <h2>Performance Study</h2>
+      <p>Each runner will be assessed using available evidence.</p>
+      <ul>
+        <li>Recent form and finishing positions</li>
+        <li>Distance suitability and racing class</li>
+        <li>Track conditions and draw position</li>
+        <li>Assigned weight and jockey information</li>
+        <li>Pedigree and fitness indicators, where verified</li>
+        <li>Trackwork reports, when authorised data is available</li>
+      </ul>
+      <span class="tag">Analysis pending verified data</span>
+    </section>
+
+    <section class="panel">
+      <h2>Evidence and Assessment</h2>
+      <p>
+        Supporting evidence, limitations and unresolved questions will
+        be documented before any assessment is published.
+      </p>
+      <p><strong>Assessment:</strong> Not available yet.</p>
+    </section>
+
+    <section class="panel" id="results">
+      <h2>Official Result and Review</h2>
+      <p>
+        Finishing positions, margins and other official results will be
+        added after verification. Post-race reviews will compare the
+        evidence with the actual result.
+      </p>
+      <span class="tag">Awaiting official result</span>
+    </section>
+
+    <div class="notice">
+      RaceWise India provides information and analytical study, not
+      guaranteed outcomes. Horse racing involves risk. Verify official
+      declarations, scratchings and results before relying on race data.
+    </div>
+  </main>
+
+  <footer>
+    <strong>RACEWISE INDIA</strong><br>
+    Independent racing information and performance analysis.<br>
+    Data accuracy and transparency come first.
+  </footer>
+</body>
+</html>
