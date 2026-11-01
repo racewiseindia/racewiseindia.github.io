@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071629">
+<title>Pune Results Archive | RaceWise India</title>
+<style>
+:root {
+  --navy:#071629;
+  --panel:#10233b;
+  --gold:#d5ad59;
+  --cream:#f5f1e8;
+  --muted:#b5c0ce;
+  --green:#65d69a;
+  --amber:#f2c45e;
+  --red:#ff8585;
+  --line:#34465d;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--navy);
+  color:var(--cream);
+  font-family:Arial,sans-serif;
+  line-height:1.6;
+}
+header,footer {
+  padding:22px 6%;
+  border-bottom:1px solid #29394d;
+}
+.brand {
+  color:var(--gold);
+  font-size:23px;
+  font-weight:bold;
+  letter-spacing:1px;
+}
+nav {
+  margin-top:12px;
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+}
+nav a {
+  color:var(--cream);
+  text-decoration:none;
+  font-size:14px;
+}
+main {
+  max-width:1000px;
+  margin:auto;
+  padding:35px 6%;
+}
+.eyebrow {
+  color:var(--gold);
+  font-size:12px;
+  letter-spacing:2px;
+}
+h1 {
+  font-size:clamp(30px,6vw,46px);
+  line-height:1.15;
+  margin:12px 0;
+}
+h2 { color:var(--gold); margin-top:34px; }
+h3 { color:var(--gold); }
+.subtitle,.note { color:var(--muted); }
+.card {
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:18px;
+  margin:15px 0;
+}
+.summary {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.metric {
+  background:#182e49;
+  border-radius:7px;
+  padding:14px;
+}
+.metric strong {
+  display:block;
+  font-size:25px;
+}
+.metric:nth-child(1) strong { color:var(--red); }
+.metric:nth-child(2) strong { color:var(--amber); }
+.metric:nth-child(3) strong { color:var(--green); }
+.placed { color:var(--amber); font-weight:bold; }
+.winner { color:var(--green); font-weight:bold; }
+.miss { color:var(--red); font-weight:bold; }
+.withdrawn { color:#f2d17d; font-weight:bold; }
+a { color:var(--gold); }
+footer {
+  border-top:1px solid #29394d;
+  border-bottom:0;
+  color:var(--muted);
+  font-size:12px;
+  text-align:center;
+}
+@media(max-width:600px) {
+  .summary { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">RACEWISE INDIA</div>
+  <nav aria-label="Main navigation">
+    <a href="../index.html">Home</a>
+    <a href="../archive.html">Race Day Archive</a>
+    <a href="../results-archive.html">Results Archive</a>
+    <a href="pune-2026-10-31.html">Original Pune Study</a>
+  </nav>
+</header>
+
+<main>
+  <div class="eyebrow">HISTORICAL RESULTS • POST-RACE REVIEW</div>
+  <h1>Pune Results Archive</h1>
+  <p class="subtitle">31 October 2026 • Seven Races</p>
+
+  <div class="card">
+    <strong>RaceWise study versus race results</strong>
+    <p>
+      This page compares our original pre-race selections
+      with the finishing positions supplied from IndiaRace.com.
+      The original study remains unchanged.
+    </p>
+    <p class="note">
+      Historical performance review only. This is not betting advice
+      or a statement of betting returns.
+    </p>
+  </div>
+
+  <h2>Performance Summary</h2>
+  <div class="summary">
+    <div class="metric">
+      <strong>0/7</strong>
+      First choices won
+    </div>
+    <div class="metric">
+      <strong>3/7</strong>
+      First choices in top three
+    </div>
+    <div class="metric">
+      <strong>3/6</strong>
+      Active second choices in top three
+    </div>
+  </div>
+
+  <p class="note">
+    Katame was withdrawn in Race 3 and is excluded from
+    the second-choice denominator. Shambala was recorded
+    as disqualified in Race 2.
+  </p>
+
+  <h2>Race-by-Race Comparison</h2>
+
+  <div class="card">
+    <h3>Race 1 — D. N. Zodge Plate · 1200m</h3>
+    <p>Winner: <span class="winner">Darcy</span></p>
+    <p>First choice: <span class="placed">Challenge Accepted — 2nd</span></p>
+    <p>Second choice: Merlet — 5th</p>
+    <p>Main danger: <span class="placed">Your Unforgettable — 3rd</span></p>
+  </div>
+
+  <div class="card">
+    <h3>Race 2 — Dinkoo N. Chenoy Salver · 1600m</h3>
+    <p>Winner: <span class="winner">Break Point</span></p>
+    <p>First choice: <span class="miss">Shambala — DQ</span></p>
+    <p>Second choice: <span class="placed">Chagall — 2nd</span></p>
+    <p>Main danger: <span class="placed">The Panther — 3rd</span></p>
+  </div>
+
+  <div class="card">
+    <h3>Race 3 — Westin Pune Trophy Div-2 · 1200m</h3>
+    <p>Winner: <span class="winner">Snow Girl</span></p>
+    <p>First choice: <span class="placed">La Dolce Vita — 2nd</span></p>
+    <p>Second choice: <span class="withdrawn">Katame — Withdrawn</span></p>
+    <p>Main danger: <span class="withdrawn">Brasilier — Withdrawn</span></p>
+  </div>
+
+  <div class="card">
+    <h3>Race 4 — Supreme Star Plate · 1400m</h3>
+    <p>Winner: <span class="winner">Myrina</span></p>
+    <p>First choice: Minimus — 5th</p>
+    <p>Second choice: Priority Road — 8th</p>
+    <p>Main danger: Field of Gold — 10th</p>
+  </div>
+
+  <div class="card">
+    <h3>Race 5 — Timeless Beauty Plate · 2400m</h3>
+    <p>Winner: <span class="winner">Exotic Star</span></p>
+    <p>First choice: Flash Mob — 7th</p>
+    <p>Second choice: <span class="placed">Land of Plenty — 2nd</span></p>
+    <p>Main danger: Merchant of Venice — 4th</p>
+  </div>
+
+  <div class="card">
+    <h3>Race 6 — Westin Pune Trophy Div-1 · 1200m</h3>
+    <p>Winner: <span class="winner">Appalachian</span></p>
+    <p>First choice: Phantasmique — 9th</p>
+    <p>Second choice: <span class="placed">Azaadi — 2nd</span></p>
+    <p>Main danger: <span class="placed">Esteban — 3rd</span></p>
+  </div>
+
+  <div class="card">
+    <h3>Race 7 — K. Raghunath Plate · 1600m</h3>
+    <p>Winner: <span class="winner">Diego Garcia</span></p>
+    <p>First choice: <span class="placed">Funny Bunny — 2nd</span></p>
+    <p>Second choice: Wings of Fury — 5th</p>
+    <p>Main danger: <span class="winner">Diego Garcia — 1st</span></p>
+  </div>
+
+  <h2>Main Danger Review</h2>
+  <div class="card">
+    <p>
+      Four of the six active main dangers finished in the top three,
+      including Diego Garcia, the Race 7 winner.
+    </p>
+    <p class="note">
+      Brasilier was withdrawn. The other main dangers were:
+      Your Unforgettable 3rd, The Panther 3rd, Field of Gold 10th,
+      Merchant of Venice 4th and Esteban 3rd.
+    </p>
+  </div>
+
+  <h2>Learning Points</h2>
+  <div class="card">
+    <ul>
+      <li>Review first-choice outcomes in Races 4, 5 and 6.</li>
+      <li>Study why second choices performed better in Races 2, 5 and 6.</li>
+      <li>Recheck the evidence behind draw, pace, weight, class and distance suitability.</li>
+      <li>Keep original selections unchanged. Record improvements only in future studies.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <strong>Our RaceWise commitment</strong>
+    <p>
+      We preserve original selections, report outcomes transparently,
+      identify withdrawals and disqualifications, and never alter
+      pre-race records retrospectively.
+    </p>
+    <p><a href="pune-2026-10-31.html">← View Original Pune Pre-Race Study</a></p>
+    <p><a href="../results-archive.html">← Back to Results Archive</a></p>
+    <p class="note">
+      Source: IndiaRace.com results text supplied for this review.
+      Verify against final official race-club records if amended.
+    </p>
+  </div>
+</main>
+
+<footer>
+  © 2026 RaceWise India · Independent racing research and analysis
+</footer>
+
+</body>
+</html>
