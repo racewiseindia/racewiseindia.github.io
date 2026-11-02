@@ -157,6 +157,24 @@ footer strong { color:var(--gold); }
   </section>
 
   <section class="panel">
+    
+<section class="panel">
+  <h2>02 — Select Racing Centre</h2>
+  <p class="note">
+    Select the centre shown on your official race card.
+    Verification status will be displayed before analysis.
+  </p>
+
+  <select id="centreSelect"
+    style="width:100%;padding:13px;border:1px solid #c8b98f;border-radius:7px;background:white;font-size:15px;">
+    <option value="">Select a racing centre</option>
+  </select>
+
+  <div id="centreInfo" class="status" style="margin-top:12px;">
+    Please select a racing centre.
+  </div>
+</section>
+
     <h2>02 — Official Handicap Assessment</h2>
     <div class="grid">
       <div class="feature"><strong>Published Rating</strong><br>Official rating and rating movement</div>
@@ -238,6 +256,42 @@ const centreStatus = centreRegistry
   : [];
 
 console.log("RaceWise centre registry:", centreStatus);
+  
+const centreSelect = document.getElementById("centreSelect");
+const centreInfo = document.getElementById("centreInfo");
+
+if (centreRegistry && centreSelect && centreInfo) {
+  Object.entries(centreRegistry.centres).forEach(([id, centre]) => {
+    const option = document.createElement("option");
+    option.value = id;
+    option.textContent = centre.name;
+    centreSelect.appendChild(option);
+  });
+
+  function updateCentreInfo() {
+    const centre = centreRegistry.centres[centreSelect.value];
+
+    if (!centre) {
+      centreInfo.textContent = "Please select a racing centre.";
+      return;
+    }
+
+    const verified =
+      centre.officialRulesVerified === true &&
+      centre.authorisedDataVerified === true;
+
+    centreInfo.textContent = verified
+      ? centre.name + " — configuration verified. Backend integration is still required."
+      : centre.name + " — " + centre.authority +
+        ". Official rules and authorised data are not yet verified. Official handicap calculations remain disabled.";
+  }
+
+  centreSelect.addEventListener("change", updateCentreInfo);
+} else if (centreInfo) {
+  centreInfo.textContent =
+    "Centre configuration could not be loaded. Please check centre-config.js.";
+}
+
 
 const input = document.getElementById("raceFiles");
 const list = document.getElementById("fileList");
