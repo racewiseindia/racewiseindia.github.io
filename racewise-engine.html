@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RaceWise India | Analysis Engine</title>
+<style>
+:root {
+  --navy:#07172e;
+  --navy2:#102849;
+  --gold:#d6ad55;
+  --cream:#f5f2e9;
+  --muted:#aebbd0;
+  --white:#fff;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--cream);
+  color:#17243a;
+  font-family:Arial,Helvetica,sans-serif;
+}
+header {
+  background:linear-gradient(120deg,var(--navy),var(--navy2));
+  color:white;
+  padding:25px 18px;
+  border-bottom:3px solid var(--gold);
+}
+header .brand {
+  color:var(--gold);
+  font-size:13px;
+  letter-spacing:3px;
+  font-weight:bold;
+}
+header h1 { margin:9px 0 5px; font-size:27px; }
+header p { color:var(--muted); margin:0; font-size:14px; }
+main { max-width:850px; margin:22px auto; padding:0 14px 35px; }
+.panel {
+  background:white;
+  border:1px solid #e4e0d5;
+  border-radius:12px;
+  padding:19px;
+  margin-bottom:16px;
+  box-shadow:0 3px 12px #1028490c;
+}
+h2 { color:var(--navy); font-size:19px; margin:0 0 12px; }
+h3 { color:var(--navy); font-size:15px; }
+.note { color:#647187; font-size:13px; line-height:1.6; }
+.upload {
+  display:block;
+  border:2px dashed #c8a65e;
+  border-radius:10px;
+  background:#fbf8f0;
+  text-align:center;
+  padding:25px 12px;
+  cursor:pointer;
+}
+.upload strong { display:block; color:var(--navy); margin-bottom:7px; }
+.upload span { color:#68758a; font-size:13px; }
+input[type=file] { display:none; }
+button {
+  border:0;
+  border-radius:7px;
+  padding:11px 16px;
+  background:var(--navy);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+button.secondary {
+  background:#eee9dc;
+  color:var(--navy);
+  border:1px solid #d8cfbb;
+}
+.actions { display:flex; gap:9px; flex-wrap:wrap; margin-top:14px; }
+#fileList { margin-top:14px; }
+.file {
+  background:#f5f6f8;
+  border-radius:7px;
+  padding:10px;
+  margin:7px 0;
+  font-size:13px;
+  overflow-wrap:anywhere;
+}
+#preview {
+  display:none;
+  max-width:100%;
+  max-height:340px;
+  margin:15px auto 0;
+  border-radius:8px;
+}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:10px;
+}
+.feature {
+  padding:12px;
+  background:#f7f5ef;
+  border-left:3px solid var(--gold);
+  border-radius:5px;
+  font-size:13px;
+  line-height:1.5;
+}
+.status {
+  padding:12px;
+  background:#fff6df;
+  border:1px solid #ead49b;
+  border-radius:8px;
+  color:#624b1e;
+  font-size:13px;
+  line-height:1.6;
+}
+footer {
+  text-align:center;
+  padding:20px;
+  background:var(--navy);
+  color:var(--muted);
+  font-size:12px;
+}
+footer strong { color:var(--gold); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">RACEWISE INDIA</div>
+  <h1>Professional Race Analysis Engine</h1>
+  <p>Evidence-based study. Transparent calculations. No invented racing data.</p>
+</header>
+
+<main>
+  <section class="panel">
+    <h2>01 — Upload Race Card</h2>
+    <p class="note">
+      Select an Indian racing centre race card in PDF or image format.
+      You can select multiple files.
+    </p>
+
+    <label class="upload" for="raceFiles">
+      <strong>＋ Select Race Card Files</strong>
+      <span>PDF, JPG, JPEG, PNG or WEBP</span>
+    </label>
+    <input id="raceFiles" type="file"
+      accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"
+      multiple>
+
+    <div id="fileList" aria-live="polite">
+      <p class="note">No files selected yet.</p>
+    </div>
+    <img id="preview" alt="Preview of selected race card image">
+
+    <div class="actions">
+      <button class="secondary" type="button" id="clearBtn">Clear Selection</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>02 — Official Handicap Assessment</h2>
+    <div class="grid">
+      <div class="feature"><strong>Published Rating</strong><br>Official rating and rating movement</div>
+      <div class="feature"><strong>Allocated Weight</strong><br>Weight differences and race conditions</div>
+      <div class="feature"><strong>Adjustments</strong><br>Claims, penalties and allowances</div>
+      <div class="feature"><strong>Weight for Age</strong><br>Applicable age and race-condition adjustments</div>
+      <div class="feature"><strong>Handicap Advantage</strong><br>Potentially well-treated or poorly-treated runners</div>
+      <div class="feature"><strong>Rule Verification</strong><br>Centre-specific official rules and calculations</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>03 — RaceWise Independent Study</h2>
+    <div class="grid">
+      <div class="feature">Recent form and consistency</div>
+      <div class="feature">Speed figures and race timings</div>
+      <div class="feature">Trackwork and fitness</div>
+      <div class="feature">Class and quality of opposition</div>
+      <div class="feature">Distance suitability and stamina</div>
+      <div class="feature">Pedigree and sibling performance</div>
+      <div class="feature">Course and going suitability</div>
+      <div class="feature">Jockey, trainer and combinations</div>
+      <div class="feature">Pace, draw and running style</div>
+      <div class="feature">Head-to-head and previous course winners</div>
+    </div>
+    <p class="note">
+      Official handicap assessment and RaceWise independent scoring
+      will remain separate, so neither is mistaken for the other.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>04 — Analysis Output (Planned)</h2>
+    <div class="grid">
+      <div class="feature">First, second and third choices</div>
+      <div class="feature">Main danger and competitive runners</div>
+      <div class="feature">Score breakdown and confidence</div>
+      <div class="feature">Evidence, sources and missing-data warnings</div>
+      <div class="feature">Race-wise selection summary</div>
+      <div class="feature">Pre-race snapshot and results audit</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="status">
+      <strong>Prototype notice:</strong> This page currently supports local
+      file selection and image preview only. It does not upload files,
+      read race-card text, retrieve racing data, calculate handicaps or
+      generate selections yet. Those capabilities require a secure backend,
+      verified official rules and authorised data access.
+      Missing information must never be invented.
+    </div>
+  </section>
+</main>
+
+<footer>
+  <strong>RACEWISE INDIA</strong><br>
+  Independent analysis • Transparent evidence • Responsible racing study
+</footer>
+
+<script>
+const input = document.getElementById("raceFiles");
+const list = document.getElementById("fileList");
+const preview = document.getElementById("preview");
+const clearBtn = document.getElementById("clearBtn");
+
+input.addEventListener("change", () => {
+  list.innerHTML = "";
+  preview.style.display = "none";
+  preview.removeAttribute("src");
+
+  const files = Array.from(input.files || []);
+  if (!files.length) {
+    list.textContent = "No files selected yet.";
+    return;
+  }
+
+  files.forEach(file => {
+    const item = document.createElement("div");
+    item.className = "file";
+    item.textContent =
+      file.name + " — " + (file.size / 1024).toFixed(1) + " KB";
+    list.appendChild(item);
+  });
+
+  const firstImage = files.find(file => file.type.startsWith("image/"));
+  if (firstImage) {
+    preview.src = URL.createObjectURL(firstImage);
+    preview.style.display = "block";
+  }
+});
+
+clearBtn.addEventListener("click", () => {
+  input.value = "";
+  list.innerHTML = '<p class="note">No files selected yet.</p>';
+  preview.removeAttribute("src");
+  preview.style.display = "none";
+});
+</script>
+
+</body>
+</html>
