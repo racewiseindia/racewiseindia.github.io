@@ -131,6 +131,16 @@ footer strong { color:var(--gold); }
 </header>
 
 <main>
+  
+<section class="panel">
+  <h2>RaceWise Engine Status</h2>
+  <p class="note">Live status of the national race-analysis system.</p>
+
+  <div id="engineStatus" aria-live="polite">
+    <div class="feature">Checking system components...</div>
+  </div>
+</section>
+
   <section class="panel">
     <h2>01 — Upload Race Card</h2>
     <p class="note">
@@ -263,6 +273,55 @@ console.log(
   "RaceWise race-card schema:",
   raceCardSchema ? "Loaded successfully" : "Not loaded"
 );
+  
+const engineStatus = document.getElementById("engineStatus");
+
+if (engineStatus) {
+  const components = [
+    {
+      name: "National centre registry",
+      ready: !!centreRegistry,
+      detail: "Seven racing centres configured"
+    },
+    {
+      name: "Race-card schema",
+      ready: !!raceCardSchema,
+      detail: "Meeting, race and runner structure loaded"
+    },
+    {
+      name: "PDF/image text extraction",
+      ready: false,
+      detail: "Not yet implemented"
+    },
+    {
+      name: "Official data verification",
+      ready: false,
+      detail: "Authorised sources still to be verified"
+    },
+    {
+      name: "Official handicap calculation",
+      ready: false,
+      detail: "Centre-specific rules not yet verified"
+    },
+    {
+      name: "RaceWise selection engine",
+      ready: false,
+      detail: "Scoring and evidence engine not yet implemented"
+    }
+  ];
+
+  components.forEach(component => {
+    const item = document.createElement("div");
+    item.className = "feature";
+
+    const status = component.ready ? "LOADED" : "PENDING";
+    item.textContent =
+      component.name + " — " + status + " | " + component.detail;
+
+    engineStatus.appendChild(item);
+  });
+}
+
   
 const centreSelect = document.getElementById("centreSelect");
 const centreInfo = document.getElementById("centreInfo");
