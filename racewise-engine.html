@@ -140,6 +140,16 @@ footer strong { color:var(--gold); }
     <div class="feature">Checking system components...</div>
   </div>
 </section>
+  <section class="panel">
+  <h2>Race-Card Validation Tests</h2>
+  <p class="note">
+    Synthetic test records only. These are not real horses or race predictions.
+  </p>
+  <button type="button" id="runTestsBtn">
+    Run Validation Tests
+  </button>
+  <div id="testResults" aria-live="polite"></div>
+</section>
 
   <section class="panel">
     <h2>01 — Upload Race Card</h2>
@@ -331,7 +341,45 @@ if (engineStatus) {
   });
 }
 
-  
+  const runTestsBtn = document.getElementById("runTestsBtn");
+const testResults = document.getElementById("testResults");
+
+if (runTestsBtn && testResults) {
+  runTestsBtn.addEventListener("click", function () {
+    testResults.textContent = "";
+
+    if (!window.RACEWISE_TEST || !window.RACEWISE_VALIDATOR) {
+      testResults.textContent = "Test module or validator not loaded.";
+      return;
+    }
+
+    const results = window.RACEWISE_TEST.runAll();
+
+    const checks = [
+      results[0].result.valid === true,
+      results[1].result.valid === false &&
+        results[1].result.errors.some(x => x.includes("jockey")) &&
+        results[1].result.warnings.some(x => x.includes("Official rating")),
+      results[2].result.valid === false &&
+        results[2].result.errors.some(x => x.includes("Duplicate horse names")),
+      results[3].result.valid === false &&
+        results[3].result.errors.some(x => x.includes("Duplicate race numbers"))
+    ];
+
+    results.forEach((test, index) => {
+      const row = document.createElement("div");
+      row.className = "feature";
+      row.textContent =
+        (checks[index] ? "PASS — " : "FAIL — ") + test.name;
+      testResults.appendChild(row);
+    });
+
+    const summary = document.createElement("p");
+    const passed = checks.filter(Boolean).length;
+    summary.textContent = passed + " of " + checks.length + " tests passed.";
+    testResults.appendChild(summary);
+  });
+}
 const centreSelect = document.getElementById("centreSelect");
 const centreInfo = document.getElementById("centreInfo");
 
