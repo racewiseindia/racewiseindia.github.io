@@ -10,7 +10,7 @@
  * can be enabled.
  */
 
-const RACEWISE_CENTRES = {
+window.RACEWISE_CENTRES = {
   version: "1.0.0",
 
   centres: {
