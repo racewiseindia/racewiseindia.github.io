@@ -194,6 +194,28 @@ footer strong { color:var(--gold); }
     Please select a racing centre.
   </div>
 </section>
+    <section class="panel">
+  <h2>03 — Race Meeting Data Entry</h2>
+  <p class="note">
+    Enter details exactly as published on the official race card.
+    Leave unavailable information blank.
+  </p>
+
+  <label>Race Date</label>
+  <input type="date" id="entryRaceDate"
+    style="width:100%;padding:12px;margin:7px 0 14px;">
+
+  <label>Number of Races</label>
+  <input type="number" id="entryRaceCount"
+    min="1" max="20" placeholder="Enter number of races"
+    style="width:100%;padding:12px;margin:7px 0 14px;">
+
+  <button type="button" id="createMeetingBtn">
+    Create Race Meeting
+  </button>
+
+  <div id="meetingEntryStatus" aria-live="polite"></div>
+</section>
 
     <h2>02 — Official Handicap Assessment</h2>
     <div class="grid">
