@@ -215,6 +215,61 @@ footer strong { color:var(--gold); }
   </button>
 
   <div id="meetingEntryStatus" aria-live="polite"></div>
+      <div id="raceEntryArea" style="margin-top:20px;">
+  <h3>Race Details</h3>
+  <p class="note">Enter details from the published race card.</p>
+
+  <label for="raceNumberSelect">Select Race</label>
+  <select id="raceNumberSelect"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+    <option value="">Create a meeting first</option>
+  </select>
+
+  <label for="entryRaceName">Race Name</label>
+  <input id="entryRaceName" type="text"
+    placeholder="Official race name"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="entryRaceTime">Scheduled Time</label>
+  <input id="entryRaceTime" type="time"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="entryDistance">Distance (metres)</label>
+  <input id="entryDistance" type="number" min="1"
+    placeholder="Example: 1400"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="entryRaceClass">Race Class</label>
+  <input id="entryRaceClass" type="text"
+    placeholder="As published on race card"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="entryAgeRestriction">Age Restriction</label>
+  <input id="entryAgeRestriction" type="text"
+    placeholder="As published, if specified"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="entryGoing">Going</label>
+  <input id="entryGoing" type="text"
+    placeholder="Leave blank if unavailable"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="entryTrackCondition">Track Condition</label>
+  <input id="entryTrackCondition" type="text"
+    placeholder="Leave blank if unavailable"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="entryRaceConditions">Race Conditions</label>
+  <textarea id="entryRaceConditions" rows="3"
+    placeholder="Published race conditions"
+    style="width:100%;padding:12px;margin:8px 0 14px;"></textarea>
+
+  <button type="button" id="saveRaceDetailsBtn">
+    Save Race Details
+  </button>
+
+  <div id="raceDetailsStatus" aria-live="polite"></div>
+</div>
 </section>
 
     <h2>02 — Official Handicap Assessment</h2>
