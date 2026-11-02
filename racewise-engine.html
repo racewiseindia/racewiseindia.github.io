@@ -217,7 +217,28 @@ footer strong { color:var(--gold); }
   Independent analysis • Transparent evidence • Responsible racing study
 </footer>
 
+<script src="centre-config.js"></script>
 <script>
+  
+// Load the national centre registry.
+// Each centre remains disabled for official handicap
+// calculations until its rules and data are verified.
+
+const centreRegistry = window.RACEWISE_CENTRES || null;
+
+const centreStatus = centreRegistry
+  ? Object.entries(centreRegistry.centres).map(([id, centre]) => ({
+      id,
+      name: centre.name,
+      authority: centre.authority,
+      readyForOfficialCalculations:
+        centre.officialRulesVerified === true &&
+        centre.authorisedDataVerified === true
+    }))
+  : [];
+
+console.log("RaceWise centre registry:", centreStatus);
+
 const input = document.getElementById("raceFiles");
 const list = document.getElementById("fileList");
 const preview = document.getElementById("preview");
