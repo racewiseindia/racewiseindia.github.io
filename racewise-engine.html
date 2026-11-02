@@ -403,6 +403,47 @@ if (runTestsBtn && testResults) {
     testResults.appendChild(summary);
   });
 }
+  const createMeetingBtn = document.getElementById("createMeetingBtn");
+const entryRaceDate = document.getElementById("entryRaceDate");
+const entryRaceCount = document.getElementById("entryRaceCount");
+const meetingEntryStatus = document.getElementById("meetingEntryStatus");
+
+let currentMeeting = null;
+
+if (createMeetingBtn) {
+  createMeetingBtn.addEventListener("click", function () {
+    const centre = centreSelect ? centreSelect.value : "";
+    const raceDate = entryRaceDate.value;
+    const raceCount = Number(entryRaceCount.value);
+
+    if (!window.RACEWISE_ENTRY) {
+      meetingEntryStatus.textContent = "Entry module not loaded.";
+      return;
+    }
+
+    if (!centre || !raceDate || !Number.isInteger(raceCount) ||
+        raceCount < 1 || raceCount > 20) {
+      meetingEntryStatus.textContent =
+        "Please select a racing centre, date and valid race count (1–20).";
+      return;
+    }
+
+    currentMeeting = window.RACEWISE_ENTRY.createMeeting();
+    currentMeeting.centre = centre;
+    currentMeeting.raceDate = raceDate;
+
+    for (let i = 0; i < raceCount; i++) {
+      window.RACEWISE_ENTRY.addRace(currentMeeting);
+    }
+
+    const summary = window.RACEWISE_ENTRY.getSummary(currentMeeting);
+
+    meetingEntryStatus.textContent =
+      "Meeting created successfully. Centre: " +
+      summary.centre + " | Date: " + summary.raceDate +
+      " | Races: " + summary.raceCount;
+  });
+}
 const centreSelect = document.getElementById("centreSelect");
 const centreInfo = document.getElementById("centreInfo");
 
