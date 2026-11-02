@@ -126,5 +126,5 @@ window.RACEWISE_CENTRES = {
 };
 
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = RACEWISE_CENTRES;
+  module.exports = window.RACEWISE_CENTRES;
 }
