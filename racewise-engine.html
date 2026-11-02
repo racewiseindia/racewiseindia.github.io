@@ -257,6 +257,12 @@ const centreStatus = centreRegistry
   : [];
 
 console.log("RaceWise centre registry:", centreStatus);
+  const raceCardSchema = window.RACEWISE_SCHEMA || null;
+
+console.log(
+  "RaceWise race-card schema:",
+  raceCardSchema ? "Loaded successfully" : "Not loaded"
+);
   
 const centreSelect = document.getElementById("centreSelect");
 const centreInfo = document.getElementById("centreInfo");
