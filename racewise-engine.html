@@ -596,6 +596,35 @@ if (saveRaceDetailsBtn) {
       "Race " + race.raceNumber + " details saved in this session.";
   });
 }
+  // Load saved details whenever a different race is selected
+function loadRaceDetails() {
+  if (!currentMeeting || !raceNumberSelect) return;
+
+  const index = Number(raceNumberSelect.value);
+  const race = currentMeeting.races[index];
+
+  if (!race) return;
+
+  document.getElementById("entryRaceName").value = race.raceName || "";
+  document.getElementById("entryRaceTime").value = race.scheduledTime || "";
+  document.getElementById("entryDistance").value =
+    race.distanceMetres || "";
+  document.getElementById("entryRaceClass").value = race.class || "";
+  document.getElementById("entryAgeRestriction").value =
+    race.ageRestriction || "";
+  document.getElementById("entryGoing").value = race.going || "";
+  document.getElementById("entryTrackCondition").value =
+    race.trackCondition || "";
+  document.getElementById("entryRaceConditions").value =
+    race.raceConditions || "";
+
+  raceDetailsStatus.textContent =
+    "Loaded details for Race " + race.raceNumber + ".";
+}
+
+if (raceNumberSelect) {
+  raceNumberSelect.addEventListener("change", loadRaceDetails);
+}
 const input = document.getElementById("raceFiles");
 const list = document.getElementById("fileList");
 const preview = document.getElementById("preview");
