@@ -164,6 +164,49 @@ footer strong { color:var(--gold); }
     Waiting for calculation.
   </div>
 </section>
+  <section class="panel">
+  <h2>Historical Horse Performance Entry</h2>
+
+  <p class="note">
+    Enter historical race details from an official,
+    verified source. Missing individual times must
+    remain blank.
+  </p>
+
+  <label>Horse Name</label>
+  <input id="historyHorseName" type="text"
+    placeholder="Enter horse name">
+
+  <label>Race Distance (metres)</label>
+  <input id="historyDistance" type="number"
+    placeholder="Example: 1400">
+
+  <label>Official Race Time (seconds)</label>
+  <input id="historyRaceTime" type="number"
+    step="0.01" placeholder="Official race time">
+
+  <label>Individual Horse Time (seconds)</label>
+  <input id="historyIndividualTime" type="number"
+    step="0.01" placeholder="Leave blank if unavailable">
+
+  <label>Official Source Name</label>
+  <input id="historySource" type="text"
+    placeholder="Official results source">
+
+  <label>
+    <input id="historyVerified" type="checkbox">
+    I have verified this data against the official source
+  </label>
+
+  <button type="button" id="analyseHistoryBtn">
+    Analyse Historical Performance
+  </button>
+
+  <div id="historyAnalysisResult" class="status"
+    style="margin-top:12px;">
+    Waiting for historical performance data.
+  </div>
+</section>
     
   <h2>Race-Card Validation Tests</h2>
   <p class="note">
