@@ -1205,6 +1205,111 @@ if (calculateSpeedBtn) {
       result.kilometresPerHour + " km/h";
   });
 }
+  
+// RaceWise historical horse performance analysis
+const analyseHistoryBtn =
+  document.getElementById("analyseHistoryBtn");
+
+if (analyseHistoryBtn) {
+  analyseHistoryBtn.addEventListener("click", function () {
+    const output = document.getElementById(
+      "historyAnalysisResult"
+    );
+
+    const horseName = document.getElementById(
+      "historyHorseName"
+    ).value.trim();
+
+    const distance = document.getElementById(
+      "historyDistance"
+    ).value;
+
+    const raceTime = document.getElementById(
+      "historyRaceTime"
+    ).value;
+
+    const individualTime = document.getElementById(
+      "historyIndividualTime"
+    ).value;
+
+    const sourceName = document.getElementById(
+      "historySource"
+    ).value.trim();
+
+    const verified = document.getElementById(
+      "historyVerified"
+    ).checked;
+
+    if (!window.RACEWISE_SPEED) {
+      output.textContent = "Speed calculator not loaded.";
+      return;
+    }
+
+    if (!horseName || !distance || !raceTime || !sourceName) {
+      output.textContent =
+        "Please enter horse name, distance, official race time and source.";
+      return;
+    }
+
+    const record = {
+      horseName: horseName,
+      distanceMetres: Number(distance),
+      officialRaceTimeSeconds: Number(raceTime),
+      individualTimeSeconds:
+        individualTime === "" ? null : Number(individualTime),
+      sectionals: [],
+      source: {
+        name: sourceName,
+        verified: verified
+      }
+    };
+
+    const analysis =
+      window.RACEWISE_SPEED.analysePerformance(record);
+
+    if (!analysis.validation.valid) {
+      output.textContent =
+        "Invalid record: " +
+        analysis.validation.errors.join(" ");
+      return;
+    }
+
+    let message =
+      "Horse: " + horseName + "\n";
+
+    if (analysis.raceSpeed) {
+      message +=
+        "Official race average speed: " +
+        analysis.raceSpeed.metresPerSecond +
+        " m/s | " +
+        analysis.raceSpeed.kilometresPerHour +
+        " km/h\n";
+    } else {
+      message +=
+        "Race speed not calculated: source not verified.\n";
+    }
+
+    if (analysis.individualSpeed) {
+      message +=
+        "Individual horse speed: " +
+        analysis.individualSpeed.metresPerSecond +
+        " m/s | " +
+        analysis.individualSpeed.kilometresPerHour +
+        " km/h\n";
+    } else {
+      message +=
+        "Individual horse speed unavailable. No individual time supplied.\n";
+    }
+
+    message +=
+      verified
+        ? "Source status: User marked as verified. Independent verification pending."
+        : "Source status: Unverified.";
+
+    output.textContent = message;
+  });
+}
+
 </script>
 
 </body>
