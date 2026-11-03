@@ -717,9 +717,63 @@ function renderMeetingArchive() {
       renderMeetingArchive();
     });
 
-    item.appendChild(title);
-    item.appendChild(button);
-    archiveList.appendChild(item);
+    const deleteButton = document.createElement("button");
+deleteButton.type = "button";
+deleteButton.textContent = "Delete Meeting";
+deleteButton.className = "secondary";
+deleteButton.style.marginLeft = "8px";
+
+deleteButton.addEventListener("click", function () {
+  const meetingId = meeting.meetingId ||
+    (meeting.centre + "_" + meeting.raceDate);
+
+  if (!window.confirm(
+    "Permanently delete " + meeting.centre + " meeting dated " +
+    meeting.raceDate + " and all " + meeting.races.length +
+    " races? This cannot be undone."
+  )) return;
+
+  const updatedArchive = getRaceWiseArchive().filter(function (saved) {
+    const savedId = saved.meetingId ||
+      (saved.centre + "_" + saved.raceDate);
+    return savedId !== meetingId;
+  });
+
+  localStorage.setItem(
+    RACEWISE_ARCHIVE_KEY,
+    JSON.stringify(updatedArchive)
+  );
+
+  const currentId = currentMeeting
+    ? (currentMeeting.centre + "_" + currentMeeting.raceDate)
+    : "";
+
+  if (currentId === meetingId) {
+    currentMeeting = null;
+    localStorage.removeItem(RACEWISE_STORAGE_KEY);
+
+    if (raceNumberSelect) raceNumberSelect.innerHTML =
+      '<option value="">Create a meeting first</option>';
+
+    if (runnerRaceSelect) runnerRaceSelect.innerHTML =
+      '<option value="">Create a meeting first</option>';
+
+    if (runnerList) runnerList.textContent = "No meeting selected.";
+    if (meetingEntryStatus) meetingEntryStatus.textContent =
+      "Test meeting deleted.";
+    if (raceDetailsStatus) raceDetailsStatus.textContent = "";
+    if (runnerEntryStatus) runnerEntryStatus.textContent = "";
+  }
+
+  renderMeetingArchive();
+});
+
+item.appendChild(title);
+item.appendChild(button);
+item.appendChild(deleteButton);
+archiveList.appendChild(item);
+    
+    
   });
 }
 
