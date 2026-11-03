@@ -573,7 +573,42 @@ const saveRaceDetailsBtn = document.getElementById("saveRaceDetailsBtn");
 const raceDetailsStatus = document.getElementById("raceDetailsStatus");
 
 let currentMeeting = null;
+// RaceWise browser storage
+const RACEWISE_STORAGE_KEY = "racewise_current_meeting_v1";
 
+function saveRaceWiseData() {
+  if (!currentMeeting) return;
+
+  try {
+    localStorage.setItem(
+      RACEWISE_STORAGE_KEY,
+      JSON.stringify(currentMeeting)
+    );
+  } catch (error) {
+    console.error("RaceWise save failed:", error);
+  }
+}
+
+function loadRaceWiseData() {
+  try {
+    const savedData = localStorage.getItem(
+      RACEWISE_STORAGE_KEY
+    );
+
+    if (!savedData) return null;
+
+    const meeting = JSON.parse(savedData);
+
+    if (!meeting || !Array.isArray(meeting.races)) {
+      return null;
+    }
+
+    return meeting;
+  } catch (error) {
+    console.error("RaceWise load failed:", error);
+    return null;
+  }
+}
 // Refresh the race dropdown after meeting creation
 function refreshRaceSelector() {
   if (!raceNumberSelect || !currentMeeting) return;
@@ -624,6 +659,7 @@ if (createMeetingBtn) {
 
     refreshRaceSelector();
     refreshRunnerRaceSelector();
+    saveRaceWiseData();
     raceDetailsStatus.textContent = "";
   });
 }
@@ -663,6 +699,7 @@ if (saveRaceDetailsBtn) {
 
     raceDetailsStatus.textContent =
       "Race " + race.raceNumber + " details saved in this session.";
+    saveRaceWiseData();
   });
 }
   // Load saved details whenever a different race is selected
@@ -826,7 +863,7 @@ if (addRunnerBtn) {
     ].forEach(function (id) {
       document.getElementById(id).value = "";
     });
-
+saveRaceWiseData();
     renderRunnerList();
   });
 }
@@ -867,6 +904,26 @@ clearBtn.addEventListener("click", () => {
   preview.removeAttribute("src");
   preview.style.display = "none";
 });
+  // Restore saved RaceWise meeting on page load
+currentMeeting = loadRaceWiseData();
+
+if (currentMeeting) {
+  refreshRaceSelector();
+  refreshRunnerRaceSelector();
+
+  if (raceNumberSelect) {
+    raceNumberSelect.value = "0";
+    loadRaceDetails();
+  }
+
+  if (runnerRaceSelect) {
+    runnerRaceSelect.value = "0";
+    renderRunnerList();
+  }
+
+  meetingEntryStatus.textContent =
+    "Saved meeting restored successfully.";
+}
 </script>
 
 </body>
