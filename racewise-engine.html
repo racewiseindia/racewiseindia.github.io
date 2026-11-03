@@ -271,7 +271,74 @@ footer strong { color:var(--gold); }
   <div id="raceDetailsStatus" aria-live="polite"></div>
 </div>
 </section>
+<section class="panel">
+  <h2>04 — RaceWise Runner Entry</h2>
+  <p class="note">
+    Enter runner details exactly as published on the official race card.
+    Missing information will be flagged, never invented.
+  </p>
 
+  <label for="runnerRaceSelect">Select Race</label>
+  <select id="runnerRaceSelect"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+    <option value="">Create a meeting first</option>
+  </select>
+
+  <label for="runnerHorseName">Horse Name *</label>
+  <input id="runnerHorseName" type="text"
+    placeholder="Official horse name"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="runnerHorseAge">Horse Age</label>
+  <input id="runnerHorseAge" type="number" min="1"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="runnerSex">Sex</label>
+  <select id="runnerSex"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+    <option value="">Not specified</option>
+    <option value="Colt">Colt</option>
+    <option value="Filly">Filly</option>
+    <option value="Gelding">Gelding</option>
+    <option value="Horse">Horse</option>
+    <option value="Mare">Mare</option>
+  </select>
+
+  <label for="runnerDraw">Draw Number</label>
+  <input id="runnerDraw" type="number" min="1"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="runnerJockey">Jockey *</label>
+  <input id="runnerJockey" type="text"
+    placeholder="Jockey name"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="runnerTrainer">Trainer</label>
+  <input id="runnerTrainer" type="text"
+    placeholder="Trainer name"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="runnerOwner">Owner</label>
+  <input id="runnerOwner" type="text"
+    placeholder="Owner name"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="runnerWeight">Allocated Weight (kg)</label>
+  <input id="runnerWeight" type="number" min="1" step="0.5"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <label for="runnerRating">Official Rating</label>
+  <input id="runnerRating" type="number"
+    style="width:100%;padding:12px;margin:8px 0 14px;">
+
+  <button type="button" id="addRunnerBtn">Add Runner</button>
+
+  <div id="runnerEntryStatus" aria-live="polite"
+    style="margin-top:12px;"></div>
+
+  <h3>Entered Runners</h3>
+  <div id="runnerList" aria-live="polite"></div>
+</section>
     <h2>02 — Official Handicap Assessment</h2>
     <div class="grid">
       <div class="feature"><strong>Published Rating</strong><br>Official rating and rating movement</div>
@@ -556,6 +623,7 @@ if (createMeetingBtn) {
       " | Races: " + summary.raceCount;
 
     refreshRaceSelector();
+    refreshRunnerRaceSelector();
     raceDetailsStatus.textContent = "";
   });
 }
@@ -625,6 +693,142 @@ function loadRaceDetails() {
 
 if (raceNumberSelect) {
   raceNumberSelect.addEventListener("change", loadRaceDetails);
+}
+  // RaceWise runner entry interface
+const runnerRaceSelect = document.getElementById("runnerRaceSelect");
+const addRunnerBtn = document.getElementById("addRunnerBtn");
+const runnerEntryStatus = document.getElementById("runnerEntryStatus");
+const runnerList = document.getElementById("runnerList");
+
+function refreshRunnerRaceSelector() {
+  if (!runnerRaceSelect || !currentMeeting) return;
+
+  runnerRaceSelect.innerHTML = "";
+
+  currentMeeting.races.forEach(function (race, index) {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = "Race " + race.raceNumber;
+    runnerRaceSelect.appendChild(option);
+  });
+
+  renderRunnerList();
+}
+
+function renderRunnerList() {
+  if (!runnerList || !currentMeeting) return;
+
+  runnerList.innerHTML = "";
+
+  const index = Number(runnerRaceSelect.value);
+  const race = currentMeeting.races[index];
+
+  if (!race) {
+    runnerList.textContent = "Please select a race.";
+    return;
+  }
+
+  const runners = window.RACEWISE_RUNNERS.getRunners(race);
+
+  if (!runners.length) {
+    runnerList.textContent = "No runners entered for this race yet.";
+    return;
+  }
+
+  runners.forEach(function (runner, runnerIndex) {
+    const item = document.createElement("div");
+    item.className = "feature";
+
+    const missing = runner.missingData || [];
+
+    item.textContent =
+      (runnerIndex + 1) + ". " + runner.horseName +
+      " | Jockey: " + (runner.jockey || "Missing") +
+      " | Draw: " + (runner.draw || "Not entered") +
+      " | Weight: " + (runner.allocatedWeightKg || "Not entered") +
+      " | Rating: " + (runner.officialRating || "Not entered") +
+      (missing.length
+        ? " | Missing: " + missing.join(", ")
+        : " | Required fields complete");
+
+    runnerList.appendChild(item);
+  });
+
+  const summary = window.RACEWISE_RUNNERS.getSummary(race);
+  const total = document.createElement("p");
+  total.className = "note";
+  total.textContent =
+    "Total runners: " + summary.runnerCount +
+    " | With missing information: " +
+    summary.runnersWithMissingData;
+
+  runnerList.appendChild(total);
+}
+
+if (runnerRaceSelect) {
+  runnerRaceSelect.addEventListener("change", renderRunnerList);
+}
+
+if (addRunnerBtn) {
+  addRunnerBtn.addEventListener("click", function () {
+    if (!currentMeeting) {
+      runnerEntryStatus.textContent = "Please create a meeting first.";
+      return;
+    }
+
+    const race = currentMeeting.races[Number(runnerRaceSelect.value)];
+
+    if (!race) {
+      runnerEntryStatus.textContent = "Please select a valid race.";
+      return;
+    }
+
+    if (!window.RACEWISE_RUNNERS) {
+      runnerEntryStatus.textContent = "Runner module not loaded.";
+      return;
+    }
+
+    const details = {
+      horseName: document.getElementById("runnerHorseName").value,
+      horseAge: document.getElementById("runnerHorseAge").value,
+      sex: document.getElementById("runnerSex").value,
+      draw: document.getElementById("runnerDraw").value,
+      jockey: document.getElementById("runnerJockey").value,
+      trainer: document.getElementById("runnerTrainer").value,
+      owner: document.getElementById("runnerOwner").value,
+      allocatedWeightKg: document.getElementById("runnerWeight").value,
+      officialRating: document.getElementById("runnerRating").value
+    };
+
+    const result = window.RACEWISE_RUNNERS.addRunner(race, details);
+
+    if (!result.success) {
+      runnerEntryStatus.textContent =
+        result.validation.errors.join(" ");
+      return;
+    }
+
+    runnerEntryStatus.textContent =
+      "Runner added. " +
+      (result.validation.warnings.join(" ") ||
+       "No missing information detected.");
+
+    [
+      "runnerHorseName",
+      "runnerHorseAge",
+      "runnerSex",
+      "runnerDraw",
+      "runnerJockey",
+      "runnerTrainer",
+      "runnerOwner",
+      "runnerWeight",
+      "runnerRating"
+    ].forEach(function (id) {
+      document.getElementById(id).value = "";
+    });
+
+    renderRunnerList();
+  });
 }
 const input = document.getElementById("raceFiles");
 const list = document.getElementById("fileList");
