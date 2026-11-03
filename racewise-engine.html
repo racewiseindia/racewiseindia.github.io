@@ -622,7 +622,9 @@ function loadRaceWiseData() {
     return null;
   }
 }
-  // RaceWise Meeting Archive
+  
+// RaceWise Meeting Archive
+
 function getRaceWiseArchive() {
   try {
     const savedArchive = localStorage.getItem(
@@ -640,13 +642,40 @@ function saveMeetingToArchive(meeting) {
   if (!meeting || !Array.isArray(meeting.races)) return;
 
   const archive = getRaceWiseArchive();
-
   const meetingId = meeting.centre + "_" + meeting.raceDate;
 
   const existingIndex = archive.findIndex(function (item) {
     return item.meetingId === meetingId;
   });
-  
+
+  const archivedMeeting = JSON.parse(JSON.stringify(meeting));
+  archivedMeeting.meetingId = meetingId;
+  archivedMeeting.lastSaved = new Date().toISOString();
+
+  if (existingIndex >= 0) {
+    archive[existingIndex] = archivedMeeting;
+  } else {
+    archive.push(archivedMeeting);
+  }
+
+  localStorage.setItem(
+    RACEWISE_ARCHIVE_KEY,
+    JSON.stringify(archive)
+  );
+}
+
+function renderMeetingArchive() {
+  const archiveList = document.getElementById("meetingArchiveList");
+
+  if (!archiveList) return;
+
+  const archive = getRaceWiseArchive();
+  archiveList.innerHTML = "";
+
+  if (!archive.length) {
+    archiveList.textContent = "No archived meetings yet.";
+    return;
+  }
 
   archive.forEach(function (meeting) {
     const item = document.createElement("div");
@@ -664,14 +693,13 @@ function saveMeetingToArchive(meeting) {
     button.addEventListener("click", function () {
       currentMeeting = meeting;
 
-      saveRaceWiseData();
-
       if (centreSelect) centreSelect.value = meeting.centre;
       if (entryRaceDate) entryRaceDate.value = meeting.raceDate;
       if (entryRaceCount) {
         entryRaceCount.value = meeting.races.length;
       }
 
+      saveRaceWiseData();
       refreshRaceSelector();
       refreshRunnerRaceSelector();
 
@@ -694,34 +722,6 @@ function saveMeetingToArchive(meeting) {
     archiveList.appendChild(item);
   });
 }
-
-  const archivedMeeting = JSON.parse(JSON.stringify(meeting));
-  archivedMeeting.meetingId = meetingId;
-  archivedMeeting.lastSaved = new Date().toISOString();
-
-  if (existingIndex >= 0) {
-    archive[existingIndex] = archivedMeeting;
-  } else {
-    archive.push(archivedMeeting);
-  }
-
-  localStorage.setItem(
-    RACEWISE_ARCHIVE_KEY,
-    JSON.stringify(archive)
-  );
-}
-  function renderMeetingArchive() {
-  const archiveList = document.getElementById("meetingArchiveList");
-
-  if (!archiveList) return;
-
-  const archive = getRaceWiseArchive();
-  archiveList.innerHTML = "";
-
-  if (!archive.length) {
-    archiveList.textContent = "No archived meetings yet.";
-    return;
-  }
 
 // Refresh the race dropdown after meeting creation
 function refreshRaceSelector() {
