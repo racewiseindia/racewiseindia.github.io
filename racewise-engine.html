@@ -272,6 +272,17 @@ footer strong { color:var(--gold); }
 </div>
 </section>
 <section class="panel">
+  <section class="panel">
+  <h2>RaceWise Meeting Archive</h2>
+
+  <p class="note">
+    Previously saved race meetings. Select a meeting to reopen it.
+  </p>
+
+  <div id="meetingArchiveList">
+    No archived meetings yet.
+  </div>
+</section>
   <h2>04 — RaceWise Runner Entry</h2>
   <p class="note">
     Enter runner details exactly as published on the official race card.
@@ -575,7 +586,7 @@ const raceDetailsStatus = document.getElementById("raceDetailsStatus");
 let currentMeeting = null;
 // RaceWise browser storage
 const RACEWISE_STORAGE_KEY = "racewise_current_meeting_v1";
-
+const RACEWISE_ARCHIVE_KEY = "racewise_meeting_archive_v1";
 function saveRaceWiseData() {
   if (!currentMeeting) return;
 
@@ -584,6 +595,8 @@ function saveRaceWiseData() {
       RACEWISE_STORAGE_KEY,
       JSON.stringify(currentMeeting)
     );
+    saveMeetingToArchive(currentMeeting);
+        renderMeetingArchive();
   } catch (error) {
     console.error("RaceWise save failed:", error);
   }
@@ -609,6 +622,107 @@ function loadRaceWiseData() {
     return null;
   }
 }
+  // RaceWise Meeting Archive
+function getRaceWiseArchive() {
+  try {
+    const savedArchive = localStorage.getItem(
+      RACEWISE_ARCHIVE_KEY
+    );
+
+    return savedArchive ? JSON.parse(savedArchive) : [];
+  } catch (error) {
+    console.error("Archive load failed:", error);
+    return [];
+  }
+}
+
+function saveMeetingToArchive(meeting) {
+  if (!meeting || !Array.isArray(meeting.races)) return;
+
+  const archive = getRaceWiseArchive();
+
+  const meetingId = meeting.centre + "_" + meeting.raceDate;
+
+  const existingIndex = archive.findIndex(function (item) {
+    return item.meetingId === meetingId;
+  });
+  
+
+  archive.forEach(function (meeting) {
+    const item = document.createElement("div");
+    item.className = "feature";
+
+    const title = document.createElement("p");
+    title.textContent =
+      meeting.centre + " | " + meeting.raceDate +
+      " | " + meeting.races.length + " races";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = "Open Meeting";
+
+    button.addEventListener("click", function () {
+      currentMeeting = meeting;
+
+      saveRaceWiseData();
+
+      if (centreSelect) centreSelect.value = meeting.centre;
+      if (entryRaceDate) entryRaceDate.value = meeting.raceDate;
+      if (entryRaceCount) {
+        entryRaceCount.value = meeting.races.length;
+      }
+
+      refreshRaceSelector();
+      refreshRunnerRaceSelector();
+
+      if (raceNumberSelect) {
+        raceNumberSelect.value = "0";
+        loadRaceDetails();
+      }
+
+      if (runnerRaceSelect) {
+        runnerRaceSelect.value = "0";
+        renderRunnerList();
+      }
+
+      meetingEntryStatus.textContent = "Archived meeting opened.";
+      renderMeetingArchive();
+    });
+
+    item.appendChild(title);
+    item.appendChild(button);
+    archiveList.appendChild(item);
+  });
+}
+
+  const archivedMeeting = JSON.parse(JSON.stringify(meeting));
+  archivedMeeting.meetingId = meetingId;
+  archivedMeeting.lastSaved = new Date().toISOString();
+
+  if (existingIndex >= 0) {
+    archive[existingIndex] = archivedMeeting;
+  } else {
+    archive.push(archivedMeeting);
+  }
+
+  localStorage.setItem(
+    RACEWISE_ARCHIVE_KEY,
+    JSON.stringify(archive)
+  );
+}
+  function renderMeetingArchive() {
+  const archiveList = document.getElementById("meetingArchiveList");
+
+  if (!archiveList) return;
+
+  const archive = getRaceWiseArchive();
+  archiveList.innerHTML = "";
+
+  if (!archive.length) {
+    archiveList.textContent = "No archived meetings yet.";
+    return;
+  }
+
 // Refresh the race dropdown after meeting creation
 function refreshRaceSelector() {
   if (!raceNumberSelect || !currentMeeting) return;
@@ -924,6 +1038,12 @@ if (currentMeeting) {
   meetingEntryStatus.textContent =
     "Saved meeting restored successfully.";
 }
+  if (currentMeeting) {
+  saveMeetingToArchive(currentMeeting);
+}
+
+renderMeetingArchive();
+
 </script>
 
 </body>
