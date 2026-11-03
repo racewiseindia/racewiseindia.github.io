@@ -85,7 +85,6 @@
 
       const runner = window.RACEWISE_ENTRY.createRunner();
 
-      Object.keys(runnerFields).forEach(function () {});
 
       runnerFields.forEach(function (field) {
         if (details && details[field] !== undefined &&
