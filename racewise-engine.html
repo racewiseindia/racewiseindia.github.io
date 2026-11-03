@@ -141,6 +141,30 @@ footer strong { color:var(--gold); }
   </div>
 </section>
   <section class="panel">
+  <h2>Historical Speed Calculator Test</h2>
+  <p class="note">
+    Synthetic example only — not actual racing data.
+  </p>
+
+  <label>Distance (metres)</label>
+  <input id="speedTestDistance" type="number"
+    value="1200" style="width:100%;padding:12px;margin:8px 0;">
+
+  <label>Race time (seconds)</label>
+  <input id="speedTestTime" type="number"
+    value="72" step="0.01"
+    style="width:100%;padding:12px;margin:8px 0;">
+
+  <button type="button" id="calculateSpeedBtn">
+    Calculate Speed
+  </button>
+
+  <div id="speedTestResult" class="status"
+    style="margin-top:12px;">
+    Waiting for calculation.
+  </div>
+</section>
+    
   <h2>Race-Card Validation Tests</h2>
   <p class="note">
     Synthetic test records only. These are not real horses or race predictions.
@@ -1099,7 +1123,45 @@ if (currentMeeting) {
 }
 
 renderMeetingArchive();
+// RaceWise historical speed calculator test
+const calculateSpeedBtn =
+  document.getElementById("calculateSpeedBtn");
 
+if (calculateSpeedBtn) {
+  calculateSpeedBtn.addEventListener("click", function () {
+    const distance = document.getElementById(
+      "speedTestDistance"
+    ).value;
+
+    const time = document.getElementById(
+      "speedTestTime"
+    ).value;
+
+    const output = document.getElementById(
+      "speedTestResult"
+    );
+
+    if (!window.RACEWISE_SPEED) {
+      output.textContent = "Speed calculator not loaded.";
+      return;
+    }
+
+    const result = window.RACEWISE_SPEED.calculateSpeed(
+      distance,
+      time
+    );
+
+    if (!result.valid) {
+      output.textContent = result.error;
+      return;
+    }
+
+    output.textContent =
+      "Synthetic test result: " +
+      result.metresPerSecond + " m/s | " +
+      result.kilometresPerHour + " km/h";
+  });
+}
 </script>
 
 </body>
