@@ -10,57 +10,111 @@ main{max-width:500px;margin:30px auto;background:#112849;padding:22px;border:1px
 h2{color:#d7b46a}
 input{box-sizing:border-box;width:100%;padding:12px;margin:8px 0 16px}
 button{padding:12px 20px;background:#d7b46a;border:0;font-weight:bold}
-#status{white-space:pre-wrap;margin-top:18px}
+#status{white-space:pre-wrap;overflow-wrap:anywhere;margin-top:18px}
 </style>
 </head>
 <body>
 <main>
 <h2>RaceWise India — Admin Test</h2>
+<p>Admin authentication and database access test.</p>
+
 <label>Supabase Publishable Key</label>
 <input id="key" type="password" placeholder="sb_publishable_...">
+
 <label>Admin Email</label>
 <input id="email" type="email" value="racewiseindia@gmail.com">
+
 <label>Password</label>
-<input id="password" type="password" placeholder="Enter your password">
-<button id="login">Test Sign-in</button>
+<input id="password" type="password" placeholder="Enter password">
+
+<button id="login">Test Sign-in and Database</button>
 <div id="status">Ready to test.</div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-const SUPABASE_URL="https://ldnmfaykekhigavqgwmf.supabase.co";
+const SUPABASE_URL =
+"https://ldnmfaykekhigavqgwmf.supabase.co";
 
-document.getElementById("login").onclick=async()=>{
- const key=document.getElementById("key").value.trim();
- const email=document.getElementById("email").value.trim();
- const password=document.getElementById("password").value;
- const status=document.getElementById("status");
+document.getElementById("login").onclick = async () => {
 
- if(!key.startsWith("sb_publishable_")){
-  status.textContent="Please enter the Publishable key.";
-  return;
- }
+const key = document.getElementById("key").value.trim();
+const email = document.getElementById("email").value.trim();
+const password = document.getElementById("password").value;
+const status = document.getElementById("status");
+const button = document.getElementById("login");
 
- const {data: meetings, error: dbError} = await db
-  .from("meetings")
-  .select("id")
-  .limit(1);
+if (!key.startsWith("sb_publishable_")) {
+status.textContent = "Please enter the Publishable key.";
+return;
+}
 
-if(dbError) throw dbError;
+if (!email || !password) {
+status.textContent = "Enter email and password.";
+return;
+}
+
+button.disabled = true;
+status.textContent = "Connecting to Supabase...";
+
+let db;
+
+try {
+
+db = window.supabase.createClient(SUPABASE_URL, key, {
+auth: {
+persistSession: false,
+autoRefreshToken: false,
+detectSessionInUrl: false
+}
+});
+
+const {data, error} =
+await db.auth.signInWithPassword({email, password});
+
+if (error) throw error;
+
+const {data: meetings, error: dbError} =
+await db.from("meetings").select("id").limit(1);
+
+if (dbError) {
 
 status.textContent =
-  "SUCCESS — Admin sign-in works.\n" +
-  "Email: " + data.user.email + "\n" +
-  "User ID: " + data.user.id + "\n\n" +
-  "DATABASE ACCESS SUCCESSFUL!\n" +
-  "The meetings table is accessible.\n" +
-  "Rows returned: " + meetings.length;
+"AUTHENTICATION SUCCESSFUL\n" +
+"Email: " + data.user.email + "\n" +
+"User ID: " + data.user.id + "\n\n" +
+"DATABASE TEST FAILED\n" + dbError.message;
 
+} else {
+
+status.textContent =
+"AUTHENTICATION SUCCESSFUL\n" +
+"Email: " + data.user.email + "\n" +
+"User ID: " + data.user.id + "\n\n" +
+"DATABASE ACCESS SUCCESSFUL!\n" +
+"Meetings table is accessible.\n" +
+"Rows returned: " + meetings.length;
+
+}
+
+} catch (e) {
+
+status.textContent = "TEST FAILED:\n" + e.message;
+
+} finally {
+
+if (db) {
+try {
 await db.auth.signOut();
- }catch(e){
-  status.textContent="SIGN-IN FAILED:\n"+e.message;
- }
- document.getElementById("password").value="";
+} catch (e) {}
+}
+
+document.getElementById("password").value = "";
+button.disabled = false;
+
+}
+
 };
 </script>
 </body>
