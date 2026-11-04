@@ -41,20 +41,22 @@ document.getElementById("login").onclick=async()=>{
   return;
  }
 
- status.textContent="Checking sign-in...";
+ const {data: meetings, error: dbError} = await db
+  .from("meetings")
+  .select("id")
+  .limit(1);
 
- try{
-  const db=supabase.createClient(SUPABASE_URL,key,{
-   auth:{persistSession:false,autoRefreshToken:false}
-  });
-  const {data,error}=await db.auth.signInWithPassword({email,password});
-  if(error) throw error;
+if(dbError) throw dbError;
 
-  status.textContent="SUCCESS — Admin sign-in works.\nEmail: "+
-   data.user.email+"\nUser ID: "+data.user.id+
-   "\n\nAuthentication tested. Database access is not yet tested.";
+status.textContent =
+  "SUCCESS — Admin sign-in works.\n" +
+  "Email: " + data.user.email + "\n" +
+  "User ID: " + data.user.id + "\n\n" +
+  "DATABASE ACCESS SUCCESSFUL!\n" +
+  "The meetings table is accessible.\n" +
+  "Rows returned: " + meetings.length;
 
-  await db.auth.signOut();
+await db.auth.signOut();
  }catch(e){
   status.textContent="SIGN-IN FAILED:\n"+e.message;
  }
