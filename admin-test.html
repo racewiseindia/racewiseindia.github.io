@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RaceWise Admin Test</title>
+<style>
+body{background:#08172d;color:#f5f1e8;font-family:Arial;padding:20px}
+main{max-width:500px;margin:30px auto;background:#112849;padding:22px;border:1px solid #d7b46a;border-radius:12px}
+h2{color:#d7b46a}
+input{box-sizing:border-box;width:100%;padding:12px;margin:8px 0 16px}
+button{padding:12px 20px;background:#d7b46a;border:0;font-weight:bold}
+#status{white-space:pre-wrap;margin-top:18px}
+</style>
+</head>
+<body>
+<main>
+<h2>RaceWise India — Admin Test</h2>
+<label>Supabase Publishable Key</label>
+<input id="key" type="password" placeholder="sb_publishable_...">
+<label>Admin Email</label>
+<input id="email" type="email" value="racewiseindia@gmail.com">
+<label>Password</label>
+<input id="password" type="password" placeholder="Enter your password">
+<button id="login">Test Sign-in</button>
+<div id="status">Ready to test.</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const URL="https://ldnmfaykekhigavqgwmf.supabase.co";
+
+document.getElementById("login").onclick=async()=>{
+ const key=document.getElementById("key").value.trim();
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("password").value;
+ const status=document.getElementById("status");
+
+ if(!key.startsWith("sb_publishable_")){
+  status.textContent="Please enter the Publishable key.";
+  return;
+ }
+
+ status.textContent="Checking sign-in...";
+
+ try{
+  const db=supabase.createClient(URL,key,{
+   auth:{persistSession:false,autoRefreshToken:false}
+  });
+  const {data,error}=await db.auth.signInWithPassword({email,password});
+  if(error) throw error;
+
+  status.textContent="SUCCESS — Admin sign-in works.\nEmail: "+
+   data.user.email+"\nUser ID: "+data.user.id+
+   "\n\nAuthentication tested. Database access is not yet tested.";
+
+  await db.auth.signOut();
+ }catch(e){
+  status.textContent="SIGN-IN FAILED:\n"+e.message;
+ }
+ document.getElementById("password").value="";
+};
+</script>
+</body>
+</html>
