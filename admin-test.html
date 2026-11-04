@@ -28,7 +28,7 @@ button{padding:12px 20px;background:#d7b46a;border:0;font-weight:bold}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const URL="https://ldnmfaykekhigavqgwmf.supabase.co";
+const SUPABASE_URL="https://ldnmfaykekhigavqgwmf.supabase.co";
 
 document.getElementById("login").onclick=async()=>{
  const key=document.getElementById("key").value.trim();
@@ -44,7 +44,7 @@ document.getElementById("login").onclick=async()=>{
  status.textContent="Checking sign-in...";
 
  try{
-  const db=supabase.createClient(URL,key,{
+  const db=supabase.createClient(SUPABASE_URL,key,{
    auth:{persistSession:false,autoRefreshToken:false}
   });
   const {data,error}=await db.auth.signInWithPassword({email,password});
