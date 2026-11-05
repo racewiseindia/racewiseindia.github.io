@@ -75,28 +75,39 @@ await db.auth.signInWithPassword({email, password});
 
 if (error) throw error;
 
-const {data: meetings, error: dbError} =
-await db.from("meetings").select("id").limit(1);
+const tables = [
+  "meetings",
+  "races",
+  "horses",
+  "race_entries",
+  "selections",
+  "results"
+];
 
-if (dbError) {
+const results = [];
 
-status.textContent =
-"AUTHENTICATION SUCCESSFUL\n" +
-"Email: " + data.user.email + "\n" +
-"User ID: " + data.user.id + "\n\n" +
-"DATABASE TEST FAILED\n" + dbError.message;
+for (const table of tables) {
+  const { count, error } = await db
+    .from(table)
+    .select("*", { count: "exact", head: true });
 
-} else {
-
-status.textContent =
-"AUTHENTICATION SUCCESSFUL\n" +
-"Email: " + data.user.email + "\n" +
-"User ID: " + data.user.id + "\n\n" +
-"DATABASE ACCESS SUCCESSFUL!\n" +
-"Meetings table is accessible.\n" +
-"Rows returned: " + meetings.length;
-
+  if (error) {
+    results.push(
+      table + ": FAILED - " + error.message
+    );
+  } else {
+    results.push(
+      table + ": ACCESSIBLE | Rows: " + count
+    );
+  }
 }
+
+status.textContent =
+  "AUTHENTICATION SUCCESSFUL\n" +
+  "Email: " + data.user.email + "\n" +
+  "User ID: " + data.user.id + "\n\n" +
+  "DATABASE VERIFICATION\n\n" +
+  results.join("\n");
 
 } catch (e) {
 
