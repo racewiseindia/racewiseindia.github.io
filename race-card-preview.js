@@ -12,7 +12,7 @@
   if (!output || !button || !preview) return;
 
   button.addEventListener("click", function () {
-        const layoutPages = window.RACEWISE_PDF_LAYOUT || [];
+            const layoutPages = window.RACEWISE_PDF_LAYOUT || [];
 
     if (!layoutPages.length) {
       preview.textContent =
@@ -23,16 +23,39 @@
     const lines = [];
 
     layoutPages.forEach(page => {
-      const items = page.items || [];
-
-      const sortedItems = items.slice().sort(
+      const items = (page.items || []).slice().sort(
         (a, b) => b.y - a.y || a.x - b.x
       );
 
-      lines.push({
-        pageNo: page.pageNo,
-        items: sortedItems
+      let currentLine = [];
+      let currentY = null;
+
+      items.forEach(item => {
+        if (
+          currentY === null ||
+          Math.abs(item.y - currentY) <= 2.5
+        ) {
+          currentLine.push(item);
+          currentY = currentLine.reduce(
+            (sum, entry) => sum + entry.y, 0
+          ) / currentLine.length;
+        } else {
+          currentLine.sort((a, b) => a.x - b.x);
+          lines.push(
+            currentLine.map(entry => entry.text).join(" | ")
+          );
+
+          currentLine = [item];
+          currentY = item.y;
+        }
       });
+
+      if (currentLine.length) {
+        currentLine.sort((a, b) => a.x - b.x);
+        lines.push(
+          currentLine.map(entry => entry.text).join(" | ")
+        );
+      }
     });
 
     const raceHeaders = [];
