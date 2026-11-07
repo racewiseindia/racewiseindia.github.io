@@ -1311,6 +1311,114 @@ if (analyseHistoryBtn) {
 }
 
 </script>
+<style>
+#rwAdminPanel{border:1px solid #d6ad55;border-radius:12px;background:#fff;padding:18px;margin:18px 0}
+#rwAdminPanel h2{color:#07172e}
+#rwAdminPanel .rw-grid{display:grid;gap:10px;max-width:520px}
+#rwAdminPanel input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cbd2dc;border-radius:7px;font-size:16px}
+#rwAdminPanel button{padding:11px 18px;margin-top:8px}
+#rwAdminStatus{white-space:pre-wrap;font-size:13px;line-height:1.5;margin-top:12px}
+</style>
 
+<section id="rwAdminPanel">
+  <h2>RaceWise Admin Login</h2>
+  <p>Sign in to verify administrator access and test read-only database access.</p>
+  <form id="rwAdminLoginForm" class="rw-grid">
+    <label>Email
+      <input id="rwAdminEmail" type="email" value="racewiseindia@gmail.com" autocomplete="username" required>
+    </label>
+    <label>Password
+      <input id="rwAdminPassword" type="password" autocomplete="current-password" required>
+    </label>
+    <button id="rwAdminSignIn" type="submit">Sign in and verify</button>
+  </form>
+  <button id="rwAdminSignOut" type="button" hidden>Sign out</button>
+  <div id="rwAdminStatus" role="status">Not signed in. No database records have been changed.</div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+(function () {
+  const status = document.getElementById("rwAdminStatus");
+  const form = document.getElementById("rwAdminLoginForm");
+  const password = document.getElementById("rwAdminPassword");
+  const signIn = document.getElementById("rwAdminSignIn");
+  const signOut = document.getElementById("rwAdminSignOut");
+
+  if (!window.supabase || !window.RACEWISE_SUPABASE_CONFIG ||
+      !window.RACEWISE_SUPABASE_CONFIG.url ||
+      !window.RACEWISE_SUPABASE_CONFIG.publishableKey ||
+      !window.RACEWISE_SUPABASE_CONFIG.publishableKey.startsWith("sb_publishable_")) {
+    status.textContent = "Supabase configuration unavailable. Please check the configuration file.";
+    signIn.disabled = true;
+    return;
+  }
+
+  const client = window.supabase.createClient(
+    window.RACEWISE_SUPABASE_CONFIG.url,
+    window.RACEWISE_SUPABASE_CONFIG.publishableKey
+  );
+
+  form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+    signIn.disabled = true;
+    status.textContent = "Signing in securely…";
+
+    try {
+      const login = await client.auth.signInWithPassword({
+        email: document.getElementById("rwAdminEmail").value.trim(),
+        password: password.value
+      });
+      password.value = "";
+      if (login.error) throw login.error;
+
+      status.textContent = "Authentication successful. Checking administrator access…";
+
+      const roleCheck = await client.rpc("is_racewise_admin");
+      if (roleCheck.error) {
+        status.textContent += "\nRole check failed: " + roleCheck.error.message;
+        signOut.hidden = false;
+        return;
+      }
+
+      if (roleCheck.data !== true) {
+        status.textContent = "Login successful, but administrator access was not confirmed.";
+        signOut.hidden = false;
+        return;
+      }
+
+      status.textContent = "AUTHENTICATION SUCCESSFUL\nRACEWISE ADMIN VERIFIED\nTesting read-only database access…";
+
+      const readTest = await client
+        .from("meetings")
+        .select("id", { count: "exact", head: true });
+
+      if (readTest.error) {
+        status.textContent += "\nDatabase read test failed: " + readTest.error.message;
+      } else {
+        status.textContent += "\nDATABASE READ TEST SUCCESSFUL\nMeetings table accessible. Rows: " +
+          (readTest.count === null ? "count unavailable" : readTest.count) +
+          "\nNo racing records were changed.";
+      }
+
+      signOut.hidden = false;
+    } catch (error) {
+      status.textContent = "Login or verification failed: " +
+        (error && error.message ? error.message : String(error));
+    } finally {
+      signIn.disabled = false;
+    }
+  });
+
+  signOut.addEventListener("click", async function() {
+    const result = await client.auth.signOut();
+    status.textContent = result.error
+      ? "Sign-out error: " + result.error.message
+      : "Signed out. No racing records were changed.";
+    signOut.hidden = true;
+  });
+})();
+</script>
 </body>
 </html>
