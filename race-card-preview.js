@@ -1,7 +1,7 @@
 /*
  * RACEWISE INDIA
- * Improved review-only race card preview
- * No database writes
+ * Conservative race-card preview
+ * Review only — no database writes
  */
 
 (function () {
@@ -28,8 +28,13 @@
       );
 
       if (match) {
+        const possibleTitle = index > 0 ? lines[index - 1] : "";
+
         raceHeaders.push({
           index,
+          title: /^The\b/i.test(possibleTitle)
+            ? possibleTitle
+            : "Race " + Number(match[1]),
           number: Number(match[1]),
           distance: Number(match[2])
         });
@@ -58,70 +63,94 @@
     }
 
     raceHeaders.forEach((race, position) => {
-      const start = race.index;
-      const end = position + 1 < raceHeaders.length
-        ? raceHeaders[position + 1].index
+      const nextRace = raceHeaders[position + 1];
+
+      // End this race before the next race's title.
+      const end = nextRace
+        ? Math.max(race.index + 1, nextRace.index - 1)
         : lines.length;
 
-      const section = lines.slice(start, end);
+      const section = lines.slice(race.index, end);
 
       const card = document.createElement("section");
       card.style.cssText =
         "border:1px solid #c9ad70;padding:12px;margin:14px 0;border-radius:8px";
 
-      const titleLine = start > 0 ? lines[start - 1] : "";
-
-      addText(
-        card,
-        "h3",
-        titleLine && !/^\d+$/.test(titleLine)
-          ? titleLine
-          : "Race " + race.number
-      );
-
+      addText(card, "h3", race.title);
       addText(card, "p", "Race number: " + race.number);
       addText(card, "p", "Distance: " + race.distance + " metres");
 
-      const classLine = section.find(line =>
-        /\bClass\s+\d+\b/i.test(line)
-      );
+      // Preserve the original condition lines instead of guessing.
+      const conditionLines = [];
+
+      for (let i = 1; i < section.length; i++) {
+        const line = section[i];
+
+        if (
+          /^Winner\s*:/i.test(line) ||
+          /^Record Time\s*:/i.test(line) ||
+          /^No\s*\|\s*Silk/i.test(line) ||
+          /^Previous Runs/i.test(line)
+        ) {
+          break;
+        }
+
+        conditionLines.push(line);
+
+        if (conditionLines.length >= 6) break;
+      }
 
       addText(
         card,
         "p",
-        "Class / conditions candidate: " +
-          (classLine || "Not confidently detected")
+        "Race conditions — original extracted text:"
       );
 
+      const conditions = document.createElement("pre");
+      conditions.style.cssText =
+        "white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px";
+      conditions.textContent = conditionLines.length
+        ? conditionLines.join("\n")
+        : "Not confidently detected";
+
+      card.appendChild(conditions);
+
+      // Find the scheduled time near the race heading.
       let timeText = "Not confidently detected";
 
-      for (let i = 0; i < Math.min(section.length, 8); i++) {
+      for (let i = 0; i < Math.min(section.length, 12); i++) {
         const match = section[i].match(/\b(\d{1,2}:\d{2})\b/);
 
-        if (match) {
-          let period = "";
+        if (!match) continue;
 
-          for (let j = i; j < Math.min(section.length, i + 3); j++) {
-            const periodMatch = section[j].match(/\b(AM|PM)\b/i);
-            if (periodMatch) {
-              period = periodMatch[1].toUpperCase();
-              break;
-            }
+        let period = "";
+
+        for (
+          let j = i;
+          j < Math.min(section.length, i + 4);
+          j++
+        ) {
+          const periodMatch = section[j].match(/\b(AM|PM)\b/i);
+
+          if (periodMatch) {
+            period = periodMatch[1].toUpperCase();
+            break;
           }
-
-          timeText = match[1] + (period ? " " + period : "");
-          break;
         }
+
+        timeText = match[1] + (period ? " " + period : "");
+        break;
       }
 
       addText(card, "p", "Scheduled time candidate: " + timeText);
 
+      // Detect runner blocks without assigning shifting columns.
       const runnerStarts = [];
 
       for (let i = 1; i < section.length; i++) {
         const details = section[i];
 
-        if (!/\|\s*/.test(details)) continue;
+        if (!details.includes("|")) continue;
         if (!/\b\d{1,2}y\b/i.test(details)) continue;
 
         const possibleName = section[i - 1];
@@ -147,62 +176,31 @@
 
       runnerStarts.forEach((runner, runnerIndex) => {
         const item = document.createElement("div");
+
         item.style.cssText =
           "background:#f4f5f7;padding:10px;margin:9px 0;border-radius:6px";
 
         addText(item, "strong", runner.name);
 
+        addText(
+          item,
+          "p",
+          "Structured owner / trainer / jockey / weight: Not parsed — manual verification required."
+        );
+
         const fields = runner.details
           .split("|")
           .map(value => value.trim());
 
-        addText(
-          item,
-          "p",
-          "Age / colour: " + (fields[0] || "Not detected")
-        );
+        const lastField = fields[fields.length - 1];
 
         addText(
           item,
           "p",
-          "Owner: " + (fields[1] || "Not detected")
-        );
-
-        addText(
-          item,
-          "p",
-          "Trainer: " + (fields[2] || "Not detected")
-        );
-
-        addText(
-          item,
-          "p",
-          "Jockey: " + (fields[3] || "Not detected")
-        );
-
-        addText(
-          item,
-          "p",
-          "Weight: " + (fields[4] || "Not detected")
-        );
-
-        if (fields.length >= 9) {
-          addText(item, "p", "Allowance: " + fields[5]);
-          addText(item, "p", "Shoe: " + fields[6]);
-          addText(item, "p", "Equipment: " + fields[7]);
-        } else if (fields.length >= 8) {
-          addText(item, "p", "Shoe: " + fields[5]);
-          addText(item, "p", "Equipment: " + fields[6]);
-        }
-
-        const rating = fields[fields.length - 1];
-
-        addText(
-          item,
-          "p",
-          /^\d{1,3}$/.test(rating)
-            ? "Card rating candidate: " + rating
-            : "Card rating: Not confidently detected"
+          /^\d{1,3}$/.test(lastField)
+            ? "Last numeric field candidate: " + lastField +
+              " — verify against the official Rtg column."
+            : "Rating: Not confidently detected."
         );
 
         const nextRunner = runnerStarts[runnerIndex + 1];
@@ -219,12 +217,15 @@
         addText(item, "p", "Original runner text:");
 
         const raw = document.createElement("pre");
+
         raw.style.cssText =
           "white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px";
+
         raw.textContent = rawBlock.join("\n");
         item.appendChild(raw);
 
         addText(item, "p", "Manual verification required.");
+
         card.appendChild(item);
       });
 
