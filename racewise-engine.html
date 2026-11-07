@@ -1503,11 +1503,28 @@ if (analyseHistoryBtn) {
           const page = await pdf.getPage(pageNo);
           const content = await page.getTextContent();
 
-          const pageText = content.items
-            .map(item => item.str || "")
-            .join(" ")
-            .replace(/[ \t]+/g, " ")
-            .trim();
+          const lines = new Map();
+
+content.items.forEach(item => {
+  const text = (item.str || "").trim();
+  if (!text) return;
+
+  const y = Math.round(item.transform[5]);
+  if (!lines.has(y)) lines.set(y, []);
+  lines.get(y).push({
+    x: item.transform[4],
+    text: text
+  });
+});
+
+const pageText = Array.from(lines.entries())
+  .sort((a, b) => b[0] - a[0])
+  .map(([y, items]) =>
+    items.sort((a, b) => a.x - b.x)
+      .map(item => item.text)
+      .join(" | ")
+  )
+  .join("\n");
 
           if (!pageText) emptyPages.push(pageNo);
 
