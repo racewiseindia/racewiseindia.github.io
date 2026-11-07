@@ -241,6 +241,15 @@ footer strong { color:var(--gold); }
     <div class="actions">
       <button class="secondary" type="button" id="clearBtn">Clear Selection</button>
     </div>
+    <div class="actions">
+  <button type="button" id="readPdfBtn">Read PDF Text</button>
+</div>
+
+<div id="pdfReadStatus" class="status" style="margin-top:12px;">
+  Select a PDF, then tap Read PDF Text. No data will be saved.
+</div>
+
+<pre id="pdfTextOutput" style="display:none;white-space:pre-wrap;overflow:auto;max-height:420px;padding:12px;background:#f5f6f8;border-radius:8px;font-size:12px;"></pre>
   </section>
 
   <section class="panel">
@@ -1443,6 +1452,87 @@ if (analyseHistoryBtn) {
       ? "Sign-out error: " + result.error.message
       : "Signed out. No racing records were changed.";
     signOut.hidden = true;
+  });
+})();
+</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+(function () {
+  const button = document.getElementById("readPdfBtn");
+  const input = document.getElementById("raceFiles");
+  const status = document.getElementById("pdfReadStatus");
+  const output = document.getElementById("pdfTextOutput");
+
+  if (!button || !input || !status || !output) return;
+
+  if (!window.pdfjsLib) {
+    status.textContent = "PDF reader library did not load. Check your internet connection and refresh.";
+    button.disabled = true;
+    return;
+  }
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  button.addEventListener("click", async function () {
+    const files = Array.from(input.files || []).filter(file =>
+      file.type === "application/pdf" ||
+      file.name.toLowerCase().endsWith(".pdf")
+    );
+
+    if (!files.length) {
+      status.textContent = "Please select a PDF file first.";
+      return;
+    }
+
+    button.disabled = true;
+    output.style.display = "block";
+    output.textContent = "";
+
+    try {
+      for (const file of files) {
+        status.textContent = "Reading " + file.name + "...";
+
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+
+        let fullText = "";
+        const emptyPages = [];
+
+        for (let pageNo = 1; pageNo <= pdf.numPages; pageNo++) {
+          const page = await pdf.getPage(pageNo);
+          const content = await page.getTextContent();
+
+          const pageText = content.items
+            .map(item => item.str || "")
+            .join(" ")
+            .replace(/[ \t]+/g, " ")
+            .trim();
+
+          if (!pageText) emptyPages.push(pageNo);
+
+          fullText += "\n\n===== PAGE " + pageNo + " =====\n" +
+            (pageText || "[No selectable text found on this page]");
+        }
+
+        output.textContent +=
+          "FILE: " + file.name +
+          "\nPAGES: " + pdf.numPages +
+          "\nTEXT CHARACTERS: " + fullText.length +
+          "\nPAGES WITHOUT SELECTABLE TEXT: " +
+          (emptyPages.length ? emptyPages.join(", ") : "None") +
+          fullText + "\n\n";
+
+        status.textContent =
+          "Extraction complete. " + pdf.numPages +
+          " pages read. No files uploaded and no database records changed.";
+      }
+    } catch (error) {
+      status.textContent = "PDF reading failed: " +
+        (error && error.message ? error.message : String(error));
+    } finally {
+      button.disabled = false;
+    }
   });
 })();
 </script>
