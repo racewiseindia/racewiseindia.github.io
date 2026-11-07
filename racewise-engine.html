@@ -1471,11 +1471,13 @@ if (analyseHistoryBtn) {
   const input = document.getElementById("raceFiles");
   const status = document.getElementById("pdfReadStatus");
   const output = document.getElementById("pdfTextOutput");
+  const layoutOutput = document.getElementById("pdfLayoutOutput");
 
   if (!button || !input || !status || !output) return;
 
   if (!window.pdfjsLib) {
-    status.textContent = "PDF reader library did not load. Check your internet connection and refresh.";
+    status.textContent =
+      "PDF reader library did not load. Refresh and try again.";
     button.disabled = true;
     return;
   }
@@ -1498,6 +1500,13 @@ if (analyseHistoryBtn) {
     output.style.display = "block";
     output.textContent = "";
 
+    if (layoutOutput) {
+      layoutOutput.textContent = "";
+      layoutOutput.style.display = "none";
+    }
+
+    window.RACEWISE_PDF_LAYOUT = [];
+
     try {
       for (const file of files) {
         status.textContent = "Reading " + file.name + "...";
@@ -1506,39 +1515,71 @@ if (analyseHistoryBtn) {
         const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
 
         let fullText = "";
+        let layoutText = "";
         const emptyPages = [];
 
         for (let pageNo = 1; pageNo <= pdf.numPages; pageNo++) {
           const page = await pdf.getPage(pageNo);
           const content = await page.getTextContent();
 
+          const positionedItems = content.items
+            .filter(item => (item.str || "").trim())
+            .map(item => ({
+              x: item.transform[4],
+              y: item.transform[5],
+              width: item.width || 0,
+              height: item.height || 0,
+              text: item.str.trim()
+            }));
+
+          window.RACEWISE_PDF_LAYOUT.push({
+            fileName: file.name,
+            pageNo: pageNo,
+            items: positionedItems
+          });
+
           const lines = new Map();
 
-content.items.forEach(item => {
-  const text = (item.str || "").trim();
-  if (!text) return;
+          positionedItems.forEach(item => {
+            const y = Math.round(item.y);
 
-  const y = Math.round(item.transform[5]);
-  if (!lines.has(y)) lines.set(y, []);
-  lines.get(y).push({
-    x: item.transform[4],
-    text: text
-  });
-});
+            if (!lines.has(y)) {
+              lines.set(y, []);
+            }
 
-const pageText = Array.from(lines.entries())
-  .sort((a, b) => b[0] - a[0])
-  .map(([y, items]) =>
-    items.sort((a, b) => a.x - b.x)
-      .map(item => item.text)
-      .join(" | ")
-  )
-  .join("\n");
+            lines.get(y).push(item);
+          });
+
+          const sortedLines = Array.from(lines.entries())
+            .sort((a, b) => b[0] - a[0]);
+
+          const pageText = sortedLines
+            .map(([y, items]) =>
+              items.sort((a, b) => a.x - b.x)
+                .map(item => item.text)
+                .join(" | ")
+            )
+            .join("\n");
 
           if (!pageText) emptyPages.push(pageNo);
 
-          fullText += "\n\n===== PAGE " + pageNo + " =====\n" +
+          fullText +=
+            "\n\n===== PAGE " + pageNo + " =====\n" +
             (pageText || "[No selectable text found on this page]");
+
+          layoutText +=
+            "\n\n===== PAGE " + pageNo + " — TEXT POSITIONS =====\n";
+
+          positionedItems
+            .slice()
+            .sort((a, b) => b.y - a.y || a.x - b.x)
+            .forEach(item => {
+              layoutText +=
+                "X:" + item.x.toFixed(1) +
+                " Y:" + item.y.toFixed(1) +
+                " W:" + item.width.toFixed(1) +
+                " | " + item.text + "\n";
+            });
         }
 
         output.textContent +=
@@ -1549,12 +1590,20 @@ const pageText = Array.from(lines.entries())
           (emptyPages.length ? emptyPages.join(", ") : "None") +
           fullText + "\n\n";
 
+        if (layoutOutput) {
+          layoutOutput.textContent +=
+            "FILE: " + file.name + layoutText + "\n";
+          layoutOutput.style.display = "block";
+        }
+
         status.textContent =
           "Extraction complete. " + pdf.numPages +
-          " pages read. No files uploaded and no database records changed.";
+          " pages read. Text and positions retained locally. " +
+          "No database records changed.";
       }
     } catch (error) {
-      status.textContent = "PDF reading failed: " +
+      status.textContent =
+        "PDF reading failed: " +
         (error && error.message ? error.message : String(error));
     } finally {
       button.disabled = false;
