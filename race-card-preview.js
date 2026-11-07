@@ -12,13 +12,28 @@
   if (!output || !button || !preview) return;
 
   button.addEventListener("click", function () {
-    const lines = output.textContent
-      .split("\n")
-      .map(line => line.trim())
-      .filter(line =>
-        line &&
-        !/^===== PAGE \d+ =====$/.test(line)
+        const layoutPages = window.RACEWISE_PDF_LAYOUT || [];
+
+    if (!layoutPages.length) {
+      preview.textContent =
+        "No PDF layout data found. Please read the PDF again first.";
+      return;
+    }
+
+    const lines = [];
+
+    layoutPages.forEach(page => {
+      const items = page.items || [];
+
+      const sortedItems = items.slice().sort(
+        (a, b) => b.y - a.y || a.x - b.x
       );
+
+      lines.push({
+        pageNo: page.pageNo,
+        items: sortedItems
+      });
+    });
 
     const raceHeaders = [];
 
