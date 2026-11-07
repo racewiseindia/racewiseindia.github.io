@@ -1390,17 +1390,43 @@ if (analyseHistoryBtn) {
 
       status.textContent = "AUTHENTICATION SUCCESSFUL\nRACEWISE ADMIN VERIFIED\nTesting read-only database access…";
 
-      const readTest = await client
-        .from("meetings")
-        .select("id", { count: "exact", head: true });
+            const tables = [
+        "meetings",
+        "horses",
+        "races",
+        "race_entries",
+        "selections",
+        "results"
+      ];
 
-      if (readTest.error) {
-        status.textContent += "\nDatabase read test failed: " + readTest.error.message;
-      } else {
-        status.textContent += "\nDATABASE READ TEST SUCCESSFUL\nMeetings table accessible. Rows: " +
-          (readTest.count === null ? "count unavailable" : readTest.count) +
-          "\nNo racing records were changed.";
-      }
+      status.textContent = "ADMIN VERIFIED\nTesting all six tables (read-only)…";
+
+      const checks = await Promise.all(
+        tables.map(async (table) => {
+          const result = await client
+            .from(table)
+            .select("id", { count: "exact", head: true });
+
+          return {
+            table,
+            count: result.count,
+            error: result.error
+          };
+        })
+      );
+
+      status.textContent = "AUTHENTICATION SUCCESSFUL\nRACEWISE ADMIN VERIFIED\n\n";
+
+      checks.forEach((check) => {
+        status.textContent += check.table + ": " +
+          (check.error
+            ? "FAILED — " + check.error.message
+            : "ACCESS SUCCESSFUL — Rows: " + check.count) +
+          "\n";
+      });
+
+      status.textContent += "\nREAD-ONLY TEST COMPLETE\nNo racing records were changed.";
+      signOut.hidden = false;
 
       signOut.hidden = false;
     } catch (error) {
