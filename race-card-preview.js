@@ -188,7 +188,6 @@
       for (let i = 1; i < section.length; i++) {
         const details = section[i];
 
-        if (!details.includes("|")) continue;
         if (!/\b\d{1,2}y\b/i.test(details)) continue;
 
         const possibleName = section[i - 1];
