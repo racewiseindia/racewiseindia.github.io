@@ -183,27 +183,28 @@
       addText(card, "p", "Scheduled time candidate: " + timeText);
 
       // Detect runner blocks without assigning shifting columns.
+            const ageLines = section
+        .map((line, index) => ({ index, line }))
+        .filter(item => /\b\d{1,2}\s*y\b/i.test(item.line));
+
+      addText(
+        card,
+        "h4",
+        "Diagnostic: " + ageLines.length + " age/description lines found"
+      );
+
+      const diagnostic = document.createElement("pre");
+      diagnostic.style.cssText =
+        "white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px";
+
+      diagnostic.textContent = ageLines
+        .slice(0, 12)
+        .map(item => item.index + ": " + item.line)
+        .join("\n") || "No age lines found.";
+
+      card.appendChild(diagnostic);
+
       const runnerStarts = [];
-
-      for (let i = 1; i < section.length; i++) {
-        const details = section[i];
-
-        if (!/\b\d{1,2}y\b/i.test(details)) continue;
-
-        const possibleName = section[i - 1];
-
-        if (
-          /^[A-Z][A-Z0-9 .'-]{1,45}$/.test(possibleName) &&
-          !/^(LAST|PREVIOUS|TRACK|WINNER|RECORD|HORSE|CLASS)$/i.test(possibleName)
-        ) {
-          runnerStarts.push({
-            nameIndex: i - 1,
-            detailsIndex: i,
-            name: possibleName,
-            details: details
-          });
-        }
-      }
 
       addText(
         card,
