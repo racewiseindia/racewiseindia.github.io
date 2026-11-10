@@ -222,14 +222,15 @@ nav a:hover {
     font-size: 14px;
   }
 }
-  /* RACEWISE CINEMATIC HEADER */
+  
+/* RACEWISE INDIA - CLEAN CINEMATIC HEADER */
 header {
   position: relative;
   isolation: isolate;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0;
   padding: 2px 4% 0;
   border-bottom: 3px solid var(--gold);
@@ -242,27 +243,39 @@ header {
   align-self: flex-start;
   justify-content: flex-start;
   width: auto;
-  padding: 8px 0 18px;
+  margin: 0;
+  padding: 0;
+}
+
+.brand img {
+  display: block;
+  width: 190px;
+  max-width: 52vw;
+  height: auto;
+  object-fit: contain;
 }
 
 nav {
+  display: flex;
   width: 100%;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px 24px;
- padding: 10px 10px; 
-  background: rgba(4, 17, 36, 0.96);
+  gap: 6px 20px;
+  padding: 8px 10px;
+  background: rgba(4, 17, 36, 0.97);
   border-top: 1px solid var(--gold);
   border-bottom: none;
 }
 
 nav a {
+  flex: 0 0 auto;
   color: #f0d69d !important;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.2px;
-  padding: 5px 0;
+  white-space: nowrap;
+  padding: 3px 0;
 }
 
 nav a:hover {
@@ -276,25 +289,38 @@ nav a:hover {
   }
 
   .brand {
-    gap: 8px;
-    font-size: 21px;
+    align-self: flex-start;
+    padding: 0;
   }
 
-    nav {
+  nav {
     width: calc(100% + 6vw);
     margin-left: -3vw;
     box-sizing: border-box;
-    gap: 4px 10px;
-    padding: 5px 6px;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 18px;
+    padding: 8px 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
     background: rgba(4, 17, 36, 0.98);
     border-top: 1px solid var(--gold);
     border-bottom: 3px solid var(--gold);
   }
 
+  nav::-webkit-scrollbar {
+    display: none;
+  }
+
   nav a {
+    flex: 0 0 auto;
     font-size: 12px;
+    padding: 2px 0;
   }
 }
+
   </style>
 </head>
 <body>
