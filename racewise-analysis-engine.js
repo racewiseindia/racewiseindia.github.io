@@ -18,8 +18,8 @@
   "use strict";
 
   const FACTORS = Object.freeze([
-    { key: "recentForm", label: "Recent form", weight: 18 },
-    { key: "speedAndTiming", label: "Speed and timing", weight: 15 },
+    { key: "recentForm", label: "Recent form", weight: 17 },
+    { key: "speedAndTiming", label: "Speed and timing", weight: 14 },
     { key: "trackwork", label: "Trackwork", weight: 8 },
     { key: "classAndOpposition", label: "Class and opposition", weight: 10 },
     { key: "distanceAndStamina", label: "Distance and stamina", weight: 12 },
@@ -30,7 +30,8 @@
     { key: "trainerPerformance", label: "Trainer performance", weight: 4 },
     { key: "jockeyTrainerCombination", label: "Jockey/trainer combination", weight: 3 },
     { key: "headToHead", label: "Head-to-head", weight: 3 },
-    { key: "paceAndRunningStyle", label: "Pace and running style", weight: 3 }
+    { key: "paceAndRunningStyle", label: "Pace and running style", weight: 2 },
+    { key: "drawAssessment", label: "Draw assessment", weight: 3 }
   ]);
 
   const MIN_COVERAGE = 50;
