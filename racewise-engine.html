@@ -1404,6 +1404,10 @@ if (analyseHistoryBtn) {
     window.RACEWISE_SUPABASE_CONFIG.url,
     window.RACEWISE_SUPABASE_CONFIG.publishableKey
   );
+  // Expose only the browser client; its session remains managed by Supabase.
+  // The server still verifies the user and administrator role on every request.
+  window.RACEWISE_SUPABASE_CLIENT = client;
+  window.RACEWISE_ADMIN_VERIFIED = false;
 
   form.addEventListener("submit", async function(event) {
     event.preventDefault();
@@ -1428,11 +1432,13 @@ if (analyseHistoryBtn) {
       }
 
       if (roleCheck.data !== true) {
+        window.RACEWISE_ADMIN_VERIFIED = false;
         status.textContent = "Login successful, but administrator access was not confirmed.";
         signOut.hidden = false;
         return;
       }
 
+      window.RACEWISE_ADMIN_VERIFIED = true;
       status.textContent = "AUTHENTICATION SUCCESSFUL\nRACEWISE ADMIN VERIFIED\nTesting read-only database access…";
 
             const tables = [
@@ -1484,6 +1490,7 @@ if (analyseHistoryBtn) {
   });
 
   signOut.addEventListener("click", async function() {
+    window.RACEWISE_ADMIN_VERIFIED = false;
     const result = await client.auth.signOut();
     status.textContent = result.error
       ? "Sign-out error: " + result.error.message
