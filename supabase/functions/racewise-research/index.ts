@@ -408,7 +408,7 @@ Deno.serve(async (req: Request) => {
   if (payload?.action === "discover_meetings") {
     const raceDate = String((payload as any).raceDate ?? "");
     const centres = (payload as any).centres;
-    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(raceDate) || !Array.isArray(centres) ||
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(raceDate) || !Array.isArray(centres) ||
         centres.length < 1 || centres.length > 10 ||
         centres.some((centre: unknown) => typeof centre !== "string" || !centre.trim())) {
       return json({ error: "Provide raceDate (YYYY-MM-DD) and 1–10 centre names." }, 400, origin);
