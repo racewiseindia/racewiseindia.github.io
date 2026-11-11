@@ -687,8 +687,12 @@
             throw new Error(data.error || "The research function returned an unexpected response.");
           }
           window.RACEWISE_RESEARCH_RESPONSE = data;
-          const btc = (data.sourceChecks || []).find(function (source) {
+          const sourceChecks = data.sourceChecks || [];
+          const btc = sourceChecks.find(function (source) {
             return source.sourceId === "official_club";
+          });
+          const btcRaceCard = sourceChecks.find(function (source) {
+            return source.sourceId === "official_club_racecard";
           });
           backendStatus.textContent =
             "BACKEND CONNECTION SUCCESSFUL\\n" +
@@ -697,12 +701,13 @@
             "Runners accepted: " + data.runnerCount + "\\n" +
             "Research tasks prepared: " + data.taskCount + "\\n\\n" +
             "Official BTC homepage: " + (btc ? btc.status.replace(/_/g, " ") : "not checked") + "\\n" +
-            "Homepage link discovery only. Linked pages and horse/race evidence have not been fetched or verified.\\n" +
+            "Dated BTC race card: " + (btcRaceCard ? btcRaceCard.status.replace(/_/g, " ") : "not returned") + "\\n" +
+            "Runner-name presence is preliminary only; no horse identity or racing evidence has been verified.\\n" +
             "No database writes; no selections produced.";
           sourceLinksPanel.replaceChildren();
           if (btc) {
-            addText(sourceLinksPanel, "p", "BTC source page: " + (btc.pageUrl || "Not available"));
-            if (btc.retrievedAt) addText(sourceLinksPanel, "p", "Retrieved at: " + btc.retrievedAt);
+            addText(sourceLinksPanel, "p", "BTC homepage: " + (btc.pageUrl || "Not available"));
+            if (btc.retrievedAt) addText(sourceLinksPanel, "p", "Homepage retrieved at: " + btc.retrievedAt);
             (btc.links || []).forEach(function (link) {
               const row = document.createElement("p");
               const anchor = document.createElement("a");
@@ -716,6 +721,16 @@
             if (!btc.links || !btc.links.length) {
               addText(sourceLinksPanel, "p", btc.note || "No relevant public links were discovered.");
             }
+          }
+          if (btcRaceCard) {
+            addText(sourceLinksPanel, "p", "BTC dated race card: " + (btcRaceCard.pageUrl || "Not available"));
+            if (btcRaceCard.retrievedAt) addText(sourceLinksPanel, "p", "Race card retrieved at: " + btcRaceCard.retrievedAt);
+            if (btcRaceCard.pageTitle) addText(sourceLinksPanel, "p", "Page title: " + btcRaceCard.pageTitle);
+            addText(sourceLinksPanel, "p", "Preliminary runner-name matches: " + (btcRaceCard.matchedRunnerNames || []).length + " | Unmatched: " + (btcRaceCard.unmatchedRunnerCount ?? "unknown"));
+            if (btcRaceCard.matchedRunnerNames && btcRaceCard.matchedRunnerNames.length) {
+              addText(sourceLinksPanel, "p", "Names found on page: " + btcRaceCard.matchedRunnerNames.join(", "));
+            }
+            addText(sourceLinksPanel, "p", btcRaceCard.note || "No verification status supplied.");
           }
           researchButton.textContent = "Research Queue Prepared";
         } catch (error) {
