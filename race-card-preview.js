@@ -204,12 +204,19 @@
         return item ? item.x : null;
       }
 
+      // Some IndiaRace PDFs merge the two printed headings into one
+      // positioned text item: "Desc Owner(s)". Preserve that layout by
+      // deriving the description and owner boundaries from the combined label.
+      const descOwnerHeader = headerRow.find(entry =>
+        /^Desc\s+Owner\(s\)$/i.test(String(entry.text || "").trim())
+      );
+
       const map = {
         no: xOf("No"),
         silk: xOf("Silk"),
         horse: xOf("Horse/Pedigree"),
-        desc: xOf("Desc"),
-        owner: xOf("Owner(s)"),
+        desc: xOf("Desc") ?? (descOwnerHeader ? descOwnerHeader.x : null),
+        owner: xOf("Owner(s)") ?? (descOwnerHeader ? descOwnerHeader.x + 24.5 : null),
         trainer: xOf("Trainer"),
         jockey: xOf("Jockey"),
         wt: xOf("Wt"),
