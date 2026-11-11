@@ -1,0 +1,29 @@
+name: Deploy RaceWise research Edge Function
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Deploy research function
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "Missing GitHub Actions secret: SUPABASE_ACCESS_TOKEN"
+            exit 1
+          fi
+          supabase functions deploy racewise-research --project-ref ldnmfaykekhigavqgwmf
