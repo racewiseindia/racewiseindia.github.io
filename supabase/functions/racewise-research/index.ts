@@ -452,12 +452,12 @@ Deno.serve(async (req: Request) => {
           note: "Official HRC calendar exceeded the 2 MB safety limit." };
       }
       const plain = html
-        .replace(/<script\\b[\\s\\S]*?<\\/script>/gi, " ")
-        .replace(/<style\\b[\\s\\S]*?<\\/style>/gi, " ")
+        .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+        .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
         .replace(/<[^>]+>/g, " ")
         .replace(/&nbsp;|&#160;/gi, " ")
         .replace(/&amp;/gi, "&")
-        .replace(/\\s+/g, " ")
+        .replace(/\s+/g, " ")
         .toLowerCase();
       const fixtureFound = dateVariants.some((variant) => plain.includes(variant.toLowerCase()));
       return {
