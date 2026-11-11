@@ -529,13 +529,15 @@
         const nextRunner = runnerStarts[runnerIndex + 1];
         const blockEnd = nextRunner ? nextRunner.nameIndex : section.length;
         const rawBlock = section.slice(runner.nameIndex, blockEnd)
-          // Show the runner number only beside the horse name, not again
-          // as a standalone extracted line in the source preview.
-          .filter(line => !(
-            runner.number !== null &&
-            /^\s*\d{1,2}\s*$/.test(String(line || "")) &&
-            Number(String(line).trim()) === runner.number
-          ));
+          // Runner number is displayed beside the horse name only.
+          // Remove its standalone source-text occurrence even when PDF
+          // extraction adds separators or surrounding whitespace.
+          .filter(line => {
+            const value = cleanLine(line).replace(/[.|]/g, "").trim();
+            return !(runner.number !== null &&
+              /^\d{1,2}$/.test(value) &&
+              Number(value) === runner.number);
+          });
 
         const item = document.createElement("div");
         item.style.cssText =
