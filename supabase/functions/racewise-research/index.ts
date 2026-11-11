@@ -232,24 +232,13 @@ async function fetchBtcRaceCard(
       const matchingRows = rows.filter((row) =>
         (` ${normalize(row.text)} `).includes(` ${target} `)
       );
-      const row = matchingRows.length === 1 ? matchingRows[0] : null;
       const allMentions = target.length >= 3 && pageText.includes(target);
-      const rowText = row?.text ?? null;
-      const raceNumberCandidates = rowText
-        ? [...rowText.matchAll(/\b(?:race|r)\s*#?\s*(\d{1,2})\b/gi)].map((m) => Number(m[1]))
-        : [];
-      const numberCandidate = row?.cells
-        .map((cell) => cell.trim())
-        .find((cell) => /^\d{1,2}$/.test(cell) && Number(cell) >= 1 && Number(cell) <= 30);
-      const ageCandidate = row?.cells
-        .map((cell) => cell.match(/\b(?:age\s*[:\-]?\s*)?([2-9])\s*(?:years?|yrs?)?\b/i))
-        .find(Boolean)?.[1] ?? null;
-      const weightCandidate = row?.cells
-        .map((cell) => cell.match(/\b(\d{2}(?:\.\d+)?)\s*kg\b/i)?.[1])
-        .find(Boolean) ?? null;
-      const labelledRating = rowText?.match(/\b(?:official\s+)?rating\s*[:\-]\s*(\d{1,3})\b/i)?.[1] ?? null;
-      const labelledJockey = rowText?.match(/\bjockey\s*[:\-]\s*([^,;|]+?)(?=\s+(?:trainer|weight|rating)\s*[:\-]|[,;|]|$)/i)?.[1]?.trim() ?? null;
-      const labelledTrainer = rowText?.match(/\btrainer\s*[:\-]\s*([^,;|]+?)(?=\s+(?:jockey|weight|rating)\s*[:\-]|[,;|]|$)/i)?.[1]?.trim() ?? null;
+
+      // BTC currently exposes some runner details as concatenated text rather
+      // than reliably separable, semantically labelled cells. Do not guess
+      // horse number, age, weight, rating, jockey, trainer, or race from digits
+      // or column position. Preserve raw row candidates for human review only.
+      const singleNameMatchingRow = matchingRows.length === 1 ? matchingRows[0] : null;
 
       return {
         expectedRaceNumber: runner.raceNumber,
@@ -257,31 +246,27 @@ async function fetchBtcRaceCard(
         expectedHorseNumber: runner.horseNumber,
         expectedAge: runner.horseAge,
         pageMentionFound: allMentions,
-        uniqueRunnerRowFound: matchingRows.length === 1,
         matchingRowCount: matchingRows.length,
-        sourceRowCells: row?.cells ?? [],
-        sourceRowText: rowText?.slice(0, 700) ?? null,
+        singleNameMatchingRowFound: matchingRows.length === 1,
+        uniqueRunnerRowFound: false,
+        sourceRowCells: singleNameMatchingRow?.cells ?? [],
+        sourceRowText: singleNameMatchingRow?.text.slice(0, 700) ?? null,
         candidates: {
-          horseNumber: numberCandidate ?? null,
-          age: ageCandidate,
-          allocatedWeightKg: weightCandidate,
-          officialRating: labelledRating,
-          jockey: labelledJockey,
-          trainer: labelledTrainer,
-          raceNumber: raceNumberCandidates.length === 1 ? raceNumberCandidates[0] : null,
+          horseNumber: null,
+          age: null,
+          allocatedWeightKg: null,
+          officialRating: null,
+          jockey: null,
+          trainer: null,
+          raceNumber: null,
         },
         comparisons: {
-          horseNumber: runner.horseNumber != null && numberCandidate != null
-            ? (String(runner.horseNumber) === numberCandidate ? "match" : "conflict")
-            : "not_comparable",
-          age: runner.horseAge != null && ageCandidate != null
-            ? (String(runner.horseAge) === ageCandidate ? "match" : "conflict")
-            : "not_comparable",
-          raceNumber: runner.raceNumber != null && raceNumberCandidates.length === 1
-            ? (String(runner.raceNumber) === String(raceNumberCandidates[0]) ? "match" : "conflict")
-            : "not_comparable",
+          horseNumber: "not_comparable",
+          age: "not_comparable",
+          raceNumber: "not_comparable",
         },
         verification: "manual_review_required",
+        reason: "BTC row fields are not yet mapped to verified table headers and race-specific row context; no numeric or positional inference is allowed.",
       };
     });
 
@@ -297,7 +282,7 @@ async function fetchBtcRaceCard(
       uniqueRunnerRowCount: runnerChecks.filter((check) => check.uniqueRunnerRowFound).length,
       runnerChecks,
       evidenceVerified: false,
-      note: "BTC page rows are exposed for race-by-race review. Field candidates are extracted only when explicitly labelled or safely isolated; table column meanings and horse identity remain unverified until manual/structured validation.",
+      note: "BTC source rows are exposed for manual review only. Numeric and positional field inference is disabled until reliable table headers and race-specific row context can be mapped. Horse identity and all racing fields remain unverified.",
     };
   } catch (error) {
     return {
@@ -453,7 +438,7 @@ Deno.serve(async (req: Request) => {
       onlyVerifiedEvidenceMayEnterScoring: true,
     },
     message: btcRaceCardCheck?.status === "fetched"
-      ? "Official BTC homepage and dated race-card page fetched. Race-by-race source rows and preliminary field candidates are returned for review; no horse identity or racing evidence has been verified."
+      ? "Official BTC homepage and dated race-card page fetched. Raw name-matching rows are returned for manual review only; field inference is disabled and no horse identity or racing evidence has been verified."
       : officialClubDiscovery.status === "fetched"
       ? "Official BTC homepage links discovered, but the dated race-card page was not successfully fetched. No racing evidence was verified."
       : "Research tasks prepared. The official BTC homepage connector did not return links; no racing evidence was verified.",
