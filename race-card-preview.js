@@ -146,6 +146,23 @@
         runnerNumber = Number(nameParts.shift());
       }
 
+      // A wrapped PDF row can place the runner number on the next pedigree line.
+      // Accept it only when that line starts with a small integer followed by
+      // an explicit pedigree-style token such as Dali(USA) or Dreamfield(GB).
+      if (runnerNumber === null) {
+        const followingLine = cleanLine(section[index + 1]);
+        const wrappedNumber = followingLine.match(
+          /^(\d{1,2})\s+(.+)$/
+        );
+        if (
+          wrappedNumber &&
+          Number(wrappedNumber[1]) <= 20 &&
+          /[A-Za-z]+\([^)]{2,8}\)/.test(wrappedNumber[2])
+        ) {
+          runnerNumber = Number(wrappedNumber[1]);
+        }
+      }
+
       const horseName = nameParts.join(" ")
         .replace(/\s+/g, " ")
         .trim();
