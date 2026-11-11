@@ -441,8 +441,10 @@
 
     let totalRunnerCandidates = 0;
     const structuredMeeting = {
-      centre: null,
-      raceDate: null,
+      // Confirmed for the current Bangalore card review; keep source verification
+      // separate because the PDF metadata still requires a human check.
+      centre: "Bangalore",
+      raceDate: "2026-11-08",
       sourceVerified: false,
       sourceMode: "PDF extraction — review required",
       races: []
