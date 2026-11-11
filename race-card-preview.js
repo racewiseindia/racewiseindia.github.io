@@ -686,6 +686,7 @@
           backendStatus.textContent =
             "BACKEND CONNECTION SUCCESSFUL\n" +
             "Meeting validated: " + (data.meeting && data.meeting.centre ? data.meeting.centre : "Centre not specified") + "\n" +
+            "Race date: " + (data.meeting && data.meeting.raceDate ? data.meeting.raceDate : "Not specified") + "\n" +
             "Runners accepted: " + data.runnerCount + "\n" +
             "Research tasks prepared: " + data.taskCount + "\n\n" +
             "Safeguards: no external sources fetched; no evidence verified; no database writes; no selections produced.";
