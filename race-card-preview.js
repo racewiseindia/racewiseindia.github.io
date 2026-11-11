@@ -534,14 +534,12 @@
         item.style.cssText =
           "background:#f4f5f7;padding:10px;margin:9px 0;border-radius:6px";
 
-        addText(item, "strong", runner.name);
         addText(
           item,
-          "p",
-          "Runner number: " +
-            (runner.number === null ? "Not confidently detected" : runner.number) +
-            " | Age: " + runner.age + " years"
+          "strong",
+          (runner.number === null ? "" : runner.number + ". ") + runner.name
         );
+        addText(item, "p", "Age: " + runner.age + " years");
         if (structured) {
           addText(item, "p", "Owner candidate: " + (structured.owner || "Not confidently detected") + (structured.pageBoundary ? " — page continuation may be incomplete" : ""));
           addText(item, "p", "Trainer candidate: " + (structured.trainer || "Not confidently detected"));
