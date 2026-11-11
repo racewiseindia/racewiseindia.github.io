@@ -315,6 +315,7 @@
         let jockey = "";
         let weight = "";
         let rating = "";
+        let relativePerformance = "";
 
         if (columnMap) {
           const columnText = (left, right) => sortedText(items.filter(item =>
@@ -334,15 +335,27 @@
             /^\d+(?:\.\d+)?$/.test(String(item.text || "").trim())
           );
 
+          // The printed Rtg value sits directly under the Rtg heading.
+          // A second number immediately to its right is a separate relative-
+          // performance figure, not the official rating.
           const ratingItem = items.find(item =>
             item.x >= columnMap.rating - 1 &&
-            item.x < 600 &&
+            item.x < columnMap.rating + 8 &&
             Math.abs(item.y - ageItem.y) <= 3 &&
+            /^\d{1,3}$/.test(String(item.text || "").trim())
+          );
+          const relativePerformanceItem = items.find(item =>
+            item.x >= columnMap.rating + 8 &&
+            item.x < columnMap.rating + 28 &&
+            Math.abs(item.y - ageItem.y) <= 8 &&
             /^\d{1,3}$/.test(String(item.text || "").trim())
           );
 
           weight = weightItem ? String(weightItem.text).trim() : "";
           rating = ratingItem ? String(ratingItem.text).trim() : "";
+          relativePerformance = relativePerformanceItem
+            ? String(relativePerformanceItem.text).trim()
+            : "";
 
           // In some PDF rows, the jockey, weight and allowance are merged
           // into one positioned text item. Split only a clear trailing
@@ -368,6 +381,7 @@
           jockey,
           weight,
           rating,
+          relativePerformance,
           pageBoundary: nearestBoundary === null
         });
       });
@@ -534,6 +548,7 @@
           addText(item, "p", "Jockey candidate: " + (structured.jockey || "Not confidently detected"));
           addText(item, "p", "Allocated weight candidate: " + (structured.weight || "Not confidently detected") + " kg");
           addText(item, "p", "Official rating candidate: " + (structured.rating || "Not confidently detected"));
+          addText(item, "p", "Relative performance candidate: " + (structured.relativePerformance || "Not confidently detected"));
           addText(item, "p", "Column candidates are extracted by the printed header positions and must be checked against the official card.");
         } else {
           addText(item, "p", "Structured columns not confidently mapped. Manual verification required; no fields have been guessed.");
