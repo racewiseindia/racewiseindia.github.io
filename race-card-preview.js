@@ -110,7 +110,7 @@
       // Some official race titles continue on the line after the distance.
       let fullTitle = title;
       const continuation = cleanLine(lines[distanceLineIndex + 1]);
-      if (/^(Memorial Trophy|Memorial Cup)$/i.test(continuation)) {
+      if (/^(Memorial Trophy|Memorial Cup|Cup)$/i.test(continuation)) {
         fullTitle += " " + continuation;
       }
 
