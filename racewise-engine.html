@@ -231,6 +231,24 @@ footer strong { color:var(--gold); }
   <div id="testResults" aria-live="polite"></div>
 </section>
 
+  <section class="panel" id="meetingDiscoveryPanel">
+    <h2>00 — Discover Meetings by Date</h2>
+    <p class="note">Choose a date and one or more racing centres. RaceWise checks each centre independently. A centre without a connected official source will be clearly marked, not guessed.</p>
+    <label for="discoveryRaceDate">Race date</label>
+    <input id="discoveryRaceDate" type="date" style="width:100%;padding:12px;margin:8px 0 14px;border:1px solid #c8b98f;border-radius:7px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;">
+      <label><input type="checkbox" name="discoveryCentre" value="Bangalore" checked> Bangalore</label>
+      <label><input type="checkbox" name="discoveryCentre" value="Hyderabad" checked> Hyderabad</label>
+      <label><input type="checkbox" name="discoveryCentre" value="Mumbai"> Mumbai</label>
+      <label><input type="checkbox" name="discoveryCentre" value="Pune"> Pune</label>
+      <label><input type="checkbox" name="discoveryCentre" value="Chennai"> Chennai</label>
+      <label><input type="checkbox" name="discoveryCentre" value="Kolkata"> Kolkata</label>
+      <label><input type="checkbox" name="discoveryCentre" value="Mysore"> Mysore</label>
+    </div>
+    <button type="button" id="discoverMeetingsBtn" style="margin-top:15px;">Discover Meetings</button>
+    <div id="meetingDiscoveryOutput" class="status" role="status" aria-live="polite" style="margin-top:12px;">Select a date and centres, then start discovery. This does not yet fetch race cards or perform horse research.</div>
+  </section>
+
   <section class="panel">
     <h2>01 — Upload Race Card</h2>
     <p class="note">
@@ -1499,6 +1517,59 @@ if (analyseHistoryBtn) {
     signOut.hidden = true;
   });
 })();
+</script>
+<script>
+
+  const discoverMeetingsBtn = document.getElementById("discoverMeetingsBtn");
+  if (discoverMeetingsBtn) {
+    discoverMeetingsBtn.addEventListener("click", async function () {
+      const output = document.getElementById("meetingDiscoveryOutput");
+      const raceDate = document.getElementById("discoveryRaceDate").value;
+      const centres = Array.from(document.querySelectorAll('input[name="discoveryCentre"]:checked')).map(el => el.value);
+      if (!raceDate) { output.textContent = "Please select a race date."; return; }
+      if (!centres.length) { output.textContent = "Please select at least one racing centre."; return; }
+      const client = window.RACEWISE_SUPABASE_CLIENT;
+      if (!window.RACEWISE_ADMIN_VERIFIED || !client) {
+        output.textContent = "Please sign in and verify RaceWise administrator access first.";
+        return;
+      }
+      discoverMeetingsBtn.disabled = true;
+      output.textContent = "Checking " + centres.length + " centres independently…";
+      try {
+        const sessionResult = await client.auth.getSession();
+        const token = sessionResult.data && sessionResult.data.session && sessionResult.data.session.access_token;
+        if (!token) throw new Error("Your admin session has expired. Please sign in again.");
+        const endpoint = window.RACEWISE_SUPABASE_CONFIG.url.replace(/\\/$/, "") + "/functions/v1/racewise-research";
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + token,
+            "apikey": window.RACEWISE_SUPABASE_CONFIG.publishableKey,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ action: "discover_meetings", raceDate: raceDate, centres: centres })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || ("Request failed (" + response.status + ")."));
+        const lines = ["MEETING DISCOVERY — " + result.raceDate, "Centres checked: " + centres.length, ""];
+        (result.meetings || []).forEach(function (meeting) {
+          lines.push(meeting.centre + " — " + meeting.status);
+          lines.push("Fixture listed: " + (meeting.fixtureFound === null ? "Not checked" : meeting.fixtureFound ? "Yes" : "No"));
+          lines.push("Race count: " + (meeting.raceCount === null ? "Not yet verified" : meeting.raceCount));
+          if (meeting.pageUrl) lines.push("Official source: " + meeting.pageUrl);
+          if (meeting.note) lines.push(meeting.note);
+          lines.push("");
+        });
+        lines.push("No horse evidence verified. No selections generated.");
+        output.textContent = lines.join("\\n");
+      } catch (error) {
+        output.textContent = "Discovery could not be completed: " + (error && error.message ? error.message : String(error));
+      } finally {
+        discoverMeetingsBtn.disabled = false;
+      }
+    });
+  }
+
 </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
