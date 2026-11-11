@@ -193,6 +193,7 @@ async function fetchBtcRaceCard(raceDate: string | undefined, horseNames: string
       .toUpperCase();
 
     const normalize = (value: string) => value
+      .toUpperCase()
       .normalize("NFKD")
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^A-Z0-9]+/g, " ")
