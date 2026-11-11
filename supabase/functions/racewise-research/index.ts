@@ -89,11 +89,11 @@ async function discoverBtcPublicLinks() {
       };
     }
     const links: Array<{ label: string; url: string }> = [];
-    const anchorPattern = /<a\\b[^>]*href\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))[^>]*>([\\s\\S]*?)<\\/a>/gi;
+    const anchorPattern = /<a\b[^>]*href\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))[^>]*>([\s\S]*?)<\/a>/gi;
     const relevant = /prospectus|entries|handicap|acceptance|race.?card|declaration|result|rating|incident|track|weather/i;
     for (const match of html.matchAll(anchorPattern)) {
       const rawHref = match[1] ?? match[2] ?? match[3] ?? "";
-      const label = (match[4] || "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/\\s+/g, " ").trim();
+      const label = (match[4] || "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/\s+/g, " ").trim();
       if (!rawHref || !label || !relevant.test(label)) continue;
       try {
         const resolved = new URL(rawHref, pageUrl);
