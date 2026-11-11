@@ -30,12 +30,100 @@ const FACTOR_SOURCES: Record<string, string[]> = {
 };
 
 const sourceCatalog = [
-  { id: "official_club", name: "Relevant turf club authority", status: "adapter_not_connected" },
+  { id: "official_club", name: "Relevant turf club authority", status: "public_link_discovery_enabled" },
   { id: "indiarace", name: "IndiaRace", status: "adapter_not_connected" },
   { id: "pedigree_authority", name: "Authorised studbook / pedigree source", status: "adapter_not_connected" },
   { id: "licensed_provider", name: "Licensed racing-data provider", status: "permission_and_adapter_required" },
   { id: "weather", name: "Weather / going observations", status: "adapter_not_connected" },
 ];
+
+// Conservative first-stage BTC connector: fetch the publicly accessible
+// official homepage once, discover same-site racing links, and retain provenance.
+// It does not open those links or treat homepage text as horse/race evidence.
+let lastBtcHomepageFetchAt = 0;
+async function discoverBtcPublicLinks() {
+  const pageUrl = "https://bangaloreraces.com/home";
+  const now = Date.now();
+  if (now - lastBtcHomepageFetchAt < 60_000) {
+    return {
+      sourceId: "official_club",
+      status: "cooldown",
+      pageUrl,
+      retrievedAt: new Date(now).toISOString(),
+      links: [],
+      evidenceVerified: false,
+      note: "A homepage request was made recently; retry after the 60-second cooldown.",
+    };
+  }
+  lastBtcHomepageFetchAt = now;
+  const retrievedAt = new Date(now).toISOString();
+  try {
+    const response = await fetch(pageUrl, {
+      method: "GET",
+      redirect: "manual",
+      headers: { "Accept": "text/html" },
+      signal: AbortSignal.timeout(8_000),
+    });
+    if (!response.ok) {
+      return {
+        sourceId: "official_club",
+        status: "http_error",
+        pageUrl,
+        httpStatus: response.status,
+        retrievedAt,
+        links: [],
+        evidenceVerified: false,
+        note: "The official homepage did not return a successful response.",
+      };
+    }
+    const html = await response.text();
+    if (html.length > 2_000_000) {
+      return {
+        sourceId: "official_club",
+        status: "page_too_large",
+        pageUrl,
+        retrievedAt,
+        links: [],
+        evidenceVerified: false,
+        note: "Homepage exceeded the 2 MB safety limit.",
+      };
+    }
+    const links: Array<{ label: string; url: string }> = [];
+    const anchorPattern = /<a\\b[^>]*href\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))[^>]*>([\\s\\S]*?)<\\/a>/gi;
+    const relevant = /prospectus|entries|handicap|acceptance|race.?card|declaration|result|rating|incident|track|weather/i;
+    for (const match of html.matchAll(anchorPattern)) {
+      const rawHref = match[1] ?? match[2] ?? match[3] ?? "";
+      const label = (match[4] || "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/\\s+/g, " ").trim();
+      if (!rawHref || !label || !relevant.test(label)) continue;
+      try {
+        const resolved = new URL(rawHref, pageUrl);
+        if (resolved.protocol !== "https:" || resolved.hostname !== "bangaloreraces.com") continue;
+        if (!links.some((item) => item.url === resolved.href)) links.push({ label, url: resolved.href });
+      } catch { /* Ignore malformed or non-URL links. */ }
+      if (links.length >= 40) break;
+    }
+    return {
+      sourceId: "official_club",
+      status: "fetched",
+      pageUrl,
+      httpStatus: response.status,
+      retrievedAt,
+      links,
+      evidenceVerified: false,
+      note: "Public link discovery only. Linked pages were not opened and no horse or race evidence was collected.",
+    };
+  } catch (error) {
+    return {
+      sourceId: "official_club",
+      status: "fetch_error",
+      pageUrl,
+      retrievedAt,
+      links: [],
+      evidenceVerified: false,
+      note: error instanceof Error ? error.message : "Homepage fetch failed.",
+    };
+  }
+}
 
 function json(data: unknown, status: number, origin: string | null) {
   const headers = new Headers({ "Content-Type": "application/json; charset=utf-8" });
@@ -99,6 +187,19 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Provide meeting.races with between 1 and 20 races." }, 400, origin);
   }
 
+  const isBangalore = String(meeting.centre ?? "").toLowerCase().includes("bangalore");
+  const officialClubDiscovery = isBangalore
+    ? await discoverBtcPublicLinks()
+    : {
+        sourceId: "official_club",
+        status: "not_applicable",
+        pageUrl: null,
+        retrievedAt: new Date().toISOString(),
+        links: [],
+        evidenceVerified: false,
+        note: "The first official-club connector currently supports Bangalore only.",
+      };
+
   const tasks: Array<Record<string, unknown>> = [];
   let runnerCount = 0;
   for (const raceValue of meeting.races) {
@@ -142,16 +243,24 @@ Deno.serve(async (req: Request) => {
     meeting: { centre: meeting.centre ?? null, raceDate: meeting.raceDate ?? null },
     runnerCount,
     taskCount: tasks.length,
-    sourceCatalog,
+    sourceCatalog: sourceCatalog.map((source) =>
+      source.id === "official_club"
+        ? { ...source, status: officialClubDiscovery.status }
+        : source
+    ),
+    sourceChecks: [officialClubDiscovery],
     tasks,
     safeguards: {
-      externalSourcesFetched: false,
+      externalSourcesFetched: officialClubDiscovery.status === "fetched",
+      racingEvidenceFetched: false,
       evidenceVerified: false,
       databaseWrites: false,
       selectionsProduced: false,
       noInventedData: true,
       onlyVerifiedEvidenceMayEnterScoring: true,
     },
-    message: "Research tasks prepared only. Source adapters must be implemented and tested before any source can be marked checked or verified.",
+    message: officialClubDiscovery.status === "fetched"
+      ? "Official BTC homepage links discovered. This is link discovery only; linked racing pages and horse evidence have not been fetched or verified."
+      : "Research tasks prepared. The official BTC homepage connector did not return links; no racing evidence was fetched or verified.",
   }, 200, origin);
 });
