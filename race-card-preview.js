@@ -440,6 +440,13 @@
     }
 
     let totalRunnerCandidates = 0;
+    const structuredMeeting = {
+      centre: null,
+      raceDate: null,
+      sourceVerified: false,
+      sourceMode: "PDF extraction — review required",
+      races: []
+    };
 
     raceHeaders.forEach((race, position) => {
       const nextRace = raceHeaders[position + 1];
@@ -447,6 +454,12 @@
       const section = lines.slice(race.index, end);
       const runnerStarts = findRunnerStarts(section);
       totalRunnerCandidates += runnerStarts.length;
+      const structuredRace = {
+        raceNumber: race.number,
+        raceName: race.title,
+        distanceMetres: race.distance,
+        runners: []
+      };
 
       const card = document.createElement("section");
       card.style.cssText =
@@ -556,6 +569,22 @@
           runner.name + (runner.number === null ? "" : " (" + runner.number + ")")
         );
         addText(item, "p", "Age: " + runner.age + " years");
+        structuredRace.runners.push({
+          horseName: runner.name,
+          horseNumber: runner.number,
+          horseAge: runner.age,
+          owner: structured ? structured.owner : null,
+          trainer: structured ? structured.trainer : null,
+          jockey: structured ? structured.jockey : null,
+          allocatedWeightKg: structured && structured.weight ? Number(structured.weight) : null,
+          officialRating: structured && structured.rating ? Number(structured.rating) : null,
+          relativePerformance: structured && structured.relativePerformance ? Number(structured.relativePerformance) : null,
+          declaredStatus: "unverified",
+          raceWiseStudy: {},
+          evidence: [],
+          missingData: ["Historical form", "Verified timing", "Trackwork", "Pedigree and distance evidence", "Course/going suitability", "Jockey/trainer statistics", "Head-to-head", "Pace and draw evidence"]
+        });
+
         if (structured) {
           addText(item, "p", "Owner candidate: " + (structured.owner || "Not confidently detected") + (structured.pageBoundary ? " — page continuation may be incomplete" : ""));
           addText(item, "p", "Trainer candidate: " + (structured.trainer || "Not confidently detected"));
@@ -584,8 +613,27 @@
         card.appendChild(item);
       });
 
+      structuredMeeting.races.push(structuredRace);
       preview.appendChild(card);
     });
+
+    // Connect extracted race-card runners to the evidence scoring module.
+    // No factor scores are fabricated: without verified sourced history the
+    // engine correctly returns unranked runners and explicit missing factors.
+    window.RACEWISE_LAST_MEETING = structuredMeeting;
+    if (window.RACEWISE_ANALYSIS) {
+      const analysisPanel = document.createElement("section");
+      analysisPanel.style.cssText = "border:1px solid #c9ad70;padding:12px;margin:16px 0;border-radius:8px";
+      addText(analysisPanel, "h3", "RACEWISE ANALYSIS READINESS");
+      addText(analysisPanel, "p", "Extracted runners are connected to the scoring engine. Historical evidence is not yet attached, so no selections are published.");
+      structuredMeeting.races.forEach(raceData => {
+        const result = window.RACEWISE_ANALYSIS.rankRace(raceData);
+        const verifiedCount = result.unranked.reduce((sum, runner) => sum + runner.verifiedFactorCount, 0) + result.rankings.reduce((sum, runner) => sum + runner.verifiedFactorCount, 0);
+        const possibleCount = raceData.runners.length * window.RACEWISE_ANALYSIS.factors.length;
+        addText(analysisPanel, "p", "Race " + raceData.raceNumber + ": " + raceData.runners.length + " runners | " + verifiedCount + "/" + possibleCount + " verified factor entries | " + result.rankings.length + " ranked. " + (result.rankings.length ? "Evidence-based ranking available." : "No ranking — verified historical evidence required."));
+      });
+      preview.appendChild(analysisPanel);
+    }
 
     addText(
       preview,
