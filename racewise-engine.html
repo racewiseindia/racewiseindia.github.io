@@ -242,11 +242,11 @@ footer strong { color:var(--gold); }
       <button class="secondary" type="button" id="clearBtn">Clear Selection</button>
     </div>
     <div class="actions">
-  <button type="button" id="readPdfBtn">Read PDF &amp; Build Race Card Preview</button>
+  <button type="button" id="readPdfBtn">Build Race Cards</button>
 </div>
 
 <div id="pdfReadStatus" class="status" style="margin-top:12px;">
-  Select a PDF, then tap once to read it and build the race-card preview. No data will be saved.
+  Select the official race-card PDF, then tap Build Race Cards. The race cards will appear below. Nothing is saved automatically.
 </div>
 
 <pre id="pdfTextOutput" style="display:none;white-space:pre-wrap;overflow:auto;max-height:420px;padding:12px;background:#f5f6f8;border-radius:8px;font-size:12px;"></pre>
@@ -1600,7 +1600,7 @@ if (analyseHistoryBtn) {
         if (layoutOutput) {
           layoutOutput.textContent +=
             "FILE: " + file.name + layoutText + "\n";
-          layoutOutput.style.display = "block";
+          layoutOutput.style.display = "none";
         }
 
         status.textContent =
@@ -1612,7 +1612,7 @@ if (analyseHistoryBtn) {
       if (buildPreviewButton) {
         buildPreviewButton.click();
         status.textContent =
-          "PDF read and race-card preview built. Please review all extracted fields against the official card. No database records changed.";
+          "Race cards built. Please verify the extracted fields against the official card. No database records changed.";
       }
     } catch (error) {
       status.textContent =
