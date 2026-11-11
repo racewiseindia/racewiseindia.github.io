@@ -130,7 +130,7 @@ footer strong { color:var(--gold); }
   <p>Evidence-based study. Transparent calculations. No invented racing data.</p>
 </header>
 
-<main>
+<main id="engineWorkspace" hidden>
   
 <section class="panel">
   <h2>RaceWise Engine Status</h2>
@@ -1347,7 +1347,7 @@ if (analyseHistoryBtn) {
 
 <section id="rwAdminPanel">
   <h2>RaceWise Admin Login</h2>
-  <p>Sign in to verify administrator access and test read-only database access.</p>
+  <p>Sign in to verify administrator access. The analysis workspace stays hidden until your RaceWise administrator role is confirmed.</p>
   <form id="rwAdminLoginForm" class="rw-grid">
     <label>Email
       <input id="rwAdminEmail" type="email" value="racewiseindia@gmail.com" autocomplete="username" required>
@@ -1366,6 +1366,7 @@ if (analyseHistoryBtn) {
 <script>
 (function () {
   const status = document.getElementById("rwAdminStatus");
+  const workspace = document.getElementById("engineWorkspace");
   const form = document.getElementById("rwAdminLoginForm");
   const password = document.getElementById("rwAdminPassword");
   const signIn = document.getElementById("rwAdminSignIn");
@@ -1451,6 +1452,7 @@ if (analyseHistoryBtn) {
       });
 
       status.textContent += "\nREAD-ONLY TEST COMPLETE\nNo racing records were changed.";
+      if (workspace) workspace.hidden = false;
       signOut.hidden = false;
 
       signOut.hidden = false;
@@ -1467,6 +1469,7 @@ if (analyseHistoryBtn) {
     status.textContent = result.error
       ? "Sign-out error: " + result.error.message
       : "Signed out. No racing records were changed.";
+    if (workspace) workspace.hidden = true;
     signOut.hidden = true;
   });
 })();
