@@ -528,7 +528,14 @@
         }
         const nextRunner = runnerStarts[runnerIndex + 1];
         const blockEnd = nextRunner ? nextRunner.nameIndex : section.length;
-        const rawBlock = section.slice(runner.nameIndex, blockEnd);
+        const rawBlock = section.slice(runner.nameIndex, blockEnd)
+          // Show the runner number only beside the horse name, not again
+          // as a standalone extracted line in the source preview.
+          .filter(line => !(
+            runner.number !== null &&
+            /^\s*\d{1,2}\s*$/.test(String(line || "")) &&
+            Number(String(line).trim()) === runner.number
+          ));
 
         const item = document.createElement("div");
         item.style.cssText =
@@ -537,7 +544,7 @@
         addText(
           item,
           "strong",
-          (runner.number === null ? "" : runner.number + ". ") + runner.name
+          runner.name + (runner.number === null ? "" : " (" + runner.number + ")")
         );
         addText(item, "p", "Age: " + runner.age + " years");
         if (structured) {
