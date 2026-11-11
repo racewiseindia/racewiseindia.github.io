@@ -344,7 +344,7 @@ Deno.serve(async (req: Request) => {
     return json({ error: "RaceWise administrator access could not be verified." }, 403, origin);
   }
 
-  let payload: { meeting?: { centre?: string; raceDate?: string; races?: unknown[] } };
+  let payload: { action?: string; raceDate?: string; centres?: unknown[]; meeting?: { centre?: string; raceDate?: string; races?: unknown[] } };
   try {
     const raw = await req.text();
     if (raw.length > 1_000_000) return json({ error: "Request is too large (1 MB maximum)." }, 413, origin);
