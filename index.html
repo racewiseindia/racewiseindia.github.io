@@ -8,450 +8,45 @@
   <meta name="description" content="RaceWise India — evidence-based Indian horse racing study, form analysis, pedigree insights and race results.">
   <title>RaceWise India | Study Every Race</title>
   <style>
-    :root {
-      --navy: #08172d;
-      --navy-light: #112849;
-      --gold: #d7b46a;
-      --cream: #f5f1e8;
-      --muted: #b8c4d5;
-    }
-
-    * { box-sizing: border-box; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Arial, sans-serif;
-      background: var(--navy);
-      color: var(--cream);
-      line-height: 1.65;
-    }
-
-    a { color: inherit; text-decoration: none; }
-
-    header {
-      padding: 20px 6%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #293a51;
-    }
-
-      .brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  font-size: 25px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  line-height: 1.2;
+:root{--navy:#08172d;--navy-light:#112849;--gold:#d7b46a;--cream:#f5f1e8;--muted:#b8c4d5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--navy);color:var(--cream);line-height:1.65}
+a{color:inherit;text-decoration:none}
+header{position:relative;isolation:isolate;min-height:clamp(245px,34vw,370px);display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;gap:0;padding:16px 3% 0;border:0;background:linear-gradient(90deg,rgba(5,16,32,.35),rgba(5,16,32,.08)),linear-gradient(180deg,rgba(5,16,32,.12),rgba(5,16,32,.38)),url("hero-racing.jpg") center 42%/cover no-repeat}
+header>.brand{position:absolute;top:18px;left:3%;z-index:2;display:flex;align-self:flex-start;justify-content:flex-start;width:auto;margin:0;padding:0;text-decoration:none}
+header>.brand img{display:block;width:clamp(145px,23vw,220px)!important;max-width:55vw;height:auto;object-fit:contain}
+header nav{position:relative;z-index:3;display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;gap:0;width:100%;margin:0;padding:5px 8px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:rgba(4,17,36,.94);border:0}
+header nav::-webkit-scrollbar{display:none}
+header nav a{display:block;flex:0 0 auto;color:#f0d69d!important;font-size:13px;font-weight:650;letter-spacing:.15px;line-height:1.2;white-space:nowrap;padding:7px 14px}
+header nav a+a{border-left:1px solid rgba(215,180,106,.72)}
+header nav a:hover{color:#fff!important;background:rgba(215,180,106,.09)}
+.hero{padding:48px 7% 50px;text-align:center;background:linear-gradient(rgba(8,23,45,.60),rgba(8,23,45,.68)),url("hero-racing.jpg") center 48%/cover no-repeat}
+.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:3px;font-size:12px;font-weight:700}
+h1{max-width:850px;margin:18px auto;font-size:clamp(36px,7vw,65px);line-height:1.12;letter-spacing:-1.5px}
+h1 span{color:var(--gold)}
+.hero p{max-width:650px;margin:20px auto 28px;color:var(--muted);font-size:17px}
+.button{display:inline-block;padding:12px 23px;border:1px solid var(--gold);border-radius:3px;background:rgba(8,23,45,.28);color:var(--gold);font-weight:800;letter-spacing:.55px;text-transform:uppercase;margin:5px;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.button:hover{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+.button-outline{border:1px solid var(--gold);color:var(--gold);background:rgba(8,23,45,.28)}
+section{padding:55px 7%}
+.section-heading{text-align:center;margin-bottom:30px}
+.section-heading h2{font-size:clamp(25px,4vw,36px);margin:8px 0}
+.section-heading p{color:var(--muted);max-width:650px;margin:0 auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:17px;max-width:1100px;margin:auto}
+.card{background:var(--navy-light);border:1px solid #293f5b;border-radius:10px;padding:24px}
+.card .number{color:var(--gold);font-size:13px;font-weight:800;letter-spacing:2px}
+.card h3{margin:10px 0}.card p{color:var(--muted);font-size:14px}
+.standards{background:#0d203b;text-align:center}.standards p{max-width:760px;margin:auto;color:var(--muted)}
+.notice{max-width:850px;margin:25px auto 0;padding:18px;border-left:3px solid var(--gold);background:#142947;text-align:left;font-size:14px}
+footer{padding:28px 6%;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid #293a51}footer strong{color:var(--gold)}
+@media(max-width:600px){
+header{min-height:215px;padding:10px 0 0;background-position:57% center}
+header>.brand{top:12px;left:4%}header>.brand img{width:150px!important;max-width:52vw}
+header nav{padding:4px 5px}header nav a{font-size:11px;padding:7px 11px}
+.hero{padding:35px 5% 38px;background-position:57% center}
+.hero h1{font-size:clamp(29px,8vw,39px);margin:10px auto}
+.hero p{font-size:14px;margin:10px auto 17px}.hero .button{padding:11px 14px;font-size:11px}
 }
-
-.brand-name {
-  color: var(--cream);
-}
-
-.brand-name span {
-  color: var(--gold);
-}
-
-    nav { display: flex; gap: 18px; flex-wrap: wrap; }
-
-    nav a { color: var(--muted); font-size: 13px; }
-
-    nav a:hover { color: var(--gold); }
-
-    .hero {
-  padding: 82px 7% 76px;
-  text-align: center;
-  background:
-    linear-gradient(rgba(8, 23, 45, 0.58), rgba(8, 23, 45, 0.68)),
-    url("hero-racing.jpg") center 48% / cover no-repeat;
-}
-
-    .eyebrow {
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    h1 {
-      max-width: 850px;
-      margin: 18px auto;
-      font-size: clamp(36px, 7vw, 65px);
-      line-height: 1.12;
-      letter-spacing: -1.5px;
-    }
-
-    h1 span { color: var(--gold); }
-
-    .hero p {
-      max-width: 650px;
-      margin: 20px auto 28px;
-      color: var(--muted);
-      font-size: 17px;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 13px 23px;
-      border-radius: 5px;
-      background: var(--gold);
-      color: var(--navy);
-      font-weight: 800;
-      margin: 5px;
-    }
-
-    .button-outline {
-      border: 1px solid var(--gold);
-      color: var(--gold);
-      background: transparent;
-    }
-
-    section { padding: 55px 7%; }
-
-    .section-heading {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .section-heading h2 {
-      font-size: clamp(25px, 4vw, 36px);
-      margin: 8px 0;
-    }
-
-    .section-heading p {
-      color: var(--muted);
-      max-width: 650px;
-      margin: 0 auto;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 17px;
-      max-width: 1100px;
-      margin: auto;
-    }
-
-    .card {
-      background: var(--navy-light);
-      border: 1px solid #293f5b;
-      border-radius: 10px;
-      padding: 24px;
-    }
-
-    .card .number {
-      color: var(--gold);
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 2px;
-    }
-
-    .card h3 { margin: 10px 0; }
-
-    .card p { color: var(--muted); font-size: 14px; }
-
-    .standards {
-      background: #0d203b;
-      text-align: center;
-    }
-
-    .standards p {
-      max-width: 760px;
-      margin: auto;
-      color: var(--muted);
-    }
-
-    .notice {
-      max-width: 850px;
-      margin: 25px auto 0;
-      padding: 18px;
-      border-left: 3px solid var(--gold);
-      background: #142947;
-      text-align: left;
-      font-size: 14px;
-    }
-
-    footer {
-      padding: 28px 6%;
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-      border-top: 1px solid #293a51;
-    }
-
-    footer strong { color: var(--gold); }
-    /* RACEWISE INDIA - PREMIUM NAVIGATION */
-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px 24px;
-  padding: 15px 12px;
-  border-bottom: 1px solid #526078;
-}
-
-nav a {
-  color: #e8d5a8 !important;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  text-decoration: none;
-  padding: 5px 0;
-}
-
-nav a:hover {
-  color: #ffffff !important;
-}
-
-@media (max-width: 600px) {
-  nav {
-    gap: 5px 16px;
-    padding: 12px 10px;
-  }
-
-  nav a {
-    font-size: 14px;
-  }
-}
-  
-/* RACEWISE INDIA - CLEAN CINEMATIC HEADER */
-header {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  gap: 0;
-  padding: 2px 4% 0;
-  border-bottom: 3px solid var(--gold);
-  background:
-    linear-gradient(rgba(5, 18, 38, 0.35), rgba(5, 18, 38, 0.55)),
-    url("hero-racing.jpg") center 38% / cover no-repeat;
-}
-
-.brand {
-  align-self: flex-start;
-  justify-content: flex-start;
-  width: auto;
-  margin: 0;
-  padding: 0;
-}
-
-.brand img {
-  display: block;
-  width: 190px;
-  max-width: 52vw;
-  height: auto;
-  object-fit: contain;
-}
-
-nav {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px 20px;
-  padding: 8px 10px;
-  background: rgba(4, 17, 36, 0.97);
-  border-top: 1px solid var(--gold);
-  border-bottom: none;
-}
-
-nav a {
-  flex: 0 0 auto;
-  color: #f0d69d !important;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  white-space: nowrap;
-  padding: 3px 0;
-}
-
-nav a:hover {
-  color: #ffffff !important;
-}
-
-@media (max-width: 600px) {
-  header {
-    padding: 2px 3% 0;
-    background-position: 58% center;
-  }
-
-  .brand {
-    align-self: flex-start;
-    padding: 0;
-  }
-
-  nav {
-    width: calc(100% + 6vw);
-    margin-left: -3vw;
-    box-sizing: border-box;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    gap: 18px;
-    padding: 8px 12px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    background: rgba(4, 17, 36, 0.98);
-    border-top: 1px solid var(--gold);
-    border-bottom: 3px solid var(--gold);
-  }
-
-  nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  nav a {
-    flex: 0 0 auto;
-    font-size: 12px;
-    padding: 2px 0;
-  }
-}
-
-  
-/* RACEWISE CINEMATIC HEADER — approved design refinement */
-header {
-  position: relative;
-  isolation: isolate;
-  min-height: clamp(260px, 34vw, 390px);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: stretch;
-  gap: 0;
-  padding: 16px 3% 0;
-  border-bottom: 0;
-  background:
-    linear-gradient(90deg, rgba(5,16,32,.28), rgba(5,16,32,.05)),
-    linear-gradient(180deg, rgba(5,16,32,.05), rgba(5,16,32,.20)),
-    url("hero-racing.jpg") center 42% / cover no-repeat;
-}
-header > .brand {
-  position: absolute;
-  top: 18px;
-  left: 3%;
-  z-index: 2;
-  width: auto;
-  margin: 0;
-  padding: 0;
-}
-header > .brand img {
-  display: block;
-  width: clamp(145px, 25vw, 235px);
-  max-width: 55vw;
-  height: auto;
-  object-fit: contain;
-}
-header nav {
-  position: relative;
-  z-index: 3;
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  align-items: stretch;
-  width: 100%;
-  margin: 0;
-  padding: 8px 4px;
-  gap: 0;
-  overflow: visible;
-  background: rgba(4, 17, 36, .96);
-  border: 2px solid var(--gold);
-  border-radius: 13px;
-}
-header nav a {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-width: 0;
-  min-height: 52px;
-  margin: 0;
-  padding: 5px 3px;
-  border-right: 1px solid rgba(215,180,106,.8);
-  color: #f0d69d !important;
-  font-size: 12px;
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-align: center;
-  white-space: normal;
-}
-header nav a:last-child { border-right: 0; }
-header nav a::before {
-  color: var(--gold);
-  font-size: 17px;
-  line-height: 1.1;
-  margin-bottom: 3px;
-}
-header nav a:nth-child(1)::before { content: "▤"; }
-header nav a:nth-child(2)::before { content: "♜"; }
-header nav a:nth-child(3)::before { content: "⚑"; }
-header nav a:nth-child(4)::before { content: "♛"; }
-header nav a:nth-child(5)::before { content: "★"; }
-header nav a:nth-child(6)::before { content: "✥"; }
-header nav a:nth-child(7)::before { content: "ⓘ"; }
-header nav a:hover {
-  color: #fff !important;
-  background: rgba(215,180,106,.09);
-}
-.hero {
-  padding: 46px 7% 48px;
-  background:
-    linear-gradient(rgba(8,23,45,.60), rgba(8,23,45,.66)),
-    url("hero-racing.jpg") center 48% / cover no-repeat;
-}
-.hero h1 {
-  margin: 12px auto;
-  font-size: clamp(32px, 5.3vw, 56px);
-  line-height: 1.1;
-}
-.hero p {
-  margin: 12px auto 20px;
-  font-size: clamp(14px, 2vw, 17px);
-}
-.hero .button { margin: 4px; }
-@media (max-width: 600px) {
-  header {
-    min-height: 245px;
-    padding: 12px 3% 0;
-    background-position: 56% center;
-  }
-  header > .brand { top: 14px; left: 3%; }
-  header > .brand img { width: 155px; max-width: 52vw; }
-  header nav {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    padding: 5px 3px;
-    border-width: 2px;
-    border-radius: 10px;
-  }
-  header nav a {
-    min-height: 48px;
-    padding: 4px 2px;
-    font-size: 10px;
-    border-right: 1px solid rgba(215,180,106,.7);
-    border-bottom: 1px solid rgba(215,180,106,.35);
-  }
-  header nav a:nth-child(4) { border-right: 0; }
-  header nav a:nth-child(n+5) { border-bottom: 0; }
-  header nav a::before { font-size: 14px; margin-bottom: 2px; }
-  .hero { padding: 34px 5% 38px; background-position: 57% center; }
-  .hero h1 { font-size: clamp(29px, 8vw, 39px); margin: 10px auto; }
-  .hero p { font-size: 14px; margin: 10px auto 17px; }
-  .hero .button { padding: 11px 15px; font-size: 13px; }
-}
-
 </style>
 </head>
 <body>
@@ -468,7 +63,7 @@ header nav a:hover {
   <img
   src="https://raw.githubusercontent.com/racewiseindia/racewiseindia.github.io/main/BD3FBD67-3641-4C4B-A7C4-65B776CDC953.png"
   alt="RaceWise India Official Logo"
-  style="width:190px;max-width:52vw;height:auto;object-fit:contain;"
+  style="width:clamp(145px,23vw,220px);max-width:55vw;height:auto;object-fit:contain;"
 >
 </a>
 
