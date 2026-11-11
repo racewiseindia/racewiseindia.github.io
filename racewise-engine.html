@@ -500,6 +500,7 @@ footer strong { color:var(--gold); }
   <script src="race-runner-entry.js"></script>
   <script src="horse-performance-schema.js"></script>
 <script src="horse-speed-calculator.js"></script>
+<script src="racewise-analysis-engine.js?v=20261111a"></script>
 <script>
   
 // Load the national centre registry.
@@ -571,9 +572,15 @@ if (engineStatus) {
       detail: "Centre-specific rules not yet verified"
     },
     {
-      name: "RaceWise selection engine",
+      name: "RaceWise evidence scoring engine",
+      ready: !!window.RACEWISE_ANALYSIS,
+      detail: "Verified evidence-weighted study score; missing factors excluded; official handicap kept separate"
+    },
+    {
+      name: "RaceWise selection output",
       ready: false,
-      detail: "Scoring and evidence engine not yet implemented"
+      status: "PARTIAL",
+      detail: "Ranking function is available; automatic connection to extracted race-card data and historical evidence entry is the next integration step."
     }
   ];
 
