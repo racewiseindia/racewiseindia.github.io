@@ -726,11 +726,35 @@
             addText(sourceLinksPanel, "p", "BTC dated race card: " + (btcRaceCard.pageUrl || "Not available"));
             if (btcRaceCard.retrievedAt) addText(sourceLinksPanel, "p", "Race card retrieved at: " + btcRaceCard.retrievedAt);
             if (btcRaceCard.pageTitle) addText(sourceLinksPanel, "p", "Page title: " + btcRaceCard.pageTitle);
-            addText(sourceLinksPanel, "p", "Preliminary runner-name matches: " + (btcRaceCard.matchedRunnerNames || []).length + " | Unmatched: " + (btcRaceCard.unmatchedRunnerCount ?? "unknown"));
-            if (btcRaceCard.matchedRunnerNames && btcRaceCard.matchedRunnerNames.length) {
-              addText(sourceLinksPanel, "p", "Names found on page: " + btcRaceCard.matchedRunnerNames.join(", "));
-            }
+            addText(sourceLinksPanel, "p", "Runners in extracted card: " + (btcRaceCard.expectedRunnerCount ?? "unknown") + " | Page mentions: " + (btcRaceCard.pageMentionCount ?? "unknown") + " | Unique source rows: " + (btcRaceCard.uniqueRunnerRowCount ?? "unknown"));
             addText(sourceLinksPanel, "p", btcRaceCard.note || "No verification status supplied.");
+            const checks = btcRaceCard.runnerChecks || [];
+            const reviewByRace = new Map();
+            checks.forEach(function (check) {
+              const key = String(check.expectedRaceNumber ?? "Race not identified");
+              if (!reviewByRace.has(key)) reviewByRace.set(key, []);
+              reviewByRace.get(key).push(check);
+            });
+            Array.from(reviewByRace.entries()).forEach(function ([raceNumber, raceChecks]) {
+              const section = document.createElement("section");
+              section.style.cssText = "border:1px solid #c9ad70;border-radius:7px;padding:9px;margin:10px 0";
+              addText(section, "h4", "RACE " + raceNumber + " — " + raceChecks.length + " extracted runners");
+              raceChecks.forEach(function (check) {
+                const candidates = check.candidates || {};
+                const comparisons = check.comparisons || {};
+                const item = document.createElement("div");
+                item.style.cssText = "border-top:1px solid #ddd;padding:7px 0";
+                addText(item, "strong", check.horseName + (check.expectedHorseNumber == null ? "" : " (" + check.expectedHorseNumber + ")"));
+                addText(item, "p", "BTC page mention: " + (check.pageMentionFound ? "Yes" : "No") + " | Unique source row: " + (check.uniqueRunnerRowFound ? "Yes" : "No") + " | Matching rows: " + (check.matchingRowCount ?? 0));
+                addText(item, "p", "Horse number candidate: " + (candidates.horseNumber ?? "Not isolated") + " [" + comparisons.horseNumber + "] | Age candidate: " + (candidates.age ?? "Not isolated") + " [" + comparisons.age + "] | Race number candidate: " + (candidates.raceNumber ?? "Not isolated") + " [" + comparisons.raceNumber + "]");
+                addText(item, "p", "Weight candidate: " + (candidates.allocatedWeightKg ?? "Not confidently labelled") + " kg | Official rating candidate: " + (candidates.officialRating ?? "Not confidently labelled"));
+                addText(item, "p", "Jockey candidate: " + (candidates.jockey ?? "Not confidently labelled") + " | Trainer candidate: " + (candidates.trainer ?? "Not confidently labelled"));
+                if (check.sourceRowText) addText(item, "p", "BTC source row: " + check.sourceRowText);
+                addText(item, "p", "Status: manual review required; no field is treated as verified.");
+                section.appendChild(item);
+              });
+              sourceLinksPanel.appendChild(section);
+            });
           }
           researchButton.textContent = "Research Queue Prepared";
         } catch (error) {
