@@ -43,7 +43,7 @@ const sourceCatalog = [
 // It does not open those links or treat homepage text as horse/race evidence.
 let lastBtcHomepageFetchAt = 0;
 async function discoverBtcPublicLinks() {
-  const pageUrl = "https://bangaloreraces.com/home";
+  const pageUrl = "https://www.bangaloreraces.com/home";
   const now = Date.now();
   if (now - lastBtcHomepageFetchAt < 60_000) {
     return {
@@ -98,7 +98,7 @@ async function discoverBtcPublicLinks() {
       if (!rawHref || !label || !relevant.test(label)) continue;
       try {
         const resolved = new URL(rawHref, pageUrl);
-        if (resolved.protocol !== "https:" || resolved.hostname !== "bangaloreraces.com") continue;
+        if (resolved.protocol !== "https:" || resolved.hostname !== "www.bangaloreraces.com") continue;
         if (!links.some((item) => item.url === resolved.href)) links.push({ label, url: resolved.href });
       } catch { /* Ignore malformed or non-URL links. */ }
       if (links.length >= 40) break;
