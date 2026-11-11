@@ -552,9 +552,16 @@ if (engineStatus) {
 },
 
     {
-      name: "PDF/image text extraction",
+      name: "PDF text extraction",
       ready: false,
-      detail: "Not yet implemented"
+      status: "PARTIAL",
+      detail: "PDF.js text and position extraction are available; image OCR is not implemented."
+    },
+    {
+      name: "Race-card runner preview",
+      ready: false,
+      status: "PARTIAL",
+      detail: "Race and runner candidates are previewed with source text; extracted fields require manual verification."
     },
     {
       name: "Official data verification",
@@ -577,7 +584,7 @@ if (engineStatus) {
     const item = document.createElement("div");
     item.className = "feature";
 
-    const status = component.ready ? "LOADED" : "PENDING";
+    const status = component.status || (component.ready ? "LOADED" : "PENDING");
     item.textContent =
       component.name + " — " + status + " | " + component.detail;
 
