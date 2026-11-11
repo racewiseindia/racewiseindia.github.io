@@ -1,0 +1,209 @@
+{
+  "schemaVersion": "1.0.0",
+  "purpose": "Discover and reconcile evidence for pre-race study. A listed source is not proof that every field is available or licensed for automated reuse.",
+  "policy": {
+    "useOnlyPublicOrAuthorisedAccess": true,
+    "respectTermsRobotsRateLimitsAndCopyright": true,
+    "noLoginBypassOrAntiBotCircumvention": true,
+    "preserveSourceUrlRetrievedAtAndRawRecordReference": true,
+    "missingValues": "null_with_reason",
+    "unverifiedValues": "quarantined_not_scored",
+    "identityMatching": "officialHorseId_preferred; otherwise exact_name_plus_pedigree_and_context; ambiguous_matches_require_review",
+    "neverInferIndividualHorseTimeFromRaceTime": true,
+    "noSelectionsUntilEvidenceThresholdMet": true
+  },
+  "sources": [
+    {
+      "id": "btc_official",
+      "name": "Bangalore Turf Club official website",
+      "url": "https://www.bangaloreraces.com/Home/Racing",
+      "type": "primary_racing_authority",
+      "useFor": [
+        "racecards",
+        "declarations",
+        "handicaps",
+        "ratings",
+        "results",
+        "race_replays",
+        "jockey_lists",
+        "trainer_lists",
+        "rules_of_racing",
+        "track_and_racing_updates"
+      ],
+      "access": "public_pages_and_downloads; automate only where permitted",
+      "automation": "adapter_required",
+      "priority": 1
+    },
+    {
+      "id": "indiarace",
+      "name": "IndiaRace",
+      "url": "https://www.indiarace.com/",
+      "type": "racing_information_publisher",
+      "useFor": [
+        "racecards",
+        "runner_details",
+        "past_performance",
+        "results",
+        "pedigree_display",
+        "trackwork_where_published"
+      ],
+      "access": "public pages; verify terms and permitted reuse before automated collection",
+      "automation": "adapter_required",
+      "priority": 2
+    },
+    {
+      "id": "race_club_authorities",
+      "name": "Other Indian turf club authorities",
+      "url": null,
+      "type": "primary_racing_authorities",
+      "useFor": [
+        "centre_specific_racecards",
+        "handicaps",
+        "results",
+        "trackwork",
+        "going",
+        "incidents",
+        "rules"
+      ],
+      "access": "centre-specific public or authorised feeds",
+      "automation": "one_adapter_per_centre",
+      "priority": 1
+    },
+    {
+      "id": "licensed_data_providers",
+      "name": "Licensed racing data providers",
+      "url": null,
+      "type": "licensed_provider",
+      "useFor": [
+        "structured_form",
+        "sectionals",
+        "individual_times",
+        "horse_identity",
+        "pedigree",
+        "statistics"
+      ],
+      "access": "contract_and_api_key_required",
+      "automation": "provider_adapter_after_licence",
+      "priority": 3
+    },
+    {
+      "id": "weather_observations",
+      "name": "Authoritative weather observations",
+      "url": null,
+      "type": "environmental_data",
+      "useFor": [
+        "rainfall",
+        "temperature",
+        "wind",
+        "humidity"
+      ],
+      "access": "public_or_licensed_api",
+      "automation": "api_adapter_required",
+      "priority": 4
+    },
+    {
+      "id": "studbook_pedigree",
+      "name": "Authorised studbook and pedigree records",
+      "url": null,
+      "type": "pedigree_authority_or_provider",
+      "useFor": [
+        "sire",
+        "dam",
+        "siblings",
+        "half_siblings",
+        "progeny_performance"
+      ],
+      "access": "public_or_licensed_access_to_be_confirmed",
+      "automation": "adapter_required",
+      "priority": 3
+    }
+  ],
+  "factorMapping": {
+    "recentForm": [
+      "btc_official",
+      "indiarace",
+      "licensed_data_providers"
+    ],
+    "speedAndTiming": [
+      "btc_official",
+      "indiarace",
+      "licensed_data_providers"
+    ],
+    "trackwork": [
+      "btc_official",
+      "indiarace",
+      "race_club_authorities"
+    ],
+    "classAndOpposition": [
+      "btc_official",
+      "indiarace",
+      "licensed_data_providers"
+    ],
+    "distanceAndStamina": [
+      "btc_official",
+      "indiarace",
+      "studbook_pedigree"
+    ],
+    "pedigree": [
+      "indiarace",
+      "studbook_pedigree",
+      "licensed_data_providers"
+    ],
+    "courseSuitability": [
+      "btc_official",
+      "race_club_authorities",
+      "indiarace"
+    ],
+    "goingSuitability": [
+      "race_club_authorities",
+      "weather_observations",
+      "licensed_data_providers"
+    ],
+    "jockeyPerformance": [
+      "btc_official",
+      "licensed_data_providers"
+    ],
+    "trainerPerformance": [
+      "btc_official",
+      "licensed_data_providers"
+    ],
+    "jockeyTrainerCombination": [
+      "btc_official",
+      "licensed_data_providers"
+    ],
+    "headToHead": [
+      "btc_official",
+      "indiarace",
+      "licensed_data_providers"
+    ],
+    "paceAndRunningStyle": [
+      "btc_official",
+      "race_replays",
+      "licensed_data_providers"
+    ],
+    "drawAssessment": [
+      "btc_official",
+      "race_club_authorities",
+      "licensed_data_providers"
+    ],
+    "handicapAssessment": [
+      "btc_official",
+      "race_club_authorities"
+    ]
+  },
+  "requiredPipeline": [
+    "parse_and_validate_race_card",
+    "resolve_runner_identity",
+    "discover_sources_for_each_runner_and_race",
+    "fetch_only_permitted_public_or_authorised_records",
+    "normalise_units_names_dates_centres_and_distances",
+    "deduplicate_and_reconcile_conflicts",
+    "retain_source_provenance_and_retrieval_timestamp",
+    "derive_only_supported_metrics",
+    "calculate_factor_coverage_and_uncertainty",
+    "rank_only_when_threshold_met",
+    "publish_first_second_choice_and_explanation",
+    "retain_pre_race_snapshot_for_later_audit"
+  ],
+  "status": "registry_only_backend_connectors_not_yet_implemented"
+}
