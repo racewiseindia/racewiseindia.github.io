@@ -2,15 +2,15 @@
 
 ## Current phase
 
-This is an authenticated **research-queue preparation** endpoint only. It validates the signed-in RaceWise administrator, accepts a meeting/runner payload, and returns auditable tasks mapped to the RaceWise study factors.
+This is an authenticated research preparation endpoint. It validates the signed-in RaceWise administrator, accepts a meeting/runner payload, and returns auditable tasks mapped to the RaceWise study factors. For Bangalore meetings, it also makes one conservative read-only request to the public Bangalore Turf Club homepage and discovers relevant same-site links.
 
 It deliberately does **not**:
-- fetch or scrape external websites;
+- open linked racing pages or collect horse/race evidence;
 - mark source records checked or verified;
 - write to Supabase tables;
 - calculate runner scores or publish selections.
 
-Those capabilities must be added as separate, permitted source adapters and tested against source terms, identity matching, and evidence provenance. Keep Supabase Edge Function JWT verification enabled.
+The homepage link-discovery result includes its source URL, retrieval timestamp, response status, and discovered links. This is navigation metadata only, not racing evidence. Linked pages are not opened. Further adapters must be separately implemented and tested against source terms, identity matching, and evidence provenance. The BTC homepage request has a best-effort 60-second in-memory cooldown per function instance. Keep Supabase Edge Function JWT verification enabled.
 
 ## Deploy
 
@@ -45,4 +45,4 @@ POST JSON:
 }
 ```
 
-Call it only with a signed-in administrator's Supabase access token. A successful response explicitly reports that external sources were not fetched, evidence was not verified, no database writes occurred, and no selections were produced.
+Call it only with a signed-in administrator's Supabase access token. A successful response reports whether the BTC homepage was fetched for link discovery. It explicitly keeps racing-evidence fetching, evidence verification, database writes, and selections disabled.
