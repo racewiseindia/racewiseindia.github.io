@@ -230,7 +230,7 @@ async function fetchBtcRaceCard(
     const runnerChecks = expected.map((runner) => {
       const target = normalize(runner.horseName);
       const matchingRows = rows.filter((row) =>
-        normalize(row.text).split(" ").join(" ").includes(target)
+        (` ${normalize(row.text)} `).includes(` ${target} `)
       );
       const row = matchingRows.length === 1 ? matchingRows[0] : null;
       const allMentions = target.length >= 3 && pageText.includes(target);
