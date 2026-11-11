@@ -254,11 +254,13 @@
         .slice()
         .sort((a, b) => b.y - a.y || a.x - b.x);
 
+      // Race titles are centred and may sit to the right of the Horse/Pedigree column.
+      // Missing this boundary lets the final runner absorb the next race's prize-money.
       const titleYs = items
         .filter(item =>
           /^The\b/i.test(String(item.text || "").trim()) &&
           item.x >= (columnMap ? columnMap.horse - 10 : 65) &&
-          item.x < descMin
+          item.x < (columnMap ? columnMap.desc + 180 : 420)
         )
         .map(item => item.y);
 
