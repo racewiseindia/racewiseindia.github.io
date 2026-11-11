@@ -341,6 +341,20 @@
 
           weight = weightItem ? String(weightItem.text).trim() : "";
           rating = ratingItem ? String(ratingItem.text).trim() : "";
+
+          // In some PDF rows, the jockey, weight and allowance are merged
+          // into one positioned text item. Split only a clear trailing
+          // numeric weight (with an optional allowance suffix); keep the
+          // untouched original runner text below for manual checking.
+          if (!weight) {
+            const mergedWeight = jockey.match(
+              /^(.+?)\s+(\d{2}(?:\.\d+)?)(?:\s+[-–]?\d+(?:\.\d+)?(?:\s+[A-Z]+)?)?$/
+            );
+            if (mergedWeight) {
+              jockey = mergedWeight[1].trim();
+              weight = mergedWeight[2];
+            }
+          }
         }
 
         candidates.push({
