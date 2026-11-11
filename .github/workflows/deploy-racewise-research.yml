@@ -26,4 +26,4 @@ jobs:
             echo "Missing GitHub Actions secret: SUPABASE_ACCESS_TOKEN"
             exit 1
           fi
-          supabase functions deploy racewise-research --project-ref ldnmfaykekhigavqgwmf
+          supabase functions deploy racewise-research --project-ref ldnmfaykekhigavqgwmf --yes
