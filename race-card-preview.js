@@ -440,6 +440,14 @@
       addText(card, "p", "Race number: " + race.number);
       addText(card, "p", "Distance: " + race.distance + " metres");
 
+      // Prize money belongs to the race, not to individual runners.
+      const prizeLine = section
+        .map(cleanLine)
+        .find(line => /^Winner\s*:/i.test(line) && /Second\s*:/i.test(line)) || "";
+      if (prizeLine) {
+        addText(card, "p", "Race prize money (not individual horse earnings): " + prizeLine);
+      }
+
       let timeText = "Not confidently detected";
       for (
         let i = Math.max(0, race.distanceLineIndex - race.index);
@@ -533,7 +541,12 @@
         const raw = document.createElement("pre");
         raw.style.cssText =
           "white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px";
-        raw.textContent = rawBlock.join("\n");
+        raw.textContent = rawBlock
+          .map(line => String(line || "").replace(
+            /Last\s+5\s+runs\s*:/i,
+            "Last 5 finishing positions (source-card form sequence):"
+          ))
+          .join("\n");
         item.appendChild(raw);
 
         addText(item, "p", "Review required before structured entry.");
