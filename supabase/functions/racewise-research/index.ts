@@ -158,7 +158,7 @@ async function fetchBtcRaceCard(
     };
   }
 
-  const pageUrl = \`https://www.bangaloreraces.com/racing/racecard?d=\${encodeURIComponent(raceDate)}\`;
+  const pageUrl = `https://www.bangaloreraces.com/racing/racecard?d=${encodeURIComponent(raceDate)}`;
   const retrievedAt = new Date().toISOString();
   try {
     const response = await fetch(pageUrl, {
