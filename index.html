@@ -15,9 +15,8 @@ a{color:inherit;text-decoration:none}
 header{position:relative;isolation:isolate;min-height:clamp(245px,34vw,370px);display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;gap:0;padding:16px 3% 0;border:0;background:linear-gradient(90deg,rgba(5,16,32,.35),rgba(5,16,32,.08)),linear-gradient(180deg,rgba(5,16,32,.12),rgba(5,16,32,.38)),url("hero-racing.jpg") center 42%/cover no-repeat}
 header>.brand{position:absolute;top:18px;left:3%;z-index:2;display:flex;align-self:flex-start;justify-content:flex-start;width:auto;margin:0;padding:0;text-decoration:none}
 header>.brand img{display:block;width:clamp(145px,23vw,220px)!important;max-width:55vw;height:auto;object-fit:contain}
-header nav{position:relative;z-index:3;display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;gap:0;width:100%;margin:0;padding:5px 8px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:rgba(4,17,36,.94);border:0}
-header nav::-webkit-scrollbar{display:none}
-header nav a{display:block;flex:0 0 auto;color:#f0d69d!important;font-size:13px;font-weight:650;letter-spacing:.15px;line-height:1.2;white-space:nowrap;padding:7px 14px}
+header nav{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:0;width:100%;margin:0;padding:5px 2px;overflow:visible;background:rgba(4,17,36,.94);border:0}
+header nav a{display:block;flex:1 1 0;min-width:0;color:#f0d69d!important;font-size:clamp(9px,.88vw,12px);font-weight:650;letter-spacing:0;line-height:1.2;text-align:center;white-space:nowrap;padding:7px 3px}
 header nav a+a{border-left:1px solid rgba(215,180,106,.72)}
 header nav a:hover{color:#fff!important;background:rgba(215,180,106,.09)}
 .hero{padding:48px 7% 50px;text-align:center;background:linear-gradient(rgba(8,23,45,.60),rgba(8,23,45,.68)),url("hero-racing.jpg") center 48%/cover no-repeat}
@@ -42,7 +41,7 @@ footer{padding:28px 6%;text-align:center;color:var(--muted);font-size:12px;borde
 @media(max-width:600px){
 header{min-height:215px;padding:10px 0 0;background-position:57% center}
 header>.brand{top:12px;left:4%}header>.brand img{width:150px!important;max-width:52vw}
-header nav{padding:4px 5px}header nav a{font-size:11px;padding:7px 11px}
+header nav{padding:4px 1px;overflow:visible}header nav a{flex:1 1 0;font-size:clamp(7px,2.05vw,10px);letter-spacing:-.2px;padding:7px 1px;white-space:normal;overflow-wrap:anywhere}
 .hero{padding:35px 5% 38px;background-position:57% center}
 .hero h1{font-size:clamp(29px,8vw,39px);margin:10px auto}
 .hero p{font-size:14px;margin:10px auto 17px}.hero .button{padding:11px 14px;font-size:11px}
