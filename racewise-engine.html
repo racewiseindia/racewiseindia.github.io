@@ -164,7 +164,20 @@ footer strong { color:var(--gold); }
     Waiting for calculation.
   </div>
 </section>
-  <section class="panel">
+  <section class="panel" id="historyImportPanel">
+  <h2>05 — Import Verified Historical Results</h2>
+  <p class="note">Import a JSON file containing historical result records. Each record must identify the horse, date, centre, distance, finishing position, field size and a verified source. Individual horse times are optional. Race-level times are never treated as individual horse times.</p>
+  <label class="upload" for="historyJsonFile">
+    <strong>＋ Select Historical Results JSON</strong>
+    <span>Verified structured result records only</span>
+  </label>
+  <input id="historyJsonFile" type="file" accept=".json,application/json">
+  <div id="historyJsonStatus" class="status" style="margin-top:12px;">Build the race cards first, then import verified historical records to attach evidence to matching runners.</div>
+  <button type="button" id="analyseWithHistoryBtn" style="margin-top:12px;">Attach Evidence & Recalculate RaceWise Scores</button>
+  <div id="historyRankingOutput" aria-live="polite" style="margin-top:14px;"></div>
+  <p class="note">Import format: a JSON array of records, or an object with a "records" array. Every record requires a verified source name. Horse-name matches are provisional until identity is confirmed; similar names must not be assumed to be the same horse.</p>
+</section>
+<section class="panel">
   <h2>Historical Horse Performance Entry</h2>
 
   <p class="note">
@@ -501,6 +514,7 @@ footer strong { color:var(--gold); }
   <script src="horse-performance-schema.js"></script>
 <script src="horse-speed-calculator.js"></script>
 <script src="racewise-analysis-engine.js?v=20261111a"></script>
+<script src="racewise-history-engine.js?v=20261111a"></script>
 <script>
   
 // Load the national centre registry.
