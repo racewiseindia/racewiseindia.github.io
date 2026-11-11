@@ -403,89 +403,59 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  // Hyderabad Race Club official calendar connector. The club's current
-  // public site exposes /calendar, but access may be restricted or client-rendered.
-  // Only an explicit date match in returned page text can mark a fixture listed.
+  // HRC November 2026 calendar transcription supplied by the user and
+  // confirmed by them as copied from the official HRC calendar.
+  // This is a dated snapshot, not a live fetch or an independently archived copy.
   async function discoverHyderabadMeetingFixture(raceDate: string) {
     const pageUrl = "https://www.hydraces.com/calendar";
     const retrievedAt = new Date().toISOString();
-    const [year, month, day] = raceDate.split("-").map(Number);
-    const date = new Date(Date.UTC(year, month - 1, day));
-    const monthLong = date.toLocaleString("en-GB", { month: "long", timeZone: "UTC" });
-    const monthShort = date.toLocaleString("en-GB", { month: "short", timeZone: "UTC" });
-    const dayPadded = String(day).padStart(2, "0");
-    const dateVariants = [
-      raceDate,
-      `${day} ${monthLong} ${year}`,
-      `${dayPadded} ${monthLong} ${year}`,
-      `${monthLong} ${day}, ${year}`,
-      `${monthShort} ${day}, ${year}`,
-      `${dayPadded}/${String(month).padStart(2, "0")}/${year}`,
-    ];
-    try {
-      const response = await fetch(pageUrl, {
-        method: "GET",
-        redirect: "follow",
-        headers: { "Accept": "text/html" },
-        signal: AbortSignal.timeout(10_000),
-      });
-      if (!response.ok) {
-        return {
-          centre: "Hyderabad",
-          status: response.status === 403 ? "source_restricted" : "source_error",
-          fixtureFound: null,
-          raceCount: null,
-          pageUrl,
-          finalUrl: response.url,
-          httpStatus: response.status,
-          retrievedAt,
-          evidenceVerified: false,
-          note: response.status === 403
-            ? "The official HRC calendar denied automated access (HTTP 403). No fixture conclusion was made."
-            : "The official HRC calendar did not return a successful response. No fixture conclusion was made.",
-        };
-      }
-      const html = await response.text();
-      if (html.length > 2_000_000) {
-        return { centre: "Hyderabad", status: "page_too_large", fixtureFound: null,
-          raceCount: null, pageUrl, retrievedAt, evidenceVerified: false,
-          note: "Official HRC calendar exceeded the 2 MB safety limit." };
-      }
-      const plain = html
-        .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
-        .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
-        .replace(/<[^>]+>/g, " ")
-        .replace(/&nbsp;|&#160;/gi, " ")
-        .replace(/&amp;/gi, "&")
-        .replace(/\s+/g, " ")
-        .toLowerCase();
-      const fixtureFound = dateVariants.some((variant) => plain.includes(variant.toLowerCase()));
+    const hrcNovember2026: Record<string, string[]> = {
+      "2026-11-05": ["Pune"],
+      "2026-11-08": ["Bangalore"],
+      "2026-11-09": ["Hyderabad"],
+      "2026-11-13": ["Bangalore"],
+      "2026-11-14": ["Kolkata"],
+      "2026-11-15": ["Hyderabad", "Pune"],
+      "2026-11-16": ["Hyderabad"],
+      "2026-11-17": ["Kolkata"],
+      "2026-11-20": ["Bangalore"],
+      "2026-11-21": ["Kolkata"],
+      "2026-11-22": ["Hyderabad"],
+      "2026-11-23": ["Hyderabad"],
+      "2026-11-27": ["Bangalore"],
+      "2026-11-28": ["Bangalore", "Kolkata"],
+      "2026-11-29": ["Hyderabad", "Mumbai"],
+      "2026-11-30": ["Hyderabad"],
+    };
+    const centres = hrcNovember2026[raceDate];
+    if (!centres) {
       return {
         centre: "Hyderabad",
-        status: fixtureFound ? "fixture_listed" : "date_unresolved",
-        fixtureFound: fixtureFound ? true : null,
-        raceCount: null,
-        pageUrl,
-        finalUrl: response.url,
-        httpStatus: response.status,
-        retrievedAt,
-        evidenceVerified: false,
-        note: fixtureFound
-          ? "The official HRC calendar page contains this date. Race count and dated race-card details still require separate verification."
-          : "The official HRC page was fetched, but the date was not present in the returned static text. This is inconclusive: the calendar may be client-rendered or use a separate data feed. No no-fixture conclusion was made.",
-      };
-    } catch (error) {
-      return {
-        centre: "Hyderabad",
-        status: "fetch_error",
+        status: "date_unresolved",
         fixtureFound: null,
         raceCount: null,
         pageUrl,
         retrievedAt,
         evidenceVerified: false,
-        note: error instanceof Error ? error.message : "Official HRC calendar lookup failed.",
+        sourceMethod: "no_matching_entry_in_supplied_snapshot",
+        note: "No matching entry was available in the user-confirmed November 2026 HRC calendar transcription. This is not a live calendar check and does not prove that no meeting exists.",
       };
     }
+    const fixtureFound = centres.some((name) => name.toLowerCase() === "hyderabad");
+    return {
+      centre: "Hyderabad",
+      status: fixtureFound ? "fixture_listed_snapshot" : "not_listed_in_snapshot",
+      fixtureFound,
+      raceCount: null,
+      pageUrl,
+      retrievedAt,
+      evidenceVerified: false,
+      sourceMethod: "user_confirmed_transcription_of_official_hrc_calendar",
+      calendarCentresOnDate: centres,
+      note: fixtureFound
+        ? "Hyderabad is listed on this date in the user-confirmed transcription of the official HRC calendar. This is a calendar snapshot, not a live website fetch; race count, race card and runners remain unverified."
+        : "Hyderabad is not listed on this date in the user-confirmed transcription of the official HRC calendar. This snapshot is not a live check; no race count or horse evidence was verified.",
+    };
   }
 
   const meeting = payload?.meeting;
