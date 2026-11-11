@@ -242,21 +242,17 @@ footer strong { color:var(--gold); }
       <button class="secondary" type="button" id="clearBtn">Clear Selection</button>
     </div>
     <div class="actions">
-  <button type="button" id="readPdfBtn">Read PDF Text</button>
+  <button type="button" id="readPdfBtn">Read PDF &amp; Build Race Card Preview</button>
 </div>
 
 <div id="pdfReadStatus" class="status" style="margin-top:12px;">
-  Select a PDF, then tap Read PDF Text. No data will be saved.
+  Select a PDF, then tap once to read it and build the race-card preview. No data will be saved.
 </div>
 
 <pre id="pdfTextOutput" style="display:none;white-space:pre-wrap;overflow:auto;max-height:420px;padding:12px;background:#f5f6f8;border-radius:8px;font-size:12px;"></pre>
  <pre id="pdfLayoutOutput"
   style="display:none;white-space:pre-wrap;overflow:auto;max-height:420px;padding:12px;background:#eef3f8;border-radius:8px;font-size:11px;"></pre>
-    <div class="actions">
-  <button type="button" id="buildRacePreviewBtn">
-    Build Race Card Preview
-  </button>
-</div>
+    <button type="button" id="buildRacePreviewBtn" hidden>Build Race Card Preview</button>
 
 <div id="raceCardPreview" style="display:none;"></div>
   </section>
@@ -1608,9 +1604,15 @@ if (analyseHistoryBtn) {
         }
 
         status.textContent =
-          "Extraction complete. " + pdf.numPages +
-          " pages read. Text and positions retained locally. " +
-          "No database records changed.";
+          "PDF reading complete. " + pdf.numPages +
+          " pages read. Building race-card preview…";
+      }
+
+      const buildPreviewButton = document.getElementById("buildRacePreviewBtn");
+      if (buildPreviewButton) {
+        buildPreviewButton.click();
+        status.textContent =
+          "PDF read and race-card preview built. Please review all extracted fields against the official card. No database records changed.";
       }
     } catch (error) {
       status.textContent =
@@ -1622,6 +1624,6 @@ if (analyseHistoryBtn) {
   });
 })();
 </script>
-  <script src="race-card-preview.js?v=20261111b"></script>
+  <script src="race-card-preview.js?v=20261111c"></script>
 </body>
 </html>
