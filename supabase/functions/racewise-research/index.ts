@@ -353,7 +353,100 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Request body must be valid JSON." }, 400, origin);
   }
 
+
+  // Date-first discovery: one date may contain multiple independent centre meetings.
+  // Fixture presence is not treated as a race-card parse or evidence verification.
+  async function discoverBtcMeetingFixture(raceDate: string) {
+    const pageUrl = "https://www.bangaloreraces.com/Club/Fixtures";
+    const retrievedAt = new Date().toISOString();
+    try {
+      const response = await fetch(pageUrl, {
+        method: "GET",
+        redirect: "manual",
+        headers: { "Accept": "text/html" },
+        signal: AbortSignal.timeout(8_000),
+      });
+      if (!response.ok) {
+        return { centre: "Bangalore", status: "source_error", fixtureFound: false, raceCount: null,
+          pageUrl, httpStatus: response.status, retrievedAt, evidenceVerified: false };
+      }
+      const html = await response.text();
+      if (html.length > 2_000_000) {
+        return { centre: "Bangalore", status: "page_too_large", fixtureFound: false, raceCount: null,
+          pageUrl, retrievedAt, evidenceVerified: false };
+      }
+      const plain = html
+        .replace(/<script\\b[\\s\\S]*?<\\/script>/gi, " ")
+        .replace(/<style\\b[\\s\\S]*?<\\/style>/gi, " ")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/&nbsp;|&#160;/gi, " ")
+        .replace(/&amp;/gi, "&")
+        .replace(/\\s+/g, " ");
+      const fixtureFound = new RegExp("(^|\\\\D)" + raceDate.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\  const meeting = payload?.meeting;
+") + "(\\\\D|$)").test(plain);
+      return {
+        centre: "Bangalore",
+        status: fixtureFound ? "fixture_listed" : "no_fixture_listed",
+        fixtureFound,
+        raceCount: null,
+        raceCardStatus: fixtureFound ? "not_yet_parsed" : "not_applicable",
+        pageUrl,
+        retrievedAt,
+        evidenceVerified: false,
+        note: fixtureFound
+          ? "The official BTC fixtures page contains this date. Race count and race details still require the dated race card."
+          : "No matching date was found on the official BTC fixtures page checked."
+      };
+    } catch (error) {
+      return { centre: "Bangalore", status: "fetch_error", fixtureFound: false, raceCount: null,
+        pageUrl, retrievedAt, evidenceVerified: false,
+        note: error instanceof Error ? error.message : "Fixture lookup failed." };
+    }
+  }
+
   const meeting = payload?.meeting;
+
+  if (payload?.action === "discover_meetings") {
+    const raceDate = String((payload as any).raceDate ?? "");
+    const centres = (payload as any).centres;
+    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(raceDate) || !Array.isArray(centres) ||
+        centres.length < 1 || centres.length > 10 ||
+        centres.some((centre: unknown) => typeof centre !== "string" || !centre.trim())) {
+      return json({ error: "Provide raceDate (YYYY-MM-DD) and 1–10 centre names." }, 400, origin);
+    }
+    const uniqueCentres = [...new Set(centres.map((centre: string) => centre.trim()))];
+    const meetings = await Promise.all(uniqueCentres.map(async (centre: string) => {
+      const normalized = centre.toLowerCase();
+      if (normalized === "bangalore" || normalized === "bengaluru") {
+        return await discoverBtcMeetingFixture(raceDate);
+      }
+      return {
+        centre,
+        status: "adapter_not_connected",
+        fixtureFound: null,
+        raceCount: null,
+        raceCardStatus: "not_checked",
+        pageUrl: null,
+        retrievedAt: new Date().toISOString(),
+        evidenceVerified: false,
+        note: "An authorised official fixture adapter for this centre has not yet been connected."
+      };
+    }));
+    return json({
+      ok: true,
+      action: "discover_meetings",
+      raceDate,
+      meetingCount: meetings.filter((item) => item.fixtureFound === true).length,
+      meetings,
+      safeguards: {
+        multipleCentresSupported: true,
+        raceCountsInvented: false,
+        evidenceVerified: false,
+        selectionsProduced: false
+      }
+    }, 200, origin);
+  }
+
   if (!meeting || !Array.isArray(meeting.races) || meeting.races.length < 1 || meeting.races.length > 20) {
     return json({ error: "Provide meeting.races with between 1 and 20 races." }, 400, origin);
   }
