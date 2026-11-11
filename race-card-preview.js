@@ -303,12 +303,29 @@
           item.y <= ageItem.y + 5
         )).replace(/^[-–]\s*/, "").trim();
 
+        // The first printed field may contain horse number and draw together,
+        // for example "3(2)". Keep these as separate values; never infer a
+        // draw from the horse number when the PDF does not print one.
+        const numberColumnItems = items.filter(item =>
+          item.x >= 20 &&
+          item.x < 60 &&
+          Math.abs(item.y - ageItem.y) <= 3
+        ).sort((a, b) => a.x - b.x);
+        const numberColumnText = numberColumnItems
+          .map(item => String(item.text || "").trim())
+          .join(" ")
+          .replace(/\s+/g, " ")
+          .trim();
+        const numberAndDraw = numberColumnText.match(
+          /^(\d{1,2})\s*\(\s*(\d{1,2})\s*\)/
+        );
         const numberItem = items.find(item =>
           item.x >= 20 &&
           item.x < 45 &&
           Math.abs(item.y - ageItem.y) <= 3 &&
           /^\d{1,2}$/.test(String(item.text || "").trim())
         );
+        const drawNumber = numberAndDraw ? Number(numberAndDraw[2]) : null;
 
         let owner = "";
         let trainer = "";
@@ -374,7 +391,10 @@
 
         candidates.push({
           name,
-          number: numberItem ? Number(numberItem.text) : null,
+          number: numberAndDraw
+            ? Number(numberAndDraw[1])
+            : (numberItem ? Number(numberItem.text) : null),
+          drawNumber,
           age: Number((String(ageItem.text).match(/^(\d{1,2})/i) || [])[1]),
           owner,
           trainer,
@@ -542,7 +562,7 @@
       table.style.cssText = "width:100%;border-collapse:collapse;font-size:13px;min-width:260px";
       const head = document.createElement("thead");
       const headRow = document.createElement("tr");
-      ["No.", "Horse", "Age", "Review"].forEach(label => {
+      ["No.", "Draw", "Horse", "Age", "Review"].forEach(label => {
         const th = document.createElement("th");
         th.textContent = label;
         th.style.cssText = "text-align:left;padding:7px 5px;border-bottom:1px solid #c9ad70;color:#d7b46a";
@@ -560,6 +580,7 @@
         const matchingCandidates = coordinateByHorse.get(coordinateKey) || [];
         const structured = matchingCandidates.length ? matchingCandidates.shift() : null;
         if (structured && runner.number === null && structured.number !== null) runner.number = structured.number;
+        if (structured && runner.drawNumber == null && structured.drawNumber != null) runner.drawNumber = structured.drawNumber;
         const nextRunner = runnerStarts[runnerIndex + 1];
         const blockEnd = nextRunner ? nextRunner.nameIndex : section.length;
         const rawBlock = section.slice(runner.nameIndex, blockEnd).filter(line => {
@@ -568,7 +589,7 @@
         });
 
         structuredRace.runners.push({
-          horseName: runner.name, horseNumber: runner.number, horseAge: runner.age,
+          horseName: runner.name, horseNumber: runner.number, drawNumber: runner.drawNumber ?? null, horseAge: runner.age,
           owner: structured ? structured.owner : null,
           trainer: structured ? structured.trainer : null,
           jockey: structured ? structured.jockey : null,
@@ -584,6 +605,9 @@
         const no = document.createElement("td");
         no.textContent = runner.number === null ? "—" : String(runner.number);
         no.style.cssText = "padding:7px 5px;vertical-align:top";
+        const draw = document.createElement("td");
+        draw.textContent = runner.drawNumber == null ? "—" : String(runner.drawNumber);
+        draw.style.cssText = "padding:7px 5px;vertical-align:top";
         const horse = document.createElement("td");
         horse.textContent = runner.name;
         horse.style.cssText = "padding:7px 5px;font-weight:600;vertical-align:top";
@@ -625,7 +649,7 @@
         body.appendChild(rawDetails);
         details.appendChild(body);
         review.appendChild(details);
-        tr.append(no, horse, age, review);
+        tr.append(no, draw, horse, age, review);
         tbody.appendChild(tr);
       });
 
