@@ -1,6 +1,7 @@
 // RaceWise India — authenticated research queue endpoint
-// Phase 1: validates an admin request and prepares auditable research tasks.
-// This version does NOT scrape external sites, write to the database, or score runners.
+// Phase 1: validates an admin request, prepares auditable tasks, and discovers
+// relevant links from the public Bangalore Turf Club homepage only.
+// It does not open linked pages, verify racing evidence, write to the database, or score runners.
 // Deploy with Supabase Edge Functions; keep verify_jwt enabled.
 
 import { createClient } from "npm:@supabase/supabase-js@2";
