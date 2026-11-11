@@ -664,6 +664,10 @@
       backendStatus.textContent = "Waiting for an authenticated administrator request.";
       researchPanel.appendChild(backendStatus);
 
+      const sourceLinksPanel = document.createElement("div");
+      sourceLinksPanel.style.cssText = "font-size:13px;line-height:1.5;overflow-wrap:anywhere";
+      researchPanel.appendChild(sourceLinksPanel);
+
       researchButton.addEventListener("click", async function () {
         if (window.RACEWISE_ADMIN_VERIFIED !== true || !window.RACEWISE_SUPABASE_CLIENT) {
           backendStatus.textContent = "Please sign in and complete RaceWise administrator verification first.";
@@ -683,13 +687,36 @@
             throw new Error(data.error || "The research function returned an unexpected response.");
           }
           window.RACEWISE_RESEARCH_RESPONSE = data;
+          const btc = (data.sourceChecks || []).find(function (source) {
+            return source.sourceId === "official_club";
+          });
           backendStatus.textContent =
-            "BACKEND CONNECTION SUCCESSFUL\n" +
-            "Meeting validated: " + (data.meeting && data.meeting.centre ? data.meeting.centre : "Centre not specified") + "\n" +
-            "Race date: " + (data.meeting && data.meeting.raceDate ? data.meeting.raceDate : "Not specified") + "\n" +
-            "Runners accepted: " + data.runnerCount + "\n" +
-            "Research tasks prepared: " + data.taskCount + "\n\n" +
-            "Safeguards: no external sources fetched; no evidence verified; no database writes; no selections produced.";
+            "BACKEND CONNECTION SUCCESSFUL\\n" +
+            "Meeting validated: " + (data.meeting && data.meeting.centre ? data.meeting.centre : "Centre not specified") + "\\n" +
+            "Race date: " + (data.meeting && data.meeting.raceDate ? data.meeting.raceDate : "Not specified") + "\\n" +
+            "Runners accepted: " + data.runnerCount + "\\n" +
+            "Research tasks prepared: " + data.taskCount + "\\n\\n" +
+            "Official BTC homepage: " + (btc ? btc.status.replace(/_/g, " ") : "not checked") + "\\n" +
+            "Homepage link discovery only. Linked pages and horse/race evidence have not been fetched or verified.\\n" +
+            "No database writes; no selections produced.";
+          sourceLinksPanel.replaceChildren();
+          if (btc) {
+            addText(sourceLinksPanel, "p", "BTC source page: " + (btc.pageUrl || "Not available"));
+            if (btc.retrievedAt) addText(sourceLinksPanel, "p", "Retrieved at: " + btc.retrievedAt);
+            (btc.links || []).forEach(function (link) {
+              const row = document.createElement("p");
+              const anchor = document.createElement("a");
+              anchor.href = link.url;
+              anchor.textContent = link.label + " — " + link.url;
+              anchor.target = "_blank";
+              anchor.rel = "noopener noreferrer";
+              row.appendChild(anchor);
+              sourceLinksPanel.appendChild(row);
+            });
+            if (!btc.links || !btc.links.length) {
+              addText(sourceLinksPanel, "p", btc.note || "No relevant public links were discovered.");
+            }
+          }
           researchButton.textContent = "Research Queue Prepared";
         } catch (error) {
           backendStatus.textContent = "Backend request failed: " +
