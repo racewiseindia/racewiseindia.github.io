@@ -452,8 +452,15 @@
       card.style.cssText =
         "border:1px solid #c9ad70;padding:12px;margin:14px 0;border-radius:8px";
 
-      addText(card, "h3", race.title);
-      addText(card, "p", "Race number: " + race.number);
+      const titleRow = document.createElement("div");
+      titleRow.style.cssText =
+        "display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap";
+      const title = addText(titleRow, "h3", race.title);
+      title.style.margin = "0";
+      const raceLabel = addText(titleRow, "span", "RACE " + race.number);
+      raceLabel.style.cssText =
+        "color:#d7b46a;font-weight:700;white-space:nowrap;letter-spacing:1px";
+      card.appendChild(titleRow);
       addText(card, "p", "Distance: " + race.distance + " metres");
 
       // Prize money belongs to the race, not to individual runners.
