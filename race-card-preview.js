@@ -368,7 +368,17 @@
     const lines = buildLines(layoutPages);
     const raceHeaders = findRaceHeaders(lines);
     const coordinateRunners = findCoordinateRunnerCandidates(layoutPages);
-    let coordinateRunnerCursor = 0;
+    const normalizeHorseKey = (name, age) =>
+      String(name || "").toUpperCase().replace(/[^A-Z0-9]/g, "") +
+      "|" + String(age || "");
+    const coordinateByHorse = new Map();
+    coordinateRunners.forEach(candidate => {
+      const key = normalizeHorseKey(candidate.name, candidate.age);
+      if (!key.startsWith("|")) {
+        if (!coordinateByHorse.has(key)) coordinateByHorse.set(key, []);
+        coordinateByHorse.get(key).push(candidate);
+      }
+    });
 
     function addText(parent, tag, value) {
       const element = document.createElement(tag);
@@ -465,12 +475,9 @@
       );
 
       runnerStarts.forEach((runner, runnerIndex) => {
-        const coordinateCandidate = coordinateRunners[coordinateRunnerCursor++] || null;
-        const normalizeName = value => String(value || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
-        const coordinateMatches = coordinateCandidate &&
-          normalizeName(coordinateCandidate.name) === normalizeName(runner.name) &&
-          coordinateCandidate.age === runner.age;
-        const structured = coordinateMatches ? coordinateCandidate : null;
+        const coordinateKey = normalizeHorseKey(runner.name, runner.age);
+        const matchingCandidates = coordinateByHorse.get(coordinateKey) || [];
+        const structured = matchingCandidates.length ? matchingCandidates.shift() : null;
         if (structured && runner.number === null && structured.number !== null) {
           runner.number = structured.number;
         }
