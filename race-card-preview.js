@@ -535,84 +535,98 @@
         : "Not confidently detected";
       card.appendChild(conditions);
 
-      addText(
-        card,
-        "h4",
-        runnerStarts.length + " runner candidates detected from age/description rows"
-      );
+      addText(card, "h4", runnerStarts.length + " runners");
+      const tableWrap = document.createElement("div");
+      tableWrap.style.cssText = "overflow-x:auto;width:100%";
+      const table = document.createElement("table");
+      table.style.cssText = "width:100%;border-collapse:collapse;font-size:13px;min-width:260px";
+      const head = document.createElement("thead");
+      const headRow = document.createElement("tr");
+      ["No.", "Horse", "Age", "Review"].forEach(label => {
+        const th = document.createElement("th");
+        th.textContent = label;
+        th.style.cssText = "text-align:left;padding:7px 5px;border-bottom:1px solid #c9ad70;color:#d7b46a";
+        headRow.appendChild(th);
+      });
+      head.appendChild(headRow);
+      table.appendChild(head);
+      const tbody = document.createElement("tbody");
+      table.appendChild(tbody);
+      tableWrap.appendChild(table);
+      card.appendChild(tableWrap);
 
       runnerStarts.forEach((runner, runnerIndex) => {
         const coordinateKey = normalizeHorseKey(runner.name, runner.age);
         const matchingCandidates = coordinateByHorse.get(coordinateKey) || [];
         const structured = matchingCandidates.length ? matchingCandidates.shift() : null;
-        if (structured && runner.number === null && structured.number !== null) {
-          runner.number = structured.number;
-        }
+        if (structured && runner.number === null && structured.number !== null) runner.number = structured.number;
         const nextRunner = runnerStarts[runnerIndex + 1];
         const blockEnd = nextRunner ? nextRunner.nameIndex : section.length;
-        const rawBlock = section.slice(runner.nameIndex, blockEnd)
-          // Runner number is displayed beside the horse name only.
-          // Remove its standalone source-text occurrence even when PDF
-          // extraction adds separators or surrounding whitespace.
-          .filter(line => {
-            const value = cleanLine(line).replace(/[.|]/g, "").trim();
-            return !(runner.number !== null &&
-              /^\d{1,2}$/.test(value) &&
-              Number(value) === runner.number);
-          });
+        const rawBlock = section.slice(runner.nameIndex, blockEnd).filter(line => {
+          const value = cleanLine(line).replace(/[.|]/g, "").trim();
+          return !(runner.number !== null && /^\d{1,2}$/.test(value) && Number(value) === runner.number);
+        });
 
-        const item = document.createElement("div");
-        item.style.cssText =
-          "background:#f4f5f7;padding:10px;margin:9px 0;border-radius:6px";
-
-        addText(
-          item,
-          "strong",
-          runner.name + (runner.number === null ? "" : " (" + runner.number + ")")
-        );
-        addText(item, "p", "Age: " + runner.age + " years");
         structuredRace.runners.push({
-          horseName: runner.name,
-          horseNumber: runner.number,
-          horseAge: runner.age,
+          horseName: runner.name, horseNumber: runner.number, horseAge: runner.age,
           owner: structured ? structured.owner : null,
           trainer: structured ? structured.trainer : null,
           jockey: structured ? structured.jockey : null,
           allocatedWeightKg: structured && structured.weight ? Number(structured.weight) : null,
           officialRating: structured && structured.rating ? Number(structured.rating) : null,
           relativePerformance: structured && structured.relativePerformance ? Number(structured.relativePerformance) : null,
-          declaredStatus: "unverified",
-          raceWiseStudy: {},
-          evidence: [],
+          declaredStatus: "unverified", raceWiseStudy: {}, evidence: [],
           missingData: ["Historical form", "Verified timing", "Trackwork", "Pedigree and distance evidence", "Course/going suitability", "Jockey/trainer statistics", "Head-to-head", "Pace and draw evidence"]
         });
 
+        const tr = document.createElement("tr");
+        tr.style.borderBottom = "1px solid #e1e1e1";
+        const no = document.createElement("td");
+        no.textContent = runner.number === null ? "—" : String(runner.number);
+        no.style.cssText = "padding:7px 5px;vertical-align:top";
+        const horse = document.createElement("td");
+        horse.textContent = runner.name;
+        horse.style.cssText = "padding:7px 5px;font-weight:600;vertical-align:top";
+        const age = document.createElement("td");
+        age.textContent = String(runner.age);
+        age.style.cssText = "padding:7px 5px;vertical-align:top";
+        const review = document.createElement("td");
+        review.style.cssText = "padding:7px 5px;vertical-align:top";
+        const details = document.createElement("details");
+        const summary = document.createElement("summary");
+        summary.textContent = "Details";
+        summary.style.cssText = "cursor:pointer;color:#8a6b2f";
+        details.appendChild(summary);
+        const body = document.createElement("div");
+        body.style.cssText = "padding:6px 0;overflow-wrap:anywhere";
+        const status = document.createElement("p");
+        status.textContent = "Review required — extracted fields are not verified.";
+        body.appendChild(status);
         if (structured) {
-          addText(item, "p", "Owner candidate: " + (structured.owner || "Not confidently detected") + (structured.pageBoundary ? " — page continuation may be incomplete" : ""));
-          addText(item, "p", "Trainer candidate: " + (structured.trainer || "Not confidently detected"));
-          addText(item, "p", "Jockey candidate: " + (structured.jockey || "Not confidently detected"));
-          addText(item, "p", "Allocated weight candidate: " + (structured.weight || "Not confidently detected") + " kg");
-          addText(item, "p", "Official rating candidate: " + (structured.rating || "Not confidently detected"));
-          addText(item, "p", "Relative performance candidate: " + (structured.relativePerformance || "Not confidently detected"));
-          addText(item, "p", "Column candidates are extracted by the printed header positions and must be checked against the official card.");
+          [["Owner", structured.owner], ["Trainer", structured.trainer], ["Jockey", structured.jockey], ["Weight candidate (kg)", structured.weight], ["Rating candidate", structured.rating], ["Relative performance candidate", structured.relativePerformance]].forEach(([label, value]) => {
+            const p = document.createElement("p");
+            p.textContent = label + ": " + (value || "Not confidently detected");
+            body.appendChild(p);
+          });
         } else {
-          addText(item, "p", "Structured columns not confidently mapped. Manual verification required; no fields have been guessed.");
+          const p = document.createElement("p");
+          p.textContent = "Structured columns not confidently mapped.";
+          body.appendChild(p);
         }
-        addText(item, "p", "Original runner text:");
-
+        const rawDetails = document.createElement("details");
+        const rawSummary = document.createElement("summary");
+        rawSummary.textContent = "View original PDF text";
+        rawSummary.style.cssText = "cursor:pointer;color:#8a6b2f;margin:6px 0";
+        rawDetails.appendChild(rawSummary);
         const raw = document.createElement("pre");
-        raw.style.cssText =
-          "white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px";
-        raw.textContent = rawBlock
-          .map(line => String(line || "").replace(
-            /Last\s+5\s+runs\s*:/i,
-            "Last 5 finishing positions (source-card form sequence):"
-          ))
-          .join("\n");
-        item.appendChild(raw);
-
-        addText(item, "p", "Review required before structured entry.");
-        card.appendChild(item);
+        raw.style.cssText = "white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px";
+        raw.textContent = rawBlock.join("\n");
+        rawDetails.appendChild(raw);
+        body.appendChild(rawDetails);
+        details.appendChild(body);
+        review.appendChild(details);
+        tr.append(no, horse, age, review);
+        tbody.appendChild(tr);
       });
 
       structuredMeeting.races.push(structuredRace);
@@ -664,9 +678,16 @@
       backendStatus.textContent = "Waiting for an authenticated administrator request.";
       researchPanel.appendChild(backendStatus);
 
+      const sourceDetails = document.createElement("details");
+      sourceDetails.style.cssText = "margin:10px 0";
+      const sourceSummary = document.createElement("summary");
+      sourceSummary.textContent = "View source checks and runner-by-runner review";
+      sourceSummary.style.cssText = "cursor:pointer;color:#d7b46a;font-weight:700;padding:8px 0";
+      sourceDetails.appendChild(sourceSummary);
       const sourceLinksPanel = document.createElement("div");
       sourceLinksPanel.style.cssText = "font-size:13px;line-height:1.5;overflow-wrap:anywhere";
-      researchPanel.appendChild(sourceLinksPanel);
+      sourceDetails.appendChild(sourceLinksPanel);
+      researchPanel.appendChild(sourceDetails);
 
       researchButton.addEventListener("click", async function () {
         if (window.RACEWISE_ADMIN_VERIFIED !== true || !window.RACEWISE_SUPABASE_CLIENT) {
