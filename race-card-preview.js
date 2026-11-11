@@ -180,6 +180,179 @@
     return starts;
   }
 
+
+  function findCoordinateRunnerCandidates(layoutPages) {
+    const candidates = [];
+    let activeFile = null;
+    let columnMap = null;
+
+    function findHeaderMap(page) {
+      const items = page.items || [];
+      const horseHeader = items.find(item =>
+        /^Horse\/Pedigree$/i.test(String(item.text || "").trim())
+      );
+      if (!horseHeader) return null;
+
+      const headerRow = items.filter(item =>
+        Math.abs(item.y - horseHeader.y) <= 2.5
+      );
+
+      function xOf(label) {
+        const item = headerRow.find(entry =>
+          String(entry.text || "").trim().toLowerCase() === label.toLowerCase()
+        );
+        return item ? item.x : null;
+      }
+
+      const map = {
+        no: xOf("No"),
+        silk: xOf("Silk"),
+        horse: xOf("Horse/Pedigree"),
+        desc: xOf("Desc"),
+        owner: xOf("Owner(s)"),
+        trainer: xOf("Trainer"),
+        jockey: xOf("Jockey"),
+        wt: xOf("Wt"),
+        al: xOf("Al"),
+        rating: xOf("Rtg")
+      };
+
+      return Object.values(map).every(value => Number.isFinite(value))
+        ? map
+        : null;
+    }
+
+    layoutPages.forEach(page => {
+      const fileName = page.fileName || "";
+      if (fileName !== activeFile) {
+        activeFile = fileName;
+        columnMap = null;
+      }
+
+      columnMap = findHeaderMap(page) || columnMap;
+
+      const items = (page.items || []).filter(item =>
+        item && String(item.text || "").trim()
+      );
+
+      const descMin = columnMap ? columnMap.desc - 10 : 185;
+      const ownerMin = columnMap ? columnMap.owner - 10 : 230;
+
+      const ageItems = items
+        .filter(item =>
+          /^\d{1,2}y\b/i.test(String(item.text || "").trim()) &&
+          item.x >= descMin &&
+          item.x < ownerMin
+        )
+        .slice()
+        .sort((a, b) => b.y - a.y || a.x - b.x);
+
+      const titleYs = items
+        .filter(item =>
+          /^The\b/i.test(String(item.text || "").trim()) &&
+          item.x >= (columnMap ? columnMap.horse - 10 : 65) &&
+          item.x < descMin
+        )
+        .map(item => item.y);
+
+      ageItems.forEach((ageItem, index) => {
+        const nextAgeY = ageItems[index + 1]
+          ? ageItems[index + 1].y
+          : null;
+
+        const nextTitleY = titleYs
+          .filter(y => y < ageItem.y - 3)
+          .sort((a, b) => b - a)[0];
+
+        const boundaries = [nextAgeY, nextTitleY]
+          .filter(y => Number.isFinite(y) && y < ageItem.y - 3);
+
+        const nearestBoundary = boundaries.length
+          ? Math.max(...boundaries)
+          : null;
+
+        const lowerY = nearestBoundary === null
+          ? -Infinity
+          : nearestBoundary + 3;
+
+        const inRunnerBlock = item =>
+          item.y <= ageItem.y + 1 && item.y > lowerY;
+
+        const sortedText = (list) => list
+          .slice()
+          .sort((a, b) => b.y - a.y || a.x - b.x)
+          .map(item => String(item.text || "").trim())
+          .filter(Boolean)
+          .join(" ")
+          .replace(/\s+/g, " ")
+          .trim();
+
+        const name = sortedText(items.filter(item =>
+          item.x >= (columnMap ? columnMap.horse - 10 : 70) &&
+          item.x < descMin &&
+          item.y >= ageItem.y - 1 &&
+          item.y <= ageItem.y + 5
+        )).replace(/^[-–]\s*/, "").trim();
+
+        const numberItem = items.find(item =>
+          item.x >= 20 &&
+          item.x < 45 &&
+          Math.abs(item.y - ageItem.y) <= 3 &&
+          /^\d{1,2}$/.test(String(item.text || "").trim())
+        );
+
+        let owner = "";
+        let trainer = "";
+        let jockey = "";
+        let weight = "";
+        let rating = "";
+
+        if (columnMap) {
+          const columnText = (left, right) => sortedText(items.filter(item =>
+            item.x >= left &&
+            item.x < right &&
+            inRunnerBlock(item)
+          ));
+
+          owner = columnText(columnMap.owner - 10, columnMap.trainer - 8);
+          trainer = columnText(columnMap.trainer - 8, columnMap.jockey - 8);
+          jockey = columnText(columnMap.jockey - 8, columnMap.wt - 5);
+
+          const weightItem = items.find(item =>
+            item.x >= columnMap.wt - 5 &&
+            item.x < columnMap.al - 2 &&
+            Math.abs(item.y - ageItem.y) <= 3 &&
+            /^\d+(?:\.\d+)?$/.test(String(item.text || "").trim())
+          );
+
+          const ratingItem = items.find(item =>
+            item.x >= columnMap.rating - 1 &&
+            item.x < 600 &&
+            Math.abs(item.y - ageItem.y) <= 3 &&
+            /^\d{1,3}$/.test(String(item.text || "").trim())
+          );
+
+          weight = weightItem ? String(weightItem.text).trim() : "";
+          rating = ratingItem ? String(ratingItem.text).trim() : "";
+        }
+
+        candidates.push({
+          name,
+          number: numberItem ? Number(numberItem.text) : null,
+          age: Number((String(ageItem.text).match(/^(\d{1,2})/i) || [])[1]),
+          owner,
+          trainer,
+          jockey,
+          weight,
+          rating,
+          pageBoundary: nearestBoundary === null
+        });
+      });
+    });
+
+    return candidates;
+  }
+
   button.addEventListener("click", function () {
     const layoutPages = window.RACEWISE_PDF_LAYOUT || [];
 
@@ -194,6 +367,8 @@
 
     const lines = buildLines(layoutPages);
     const raceHeaders = findRaceHeaders(lines);
+    const coordinateRunners = findCoordinateRunnerCandidates(layoutPages);
+    let coordinateRunnerCursor = 0;
 
     function addText(parent, tag, value) {
       const element = document.createElement(tag);
@@ -290,6 +465,15 @@
       );
 
       runnerStarts.forEach((runner, runnerIndex) => {
+        const coordinateCandidate = coordinateRunners[coordinateRunnerCursor++] || null;
+        const normalizeName = value => String(value || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+        const coordinateMatches = coordinateCandidate &&
+          normalizeName(coordinateCandidate.name) === normalizeName(runner.name) &&
+          coordinateCandidate.age === runner.age;
+        const structured = coordinateMatches ? coordinateCandidate : null;
+        if (structured && runner.number === null && structured.number !== null) {
+          runner.number = structured.number;
+        }
         const nextRunner = runnerStarts[runnerIndex + 1];
         const blockEnd = nextRunner ? nextRunner.nameIndex : section.length;
         const rawBlock = section.slice(runner.nameIndex, blockEnd);
@@ -306,11 +490,16 @@
             (runner.number === null ? "Not confidently detected" : runner.number) +
             " | Age: " + runner.age + " years"
         );
-        addText(
-          item,
-          "p",
-          "Owner / trainer / jockey / weight / rating: Manual verification required. No shifted columns have been assigned."
-        );
+        if (structured) {
+          addText(item, "p", "Owner candidate: " + (structured.owner || "Not confidently detected") + (structured.pageBoundary ? " — page continuation may be incomplete" : ""));
+          addText(item, "p", "Trainer candidate: " + (structured.trainer || "Not confidently detected"));
+          addText(item, "p", "Jockey candidate: " + (structured.jockey || "Not confidently detected"));
+          addText(item, "p", "Allocated weight candidate: " + (structured.weight || "Not confidently detected") + " kg");
+          addText(item, "p", "Official rating candidate: " + (structured.rating || "Not confidently detected"));
+          addText(item, "p", "Column candidates are extracted by the printed header positions and must be checked against the official card.");
+        } else {
+          addText(item, "p", "Structured columns not confidently mapped. Manual verification required; no fields have been guessed.");
+        }
         addText(item, "p", "Original runner text:");
 
         const raw = document.createElement("pre");
