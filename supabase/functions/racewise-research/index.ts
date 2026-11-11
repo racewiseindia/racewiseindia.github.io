@@ -130,21 +130,35 @@ async function discoverBtcPublicLinks() {
 // Phase 2: retrieve the dated official BTC race-card page and perform a
 // conservative exact-name presence check. A name mention is not identity
 // verification and must not be treated as verified form, timing, or results.
-async function fetchBtcRaceCard(raceDate: string | undefined, horseNames: string[]) {
+async function fetchBtcRaceCard(
+  raceDate: string | undefined,
+  races: Array<{ raceNumber?: unknown; runners?: unknown }>,
+) {
+  const expected = races.flatMap((race) =>
+    (Array.isArray(race.runners) ? race.runners : []).map((runnerValue) => {
+      const runner = runnerValue as Record<string, unknown>;
+      return {
+        raceNumber: race.raceNumber ?? null,
+        horseName: String(runner.horseName ?? "").trim(),
+        horseNumber: runner.horseNumber ?? null,
+        horseAge: runner.horseAge ?? null,
+      };
+    })
+  ).filter((runner) => runner.horseName);
+
   if (!raceDate || !/^\d{4}-\d{2}-\d{2}$/.test(raceDate)) {
     return {
       sourceId: "official_club_racecard",
       status: "date_unavailable",
       pageUrl: null,
       retrievedAt: new Date().toISOString(),
-      matchedRunnerNames: [],
-      unmatchedRunnerCount: horseNames.length,
+      runnerChecks: [],
       evidenceVerified: false,
       note: "A valid meeting date is required to request the official BTC race card.",
     };
   }
 
-  const pageUrl = `https://www.bangaloreraces.com/racing/racecard?d=${encodeURIComponent(raceDate)}`;
+  const pageUrl = \`https://www.bangaloreraces.com/racing/racecard?d=\${encodeURIComponent(raceDate)}\`;
   const retrievedAt = new Date().toISOString();
   try {
     const response = await fetch(pageUrl, {
@@ -160,8 +174,7 @@ async function fetchBtcRaceCard(raceDate: string | undefined, horseNames: string
         pageUrl,
         httpStatus: response.status,
         retrievedAt,
-        matchedRunnerNames: [],
-        unmatchedRunnerCount: horseNames.length,
+        runnerChecks: [],
         evidenceVerified: false,
         note: "The dated official BTC race-card page did not return a successful response.",
       };
@@ -174,14 +187,13 @@ async function fetchBtcRaceCard(raceDate: string | undefined, horseNames: string
         status: "page_too_large",
         pageUrl,
         retrievedAt,
-        matchedRunnerNames: [],
-        unmatchedRunnerCount: horseNames.length,
+        runnerChecks: [],
         evidenceVerified: false,
         note: "Race-card page exceeded the 4 MB safety limit.",
       };
     }
 
-    const pageText = html
+    const decode = (value: string) => value
       .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
       .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
       .replace(/<[^>]+>/g, " ")
@@ -189,10 +201,11 @@ async function fetchBtcRaceCard(raceDate: string | undefined, horseNames: string
       .replace(/&amp;/gi, "&")
       .replace(/&quot;/gi, '"')
       .replace(/&#39;|&apos;/gi, "'")
+      .replace(/&#(\d+);/g, (_m, n) => String.fromCodePoint(Number(n)))
       .replace(/\s+/g, " ")
-      .toUpperCase();
+      .trim();
 
-    const normalize = (value: string) => value
+    const normalize = (value: string) => decode(value)
       .toUpperCase()
       .normalize("NFKD")
       .replace(/[\u0300-\u036f]/g, "")
@@ -200,15 +213,77 @@ async function fetchBtcRaceCard(raceDate: string | undefined, horseNames: string
       .trim()
       .replace(/\s+/g, " ");
 
-    const matchedRunnerNames = [...new Set(horseNames.filter((name) => {
-      const normalizedName = normalize(name);
-      return normalizedName.length >= 3 && pageText.includes(normalizedName);
-    }))];
-
     const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-    const pageTitle = titleMatch
-      ? titleMatch[1].replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim().slice(0, 180)
-      : null;
+    const pageTitle = titleMatch ? decode(titleMatch[1]).slice(0, 180) : null;
+
+    // Keep source rows intact. Do not infer jockey/trainer/weight/rating from
+    // an unknown column position; expose labelled candidates only.
+    const rows = [...html.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)].map((match) => {
+      const rowHtml = match[1];
+      const cells = [...rowHtml.matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)]
+        .map((cell) => decode(cell[1]))
+        .filter(Boolean);
+      return { text: decode(rowHtml), cells };
+    }).filter((row) => row.text);
+
+    const pageText = normalize(html);
+    const runnerChecks = expected.map((runner) => {
+      const target = normalize(runner.horseName);
+      const matchingRows = rows.filter((row) =>
+        normalize(row.text).split(" ").join(" ").includes(target)
+      );
+      const row = matchingRows.length === 1 ? matchingRows[0] : null;
+      const allMentions = target.length >= 3 && pageText.includes(target);
+      const rowText = row?.text ?? null;
+      const raceNumberCandidates = rowText
+        ? [...rowText.matchAll(/\b(?:race|r)\s*#?\s*(\d{1,2})\b/gi)].map((m) => Number(m[1]))
+        : [];
+      const numberCandidate = row?.cells
+        .map((cell) => cell.trim())
+        .find((cell) => /^\d{1,2}$/.test(cell) && Number(cell) >= 1 && Number(cell) <= 30);
+      const ageCandidate = row?.cells
+        .map((cell) => cell.match(/\b(?:age\s*[:\-]?\s*)?([2-9])\s*(?:years?|yrs?)?\b/i))
+        .find(Boolean)?.[1] ?? null;
+      const weightCandidate = row?.cells
+        .map((cell) => cell.match(/\b(\d{2}(?:\.\d+)?)\s*kg\b/i)?.[1])
+        .find(Boolean) ?? null;
+      const labelledRating = rowText?.match(/\b(?:official\s+)?rating\s*[:\-]\s*(\d{1,3})\b/i)?.[1] ?? null;
+      const labelledJockey = rowText?.match(/\bjockey\s*[:\-]\s*([^,;|]+?)(?=\s+(?:trainer|weight|rating)\s*[:\-]|[,;|]|$)/i)?.[1]?.trim() ?? null;
+      const labelledTrainer = rowText?.match(/\btrainer\s*[:\-]\s*([^,;|]+?)(?=\s+(?:jockey|weight|rating)\s*[:\-]|[,;|]|$)/i)?.[1]?.trim() ?? null;
+
+      return {
+        expectedRaceNumber: runner.raceNumber,
+        horseName: runner.horseName,
+        expectedHorseNumber: runner.horseNumber,
+        expectedAge: runner.horseAge,
+        pageMentionFound: allMentions,
+        uniqueRunnerRowFound: matchingRows.length === 1,
+        matchingRowCount: matchingRows.length,
+        sourceRowCells: row?.cells ?? [],
+        sourceRowText: rowText?.slice(0, 700) ?? null,
+        candidates: {
+          horseNumber: numberCandidate ?? null,
+          age: ageCandidate,
+          allocatedWeightKg: weightCandidate,
+          officialRating: labelledRating,
+          jockey: labelledJockey,
+          trainer: labelledTrainer,
+          raceNumber: raceNumberCandidates.length === 1 ? raceNumberCandidates[0] : null,
+        },
+        comparisons: {
+          horseNumber: runner.horseNumber != null && numberCandidate != null
+            ? (String(runner.horseNumber) === numberCandidate ? "match" : "conflict")
+            : "not_comparable",
+          age: runner.horseAge != null && ageCandidate != null
+            ? (String(runner.horseAge) === ageCandidate ? "match" : "conflict")
+            : "not_comparable",
+          raceNumber: runner.raceNumber != null && raceNumberCandidates.length === 1
+            ? (String(runner.raceNumber) === String(raceNumberCandidates[0]) ? "match" : "conflict")
+            : "not_comparable",
+        },
+        verification: "manual_review_required",
+      };
+    });
 
     return {
       sourceId: "official_club_racecard",
@@ -217,10 +292,12 @@ async function fetchBtcRaceCard(raceDate: string | undefined, horseNames: string
       httpStatus: response.status,
       pageTitle,
       retrievedAt,
-      matchedRunnerNames,
-      unmatchedRunnerCount: Math.max(0, new Set(horseNames).size - matchedRunnerNames.length),
+      expectedRunnerCount: expected.length,
+      pageMentionCount: runnerChecks.filter((check) => check.pageMentionFound).length,
+      uniqueRunnerRowCount: runnerChecks.filter((check) => check.uniqueRunnerRowFound).length,
+      runnerChecks,
       evidenceVerified: false,
-      note: "Official dated race-card page fetched. Exact-name presence is a preliminary match only; race number, horse identity, fields, and each fact still require structured verification.",
+      note: "BTC page rows are exposed for race-by-race review. Field candidates are extracted only when explicitly labelled or safely isolated; table column meanings and horse identity remain unverified until manual/structured validation.",
     };
   } catch (error) {
     return {
@@ -228,14 +305,12 @@ async function fetchBtcRaceCard(raceDate: string | undefined, horseNames: string
       status: "fetch_error",
       pageUrl,
       retrievedAt,
-      matchedRunnerNames: [],
-      unmatchedRunnerCount: horseNames.length,
+      runnerChecks: [],
       evidenceVerified: false,
       note: error instanceof Error ? error.message : "Race-card page fetch failed.",
     };
   }
 }
-
 function json(data: unknown, status: number, origin: string | null) {
   const headers = new Headers({ "Content-Type": "application/json; charset=utf-8" });
   if (origin && allowedOrigins.has(origin)) {
@@ -350,7 +425,7 @@ Deno.serve(async (req: Request) => {
   const btcRaceCardCheck = isBangalore
     ? await fetchBtcRaceCard(
         meeting.raceDate,
-        [...new Set(tasks.map((task) => String(task.horseName)))],
+        meeting.races as Array<{ raceNumber?: unknown; runners?: unknown }>,
       )
     : null;
 
@@ -378,7 +453,7 @@ Deno.serve(async (req: Request) => {
       onlyVerifiedEvidenceMayEnterScoring: true,
     },
     message: btcRaceCardCheck?.status === "fetched"
-      ? "Official BTC homepage and dated race-card page fetched. Exact-name presence checks are preliminary only; no horse identity or racing evidence has been verified."
+      ? "Official BTC homepage and dated race-card page fetched. Race-by-race source rows and preliminary field candidates are returned for review; no horse identity or racing evidence has been verified."
       : officialClubDiscovery.status === "fetched"
       ? "Official BTC homepage links discovered, but the dated race-card page was not successfully fetched. No racing evidence was verified."
       : "Research tasks prepared. The official BTC homepage connector did not return links; no racing evidence was verified.",
