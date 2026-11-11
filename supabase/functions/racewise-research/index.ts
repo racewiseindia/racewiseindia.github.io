@@ -462,8 +462,8 @@ Deno.serve(async (req: Request) => {
       const fixtureFound = dateVariants.some((variant) => plain.includes(variant.toLowerCase()));
       return {
         centre: "Hyderabad",
-        status: fixtureFound ? "fixture_listed" : "date_not_confirmed",
-        fixtureFound,
+        status: fixtureFound ? "fixture_listed" : "date_unresolved",
+        fixtureFound: fixtureFound ? true : null,
         raceCount: null,
         pageUrl,
         finalUrl: response.url,
@@ -472,7 +472,7 @@ Deno.serve(async (req: Request) => {
         evidenceVerified: false,
         note: fixtureFound
           ? "The official HRC calendar page contains this date. Race count and dated race-card details still require separate verification."
-          : "The official HRC calendar page was fetched, but this date was not found in its returned text. Client-rendered or inaccessible calendar data may remain unavailable.",
+          : "The official HRC page was fetched, but the date was not present in the returned static text. This is inconclusive: the calendar may be client-rendered or use a separate data feed. No no-fixture conclusion was made.",
       };
     } catch (error) {
       return {
