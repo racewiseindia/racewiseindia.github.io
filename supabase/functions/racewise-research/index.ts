@@ -376,14 +376,13 @@ Deno.serve(async (req: Request) => {
           pageUrl, retrievedAt, evidenceVerified: false };
       }
       const plain = html
-        .replace(/<script\\b[\\s\\S]*?<\\/script>/gi, " ")
-        .replace(/<style\\b[\\s\\S]*?<\\/style>/gi, " ")
+        .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+        .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
         .replace(/<[^>]+>/g, " ")
         .replace(/&nbsp;|&#160;/gi, " ")
         .replace(/&amp;/gi, "&")
-        .replace(/\\s+/g, " ");
-      const fixtureFound = new RegExp("(^|\\\\D)" + raceDate.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\  const meeting = payload?.meeting;
-") + "(\\\\D|$)").test(plain);
+        .replace(/\s+/g, " ");
+      const fixtureFound = plain.includes(raceDate);
       return {
         centre: "Bangalore",
         status: fixtureFound ? "fixture_listed" : "no_fixture_listed",
