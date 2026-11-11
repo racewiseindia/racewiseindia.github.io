@@ -635,6 +635,28 @@
       preview.appendChild(analysisPanel);
     }
 
+    // Prepare a transparent source-by-source research queue.
+    // This is a checklist only; no source has been fetched or verified yet.
+    if (window.RACEWISE_RESEARCH_QUEUE) {
+      const queue = window.RACEWISE_RESEARCH_QUEUE.build(structuredMeeting);
+      window.RACEWISE_RESEARCH_PLAN = queue;
+      const researchPanel = document.createElement("section");
+      researchPanel.style.cssText = "border:1px solid #c9ad70;padding:12px;margin:16px 0;border-radius:8px";
+      addText(researchPanel, "h3", "RACEWISE SOURCE RESEARCH QUEUE");
+      addText(researchPanel, "p",
+        queue.runnerCount + " runners mapped to " + queue.factors.length +
+        " study factors. " + queue.taskCount +
+        " source-check tasks prepared.");
+      addText(researchPanel, "p",
+        "Status: checklist prepared only. External source adapters are not connected yet, so no website has been marked checked and no evidence has been verified.");
+      queue.sourceCatalog.forEach(function (source) {
+        addText(researchPanel, "p", source.name + " — " + source.status.replace(/_/g, " "));
+      });
+      addText(researchPanel, "p",
+        "Next backend stage: connect permitted source access, retrieve only relevant evidence, retain source links and timestamps, resolve horse identity, and verify each record before scoring.");
+      preview.appendChild(researchPanel);
+    }
+
     addText(
       preview,
       "h3",
