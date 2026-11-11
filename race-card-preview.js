@@ -648,7 +648,55 @@
         " study factors. " + queue.taskCount +
         " source-check tasks prepared.");
       addText(researchPanel, "p",
-        "Status: checklist prepared only. External source adapters are not connected yet, so no website has been marked checked and no evidence has been verified.");
+        "Status: local checklist prepared. Use the secure backend action below to validate this meeting and prepare the server-side research task list. This does not fetch or verify external evidence.");
+
+      const researchButton = document.createElement("button");
+      researchButton.type = "button";
+      researchButton.textContent = "Send Meeting to Secure Research Backend";
+      researchButton.style.cssText = "background:#07172e;color:#d6ad55;border:1px solid #d6ad55;padding:11px 14px;border-radius:7px;font-weight:700;cursor:pointer;margin:8px 0";
+      researchPanel.appendChild(researchButton);
+
+      const backendStatus = document.createElement("p");
+      backendStatus.setAttribute("role", "status");
+      backendStatus.style.cssText = "white-space:pre-wrap;font-size:13px;line-height:1.5";
+      backendStatus.textContent = "Waiting for an authenticated administrator request.";
+      researchPanel.appendChild(backendStatus);
+
+      researchButton.addEventListener("click", async function () {
+        if (window.RACEWISE_ADMIN_VERIFIED !== true || !window.RACEWISE_SUPABASE_CLIENT) {
+          backendStatus.textContent = "Please sign in and complete RaceWise administrator verification first.";
+          return;
+        }
+        researchButton.disabled = true;
+        researchButton.textContent = "Preparing secure research queue…";
+        backendStatus.textContent = "Sending the extracted meeting to the authenticated Supabase function. No database records will be changed.";
+        try {
+          const result = await window.RACEWISE_SUPABASE_CLIENT.functions.invoke(
+            "racewise-research",
+            { body: { meeting: structuredMeeting } }
+          );
+          if (result.error) throw result.error;
+          const data = result.data || {};
+          if (data.ok !== true) {
+            throw new Error(data.error || "The research function returned an unexpected response.");
+          }
+          window.RACEWISE_RESEARCH_RESPONSE = data;
+          backendStatus.textContent =
+            "BACKEND CONNECTION SUCCESSFUL\n" +
+            "Meeting validated: " + (data.meeting && data.meeting.centre ? data.meeting.centre : "Centre not specified") + "\n" +
+            "Runners accepted: " + data.runnerCount + "\n" +
+            "Research tasks prepared: " + data.taskCount + "\n\n" +
+            "Safeguards: no external sources fetched; no evidence verified; no database writes; no selections produced.";
+          researchButton.textContent = "Research Queue Prepared";
+        } catch (error) {
+          backendStatus.textContent = "Backend request failed: " +
+            (error && error.message ? error.message : String(error)) +
+            "\nNo evidence has been verified and no selections have been produced.";
+          researchButton.disabled = false;
+          researchButton.textContent = "Retry Secure Research Request";
+        }
+      });
+
       queue.sourceCatalog.forEach(function (source) {
         addText(researchPanel, "p", source.name + " — " + source.status.replace(/_/g, " "));
       });
