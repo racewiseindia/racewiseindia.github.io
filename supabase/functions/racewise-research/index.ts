@@ -131,7 +131,7 @@ async function discoverBtcPublicLinks() {
 // conservative exact-name presence check. A name mention is not identity
 // verification and must not be treated as verified form, timing, or results.
 async function fetchBtcRaceCard(raceDate: string | undefined, horseNames: string[]) {
-  if (!raceDate || !/^\\d{4}-\\d{2}-\\d{2}$/.test(raceDate)) {
+  if (!raceDate || !/^\d{4}-\d{2}-\d{2}$/.test(raceDate)) {
     return {
       sourceId: "official_club_racecard",
       status: "date_unavailable",
@@ -182,31 +182,31 @@ async function fetchBtcRaceCard(raceDate: string | undefined, horseNames: string
     }
 
     const pageText = html
-      .replace(/<script\\b[\\s\\S]*?<\\/script>/gi, " ")
-      .replace(/<style\\b[\\s\\S]*?<\\/style>/gi, " ")
+      .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
       .replace(/<[^>]+>/g, " ")
       .replace(/&nbsp;|&#160;/gi, " ")
       .replace(/&amp;/gi, "&")
       .replace(/&quot;/gi, '"')
       .replace(/&#39;|&apos;/gi, "'")
-      .replace(/\\s+/g, " ")
+      .replace(/\s+/g, " ")
       .toUpperCase();
 
     const normalize = (value: string) => value
       .normalize("NFKD")
-      .replace(/[\\u0300-\\u036f]/g, "")
+      .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^A-Z0-9]+/g, " ")
       .trim()
-      .replace(/\\s+/g, " ");
+      .replace(/\s+/g, " ");
 
     const matchedRunnerNames = [...new Set(horseNames.filter((name) => {
       const normalizedName = normalize(name);
       return normalizedName.length >= 3 && pageText.includes(normalizedName);
     }))];
 
-    const titleMatch = html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);
+    const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
     const pageTitle = titleMatch
-      ? titleMatch[1].replace(/<[^>]*>/g, "").replace(/\\s+/g, " ").trim().slice(0, 180)
+      ? titleMatch[1].replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim().slice(0, 180)
       : null;
 
     return {
