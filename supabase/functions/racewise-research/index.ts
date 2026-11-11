@@ -403,6 +403,91 @@ Deno.serve(async (req: Request) => {
     }
   }
 
+  // Hyderabad Race Club official calendar connector. The club's current
+  // public site exposes /calendar, but access may be restricted or client-rendered.
+  // Only an explicit date match in returned page text can mark a fixture listed.
+  async function discoverHyderabadMeetingFixture(raceDate: string) {
+    const pageUrl = "https://www.hydraces.com/calendar";
+    const retrievedAt = new Date().toISOString();
+    const [year, month, day] = raceDate.split("-").map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    const monthLong = date.toLocaleString("en-GB", { month: "long", timeZone: "UTC" });
+    const monthShort = date.toLocaleString("en-GB", { month: "short", timeZone: "UTC" });
+    const dayPadded = String(day).padStart(2, "0");
+    const dateVariants = [
+      raceDate,
+      `${day} ${monthLong} ${year}`,
+      `${dayPadded} ${monthLong} ${year}`,
+      `${monthLong} ${day}, ${year}`,
+      `${monthShort} ${day}, ${year}`,
+      `${dayPadded}/${String(month).padStart(2, "0")}/${year}`,
+    ];
+    try {
+      const response = await fetch(pageUrl, {
+        method: "GET",
+        redirect: "follow",
+        headers: { "Accept": "text/html" },
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (!response.ok) {
+        return {
+          centre: "Hyderabad",
+          status: response.status === 403 ? "source_restricted" : "source_error",
+          fixtureFound: null,
+          raceCount: null,
+          pageUrl,
+          finalUrl: response.url,
+          httpStatus: response.status,
+          retrievedAt,
+          evidenceVerified: false,
+          note: response.status === 403
+            ? "The official HRC calendar denied automated access (HTTP 403). No fixture conclusion was made."
+            : "The official HRC calendar did not return a successful response. No fixture conclusion was made.",
+        };
+      }
+      const html = await response.text();
+      if (html.length > 2_000_000) {
+        return { centre: "Hyderabad", status: "page_too_large", fixtureFound: null,
+          raceCount: null, pageUrl, retrievedAt, evidenceVerified: false,
+          note: "Official HRC calendar exceeded the 2 MB safety limit." };
+      }
+      const plain = html
+        .replace(/<script\\b[\\s\\S]*?<\\/script>/gi, " ")
+        .replace(/<style\\b[\\s\\S]*?<\\/style>/gi, " ")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/&nbsp;|&#160;/gi, " ")
+        .replace(/&amp;/gi, "&")
+        .replace(/\\s+/g, " ")
+        .toLowerCase();
+      const fixtureFound = dateVariants.some((variant) => plain.includes(variant.toLowerCase()));
+      return {
+        centre: "Hyderabad",
+        status: fixtureFound ? "fixture_listed" : "date_not_confirmed",
+        fixtureFound,
+        raceCount: null,
+        pageUrl,
+        finalUrl: response.url,
+        httpStatus: response.status,
+        retrievedAt,
+        evidenceVerified: false,
+        note: fixtureFound
+          ? "The official HRC calendar page contains this date. Race count and dated race-card details still require separate verification."
+          : "The official HRC calendar page was fetched, but this date was not found in its returned text. Client-rendered or inaccessible calendar data may remain unavailable.",
+      };
+    } catch (error) {
+      return {
+        centre: "Hyderabad",
+        status: "fetch_error",
+        fixtureFound: null,
+        raceCount: null,
+        pageUrl,
+        retrievedAt,
+        evidenceVerified: false,
+        note: error instanceof Error ? error.message : "Official HRC calendar lookup failed.",
+      };
+    }
+  }
+
   const meeting = payload?.meeting;
 
   if (payload?.action === "discover_meetings") {
@@ -418,6 +503,9 @@ Deno.serve(async (req: Request) => {
       const normalized = centre.toLowerCase();
       if (normalized === "bangalore" || normalized === "bengaluru") {
         return await discoverBtcMeetingFixture(raceDate);
+      }
+      if (normalized === "hyderabad") {
+        return await discoverHyderabadMeetingFixture(raceDate);
       }
       return {
         centre,
