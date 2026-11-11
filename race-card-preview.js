@@ -306,26 +306,28 @@
         // The first printed field may contain horse number and draw together,
         // for example "3(2)". Keep these as separate values; never infer a
         // draw from the horse number when the PDF does not print one.
-        const numberColumnItems = items.filter(item =>
-          item.x >= 20 &&
-          item.x < 60 &&
-          Math.abs(item.y - ageItem.y) <= 3
-        ).sort((a, b) => a.x - b.x);
-        const numberColumnText = numberColumnItems
-          .map(item => String(item.text || "").trim())
-          .join(" ")
-          .replace(/\s+/g, " ")
-          .trim();
-        const numberAndDraw = numberColumnText.match(
-          /^(\d{1,2})\s*\(\s*(\d{1,2})\s*\)/
-        );
         const numberItem = items.find(item =>
           item.x >= 20 &&
-          item.x < 45 &&
+          item.x < 60 &&
           Math.abs(item.y - ageItem.y) <= 3 &&
           /^\d{1,2}$/.test(String(item.text || "").trim())
         );
-        const drawNumber = numberAndDraw ? Number(numberAndDraw[2]) : null;
+        // IndiaRace prints the draw in parentheses on a separate line below
+        // the horse number, e.g. horse 1 followed by "(1)". Search only inside
+        // this runner's vertical block and number column, not the race header.
+        const drawItem = items
+          .filter(item =>
+            item.x >= 20 &&
+            item.x < 60 &&
+            item.y < ageItem.y - 2 &&
+            item.y > lowerY &&
+            /^\(\s*\d{1,2}\s*\)$/.test(String(item.text || "").trim())
+          )
+          .sort((a, b) => b.y - a.y)[0];
+        const drawMatch = drawItem
+          ? String(drawItem.text || "").match(/\(\s*(\d{1,2})\s*\)/)
+          : null;
+        const drawNumber = drawMatch ? Number(drawMatch[1]) : null;
 
         let owner = "";
         let trainer = "";
@@ -391,9 +393,7 @@
 
         candidates.push({
           name,
-          number: numberAndDraw
-            ? Number(numberAndDraw[1])
-            : (numberItem ? Number(numberItem.text) : null),
+          number: numberItem ? Number(numberItem.text) : null,
           drawNumber,
           age: Number((String(ageItem.text).match(/^(\d{1,2})/i) || [])[1]),
           owner,
