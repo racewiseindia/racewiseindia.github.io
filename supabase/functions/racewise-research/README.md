@@ -1,0 +1,48 @@
+# RaceWise research Edge Function
+
+## Current phase
+
+This is an authenticated **research-queue preparation** endpoint only. It validates the signed-in RaceWise administrator, accepts a meeting/runner payload, and returns auditable tasks mapped to the RaceWise study factors.
+
+It deliberately does **not**:
+- fetch or scrape external websites;
+- mark source records checked or verified;
+- write to Supabase tables;
+- calculate runner scores or publish selections.
+
+Those capabilities must be added as separate, permitted source adapters and tested against source terms, identity matching, and evidence provenance. Keep Supabase Edge Function JWT verification enabled.
+
+## Deploy
+
+The function source is maintained in this GitHub repository at:
+
+`supabase/functions/racewise-research/index.ts`
+
+A manual GitHub Actions workflow is provided at `.github/workflows/deploy-racewise-research.yml`. Before using it, add a GitHub Actions repository secret named `SUPABASE_ACCESS_TOKEN` containing a Supabase personal access token. Never commit this token, a service-role key, or a database password.
+
+Then run the workflow from GitHub Actions using **Run workflow**. It deploys only this function to project `ldnmfaykekhigavqgwmf`. The workflow does not change database schema or table data.
+
+Supabase supplies `SUPABASE_URL` and the project's public API key to Edge Functions. The function uses the caller's bearer token and the existing `is_racewise_admin` RPC to verify administrator access. Do not add a service-role key for this phase.
+
+## Request shape
+
+POST JSON:
+
+```json
+{
+  "meeting": {
+    "centre": "Bangalore",
+    "raceDate": "2026-11-08",
+    "races": [
+      {
+        "raceNumber": 1,
+        "runners": [
+          { "horseName": "Example Runner", "horseNumber": 1 }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Call it only with a signed-in administrator's Supabase access token. A successful response explicitly reports that external sources were not fetched, evidence was not verified, no database writes occurred, and no selections were produced.
