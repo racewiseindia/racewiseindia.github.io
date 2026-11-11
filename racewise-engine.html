@@ -1539,7 +1539,7 @@ if (analyseHistoryBtn) {
         const sessionResult = await client.auth.getSession();
         const token = sessionResult.data && sessionResult.data.session && sessionResult.data.session.access_token;
         if (!token) throw new Error("Your admin session has expired. Please sign in again.");
-        const endpoint = window.RACEWISE_SUPABASE_CONFIG.url.replace(/\\/$/, "") + "/functions/v1/racewise-research";
+        const endpoint = window.RACEWISE_SUPABASE_CONFIG.url.replace(/\/$/, "") + "/functions/v1/racewise-research";
         const response = await fetch(endpoint, {
           method: "POST",
           headers: {
@@ -1561,7 +1561,7 @@ if (analyseHistoryBtn) {
           lines.push("");
         });
         lines.push("No horse evidence verified. No selections generated.");
-        output.textContent = lines.join("\\n");
+        output.textContent = lines.join("\n");
       } catch (error) {
         output.textContent = "Discovery could not be completed: " + (error && error.message ? error.message : String(error));
       } finally {
