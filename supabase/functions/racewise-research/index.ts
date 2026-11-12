@@ -511,16 +511,16 @@ Deno.serve(async (req: Request) => {
       }
 
       const headings: string[] = [];
-      for (const match of html.matchAll(/<h[1-6]\\b[^>]*>([\\s\\S]*?)<\\/h[1-6]>/gi)) {
+      for (const match of html.matchAll(/<h[1-6]\b[^>]*>([\s\\S]*?)<\/h[1-6]>/gi)) {
         const heading = strip(match[1]);
         if (heading) headings.push(heading);
       }
-      const tables = [...html.matchAll(/<table\\b[^>]*>([\\s\\S]*?)<\\/table>/gi)];
+      const tables = [...html.matchAll(/<table\b[^>]*>([\s\\S]*?)<\/table>/gi)];
       const tableRows: Array<{ cells: string[]; rowText: string; tableIndex: number; rowIndex: number }> = [];
       tables.forEach((tableMatch, tableIndex) => {
         let rowIndex = 0;
-        for (const rowMatch of tableMatch[1].matchAll(/<tr\\b[^>]*>([\\s\\S]*?)<\\/tr>/gi)) {
-          const cells = [...rowMatch[1].matchAll(/<t[dh]\\b[^>]*>([\\s\\S]*?)<\\/t[dh]>/gi)]
+        for (const rowMatch of tableMatch[1].matchAll(/<tr\b[^>]*>([\s\\S]*?)<\/tr>/gi)) {
+          const cells = [...rowMatch[1].matchAll(/<t[dh]\b[^>]*>([\s\\S]*?)<\/t[dh]>/gi)]
             .map((cell) => strip(cell[1])).filter(Boolean);
           if (cells.length) {
             tableRows.push({ cells, rowText: cells.join(" | "), tableIndex, rowIndex });
@@ -531,7 +531,7 @@ Deno.serve(async (req: Request) => {
       const runnerRows = tableRows.filter((row) =>
         row.cells.length >= 2 && row.cells.some((cell) => /[A-Z]{3}/i.test(cell))
       );
-      const raceHeadingPattern = /(?:race\\s*)?(?:no\\.?\\s*)?([1-7])\\s*[.):-]/i;
+      const raceHeadingPattern = /(?:race\s*)?(?:no\\.?\s*)?([1-7])\s*[.):-]/i;
       const raceSections = headings
         .map((heading) => ({ heading, match: heading.match(raceHeadingPattern) }))
         .filter((item) => item.match)
@@ -563,7 +563,6 @@ Deno.serve(async (req: Request) => {
           ? "seven_race_headings_detected_field_mapping_pending"
           : "source_fetched_race_structure_requires_review",
         note: "Official RWITC pre-race handicaps endpoint fetched. Race headings and table rows are retained with table/row positions. Horse identity, race association, draw, weight and rating remain unverified until exact row layout and column labels are validated. Terms-race entries and missing values remain distinct; no selections are produced.",
-      };
       };
     } catch (error) {
       return { sourceId: "rwitc_official_handicaps", status: "fetch_error",
