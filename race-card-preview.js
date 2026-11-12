@@ -678,7 +678,7 @@
     // Prepare a transparent source-by-source research queue.
     // This is a checklist only; no source has been fetched or verified yet.
     if (window.RACEWISE_RESEARCH_QUEUE) {
-      const queue = window.RACEWISE_RESEARCH_QUEUE.build(structuredMeeting);
+      const queue = window.RACEWISE_RESEARCH_QUEUE.build(structuredMeeting, window.RACEWISE_SOURCE_REGISTRY || null);
       window.RACEWISE_RESEARCH_PLAN = queue;
       const researchPanel = document.createElement("section");
       researchPanel.style.cssText = "border:1px solid #c9ad70;padding:12px;margin:16px 0;border-radius:8px";
@@ -688,7 +688,7 @@
         " study factors. " + queue.taskCount +
         " source-check tasks prepared.");
       addText(researchPanel, "p",
-        "Status: local checklist prepared. Use the secure backend action below to validate this meeting and prepare the server-side research task list. This does not fetch or verify external evidence.");
+        "Status: source-by-source research tasks prepared from the registered source map when available. The checklist itself does not fetch or verify external evidence; each source adapter must return record-level evidence before scoring.");
 
       const researchButton = document.createElement("button");
       researchButton.type = "button";
