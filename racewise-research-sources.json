@@ -324,6 +324,20 @@
       "access": "public pages; verify terms, permissions, access limits and permitted automated reuse before collection",
       "automation": "adapter_required",
       "priority": 2
+    },
+    {
+      "id": "race_replays",
+      "name": "Official club race replays and video records",
+      "url": "https://www.bangaloreraces.com/Home/Racing",
+      "type": "primary_racing_media",
+      "useFor": [
+        "race_replays",
+        "pace_and_running_style_review",
+        "documented_race_incidents_where_visible"
+      ],
+      "access": "public video or authorised replay access; respect platform terms and do not infer unseen incidents",
+      "automation": "adapter_required",
+      "priority": 1
     }
   ],
   "factorMapping": {
