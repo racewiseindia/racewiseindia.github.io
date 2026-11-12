@@ -673,7 +673,7 @@ Deno.serve(async (req: Request) => {
   if (payload?.action === "fetch_rwItc_handicaps") {
     const raceDate = String((payload as any).raceDate ?? "");
     const centre = String((payload as any).centre ?? "Pune").trim().toLowerCase();
-    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(raceDate) || centre !== "pune") {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(raceDate) || centre !== "pune") {
       return json({ error: "Provide a valid raceDate (YYYY-MM-DD) and centre: Pune." }, 400, origin);
     }
     const sourceCheck = await fetchRwItcHandicaps(raceDate);
