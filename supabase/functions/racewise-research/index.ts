@@ -593,6 +593,13 @@ Deno.serve(async (req: Request) => {
         note: "The dated official RWITC pre-race handicaps archive was fetched successfully. This confirms a dated meeting handicap publication; race count, final declarations and runner identity still require separate validation."
       };
     }
+    const handicapDiagnostic = {
+      status: handicapArchive.status,
+      sourceUrl: handicapArchive.pageUrl ?? null,
+      httpStatus: handicapArchive.httpStatus ?? null,
+      pageTitle: handicapArchive.pageTitle ?? null,
+      note: handicapArchive.note ?? "No additional source diagnostic was returned."
+    };
     const pageUrl = "https://www.rwitc.com/calendar.php";
     const retrievedAt = new Date().toISOString();
     const [year, month, day] = raceDate.split("-").map(Number);
@@ -655,11 +662,12 @@ Deno.serve(async (req: Request) => {
         retrievedAt,
         evidenceVerified: false,
         sourceMethod: "official_rwItc_racing_fixtures_page_html_check",
+        handicapArchiveDiagnostic: handicapDiagnostic,
         note: matchedDate
-          ? "The requested date appears on the official RWITC Racing Fixtures page. Race count, dated race card and runners still require separate verification."
+          ? "The requested date appears on the official RWITC Racing Fixtures page. Race count, dated race card and runners still require separate verification. Dated handicaps API diagnostic: " + handicapDiagnostic.status + " — " + handicapDiagnostic.note
           : hasCalendarContent
-          ? "The official RWITC Racing Fixtures page was retrieved, but its fetched HTML did not expose this date. The calendar may load dynamically; fixture status remains unresolved, not a confirmed no-fixture result."
-          : "The official RWITC page did not expose readable fixture-calendar content in the fetched HTML. Fixture status remains unresolved.",
+          ? "The official RWITC Racing Fixtures page was retrieved, but its fetched HTML did not expose this date. The calendar may load dynamically; fixture status remains unresolved, not a confirmed no-fixture result. Dated handicaps API diagnostic: " + handicapDiagnostic.status + " — " + handicapDiagnostic.note
+          : "The official RWITC page did not expose readable fixture-calendar content in the fetched HTML. Fixture status remains unresolved. Dated handicaps API diagnostic: " + handicapDiagnostic.status + " — " + handicapDiagnostic.note,
       };
     } catch (error) {
       return {
