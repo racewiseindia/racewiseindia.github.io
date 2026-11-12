@@ -192,14 +192,20 @@
     ],
     "jockeyPerformance": [
       "btc_official",
+      "race_club_authorities",
+      "rwitc_official",
       "licensed_data_providers"
     ],
     "trainerPerformance": [
       "btc_official",
+      "race_club_authorities",
+      "rwitc_official",
       "licensed_data_providers"
     ],
     "jockeyTrainerCombination": [
       "btc_official",
+      "race_club_authorities",
+      "rwitc_official",
       "licensed_data_providers"
     ],
     "headToHead": [
@@ -222,6 +228,19 @@
       "btc_official",
       "race_club_authorities",
       "rwitc_official"
+    ],
+    "raceIncidents": [
+      "btc_official",
+      "race_club_authorities",
+      "rwitc_official",
+      "indiarace",
+      "licensed_data_providers"
+    ],
+    "officialRatingMovement": [
+      "btc_official",
+      "race_club_authorities",
+      "rwitc_official",
+      "indiarace"
     ]
   },
   "requiredPipeline": [
