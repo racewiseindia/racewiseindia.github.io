@@ -482,7 +482,10 @@ Deno.serve(async (req: Request) => {
           pageUrl, httpStatus: response.status, retrievedAt, evidenceVerified: false,
           races: [], runnerRows: [], note: "RWITC handicap archive could not be retrieved." };
       }
+      const contentType = response.headers.get("content-type") ?? "unknown";
+      const contentDisposition = response.headers.get("content-disposition") ?? null;
       const html = await response.text();
+      const responseSignature = html.slice(0, 100).replace(/[^\\x20-\\x7E]/g, ".").replace(/\\s+/g, " ").trim();
       if (html.length > 4_000_000) {
         return { sourceId: "rwitc_official_handicaps", status: "page_too_large",
           pageUrl, retrievedAt, evidenceVerified: false, races: [], runnerRows: [],
@@ -505,9 +508,10 @@ Deno.serve(async (req: Request) => {
           /404|page not found/i.test(titleMatch ? strip(titleMatch[1]) : "")) {
         return { sourceId: "rwitc_official_handicaps", status: "content_unrecognised",
           pageUrl: response.url, requestedUrl: pageUrl, retrievedAt,
+          httpStatus: response.status, contentType, contentDisposition, responseSignature,
           pageTitle: titleMatch ? strip(titleMatch[1]) : null,
           evidenceVerified: false, races: [], runnerRows: [],
-          note: "The response did not match a recognisable official RWITC handicaps page; no race or runner data was accepted." };
+          note: "The response did not match a recognisable official RWITC handicaps page; no race or runner data was accepted. Response type: " + contentType + ". Signature: " + (responseSignature || "[empty]") };
       }
 
       const headings: string[] = [];
@@ -597,6 +601,9 @@ Deno.serve(async (req: Request) => {
       status: handicapArchive.status,
       sourceUrl: handicapArchive.pageUrl ?? null,
       httpStatus: handicapArchive.httpStatus ?? null,
+      contentType: handicapArchive.contentType ?? null,
+      contentDisposition: handicapArchive.contentDisposition ?? null,
+      responseSignature: handicapArchive.responseSignature ?? null,
       pageTitle: handicapArchive.pageTitle ?? null,
       note: handicapArchive.note ?? "No additional source diagnostic was returned."
     };
