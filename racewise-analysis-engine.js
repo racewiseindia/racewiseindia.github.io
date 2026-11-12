@@ -18,12 +18,12 @@
   "use strict";
 
   const FACTORS = Object.freeze([
-    { key: "recentForm", label: "Recent form", weight: 17 },
-    { key: "speedAndTiming", label: "Speed and timing", weight: 14 },
-    { key: "trackwork", label: "Trackwork", weight: 8 },
-    { key: "classAndOpposition", label: "Class and opposition", weight: 10 },
-    { key: "distanceAndStamina", label: "Distance and stamina", weight: 12 },
-    { key: "pedigree", label: "Pedigree", weight: 8 },
+    { key: "recentForm", label: "Recent form", weight: 16 },
+    { key: "speedAndTiming", label: "Speed and timing", weight: 13 },
+    { key: "trackwork", label: "Trackwork", weight: 7 },
+    { key: "classAndOpposition", label: "Class and opposition", weight: 9 },
+    { key: "distanceAndStamina", label: "Distance and stamina", weight: 11 },
+    { key: "pedigree", label: "Pedigree", weight: 7 },
     { key: "courseSuitability", label: "Course suitability", weight: 6 },
     { key: "goingSuitability", label: "Going suitability", weight: 5 },
     { key: "jockeyPerformance", label: "Jockey statistics (recent, season, course, distance, class and going)", weight: 5 },
