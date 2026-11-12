@@ -458,6 +458,87 @@ Deno.serve(async (req: Request) => {
     };
   }
 
+  // RWITC official Racing Fixtures page adapter for Pune.
+  // The page may render its calendar client-side; absence of a date in the
+  // fetched HTML is therefore unresolved, never treated as proof of no fixture.
+  async function discoverPuneMeetingFixture(raceDate: string) {
+    const pageUrl = "https://www.rwitc.com/calendar.php";
+    const retrievedAt = new Date().toISOString();
+    const [year, month, day] = raceDate.split("-").map(Number);
+    const monthName = new Date(Date.UTC(year, month - 1, day))
+      .toLocaleString("en-GB", { month: "long", timeZone: "UTC" });
+    const monthShort = monthName.slice(0, 3);
+    const ordinal = day % 10 === 1 && day % 100 !== 11 ? "st"
+      : day % 10 === 2 && day % 100 !== 12 ? "nd"
+      : day % 10 === 3 && day % 100 !== 13 ? "rd" : "th";
+    try {
+      const response = await fetch(pageUrl, {
+        method: "GET",
+        redirect: "follow",
+        headers: { "Accept": "text/html" },
+        signal: AbortSignal.timeout(8_000),
+      });
+      if (!response.ok) {
+        return {
+          centre: "Pune", status: "source_error", fixtureFound: null,
+          raceCount: null, pageUrl, httpStatus: response.status, retrievedAt,
+          evidenceVerified: false,
+          note: "The official RWITC Racing Fixtures page could not be retrieved. Fixture status remains unresolved.",
+        };
+      }
+      const html = await response.text();
+      if (html.length > 2_000_000) {
+        return {
+          centre: "Pune", status: "page_too_large", fixtureFound: null,
+          raceCount: null, pageUrl, retrievedAt, evidenceVerified: false,
+          note: "The official RWITC calendar response exceeded the safe parsing limit. Fixture status remains unresolved.",
+        };
+      }
+      const plain = html
+        .replace(/<script\\b[\\s\\S]*?<\\/script>/gi, " ")
+        .replace(/<style\\b[\\s\\S]*?<\\/style>/gi, " ")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/&nbsp;|&#160;/gi, " ")
+        .replace(/&amp;/gi, "&")
+        .replace(/\\s+/g, " ")
+        .toLowerCase();
+      const dateForms = [
+        `${day}/${String(month).padStart(2, "0")}/${year}`,
+        `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}`,
+        `${day}/${String(month).padStart(2, "0")}`,
+        `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}`,
+        `${day} ${monthName} ${year}`,
+        `${day}${ordinal} ${monthName} ${year}`,
+        `${monthName} ${day}, ${year}`,
+        `${day} ${monthShort} ${year}`,
+      ].map((value) => value.toLowerCase());
+      const matchedDate = dateForms.some((value) => plain.includes(value));
+      const hasCalendarContent = /racing fixtures|race calendar|fixtures/i.test(plain);
+      return {
+        centre: "Pune",
+        status: matchedDate ? "fixture_listed_official" : "date_unresolved",
+        fixtureFound: matchedDate ? true : null,
+        raceCount: null,
+        raceCardStatus: matchedDate ? "not_yet_parsed" : "not_checked",
+        pageUrl,
+        retrievedAt,
+        evidenceVerified: false,
+        sourceMethod: "official_rwItc_racing_fixtures_page_html_check",
+        note: matchedDate
+          ? "The requested date appears on the official RWITC Racing Fixtures page. Race count, dated race card and runners still require separate verification."
+          : hasCalendarContent
+          ? "The official RWITC Racing Fixtures page was retrieved, but its fetched HTML did not expose this date. The calendar may load dynamically; fixture status remains unresolved, not a confirmed no-fixture result."
+          : "The official RWITC page did not expose readable fixture-calendar content in the fetched HTML. Fixture status remains unresolved.",
+      };
+    } catch (error) {
+      return {
+        centre: "Pune", status: "fetch_error", fixtureFound: null,
+        raceCount: null, pageUrl, retrievedAt, evidenceVerified: false,
+        note: error instanceof Error ? error.message : "RWITC fixture lookup failed. Fixture status remains unresolved.",
+      };
+    }
+  }
+
   const meeting = payload?.meeting;
 
   if (payload?.action === "discover_meetings") {
@@ -476,6 +557,9 @@ Deno.serve(async (req: Request) => {
       }
       if (normalized === "hyderabad") {
         return await discoverHyderabadMeetingFixture(raceDate);
+      }
+      if (normalized === "pune") {
+        return await discoverPuneMeetingFixture(raceDate);
       }
       return {
         centre,
