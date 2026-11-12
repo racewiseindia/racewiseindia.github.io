@@ -463,7 +463,12 @@ Deno.serve(async (req: Request) => {
   // RWITC official pre-race handicaps archive adapter.
   // Uses the club's dated archive route; raw source rows are retained for review.
   async function fetchRwItcHandicaps(raceDate: string) {
-    const pageUrl = `https://www.rwitc.com/new/erp_handcaps.php?date=${encodeURIComponent(raceDate)}`;
+    const endpoint = new URL("https://www.rwitc.com/rwitc_website_api/erp_handcaps_get_api.php");
+    endpoint.searchParams.set("date", raceDate);
+    endpoint.searchParams.set("type", "handicaps");
+    endpoint.searchParams.set("race_type", "pre_race");
+    endpoint.searchParams.set("download", "1");
+    const pageUrl = endpoint.toString();
     const retrievedAt = new Date().toISOString();
     try {
       const response = await fetch(pageUrl, {
@@ -506,20 +511,37 @@ Deno.serve(async (req: Request) => {
       }
 
       const headings: string[] = [];
-      for (const match of html.matchAll(/<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/gi)) {
+      for (const match of html.matchAll(/<h[1-6]\\b[^>]*>([\\s\\S]*?)<\\/h[1-6]>/gi)) {
         const heading = strip(match[1]);
         if (heading) headings.push(heading);
       }
-      const tableRows: Array<{ cells: string[]; rowText: string }> = [];
-      for (const rowMatch of html.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)) {
-        const cells = [...rowMatch[1].matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)]
-          .map((cell) => strip(cell[1])).filter(Boolean);
-        if (cells.length) tableRows.push({ cells, rowText: cells.join(" | ") });
-      }
+      const tables = [...html.matchAll(/<table\\b[^>]*>([\\s\\S]*?)<\\/table>/gi)];
+      const tableRows: Array<{ cells: string[]; rowText: string; tableIndex: number; rowIndex: number }> = [];
+      tables.forEach((tableMatch, tableIndex) => {
+        let rowIndex = 0;
+        for (const rowMatch of tableMatch[1].matchAll(/<tr\\b[^>]*>([\\s\\S]*?)<\\/tr>/gi)) {
+          const cells = [...rowMatch[1].matchAll(/<t[dh]\\b[^>]*>([\\s\\S]*?)<\\/t[dh]>/gi)]
+            .map((cell) => strip(cell[1])).filter(Boolean);
+          if (cells.length) {
+            tableRows.push({ cells, rowText: cells.join(" | "), tableIndex, rowIndex });
+            rowIndex++;
+          }
+        }
+      });
       const runnerRows = tableRows.filter((row) =>
-        row.cells.length >= 5 && row.cells.some((cell) => /[A-Z]{3}/i.test(cell)) &&
-        row.cells.some((cell) => /\d/.test(cell))
+        row.cells.length >= 2 && row.cells.some((cell) => /[A-Z]{3}/i.test(cell))
       );
+      const raceHeadingPattern = /(?:race\\s*)?(?:no\\.?\\s*)?([1-7])\\s*[.):-]/i;
+      const raceSections = headings
+        .map((heading) => ({ heading, match: heading.match(raceHeadingPattern) }))
+        .filter((item) => item.match)
+        .map((item) => ({ raceNumber: Number(item.match![1]), heading: item.heading }));
+      const responseHost = new URL(response.url).hostname.toLowerCase();
+      if (responseHost !== "www.rwitc.com" && responseHost !== "rwitc.com") {
+        return { sourceId: "rwitc_official_handicaps", status: "untrusted_redirect",
+          pageUrl: response.url, requestedUrl: pageUrl, retrievedAt, evidenceVerified: false,
+          races: [], runnerRows: [], note: "RWITC endpoint redirected outside the official RWITC domain; response rejected." };
+      }
       return {
         sourceId: "rwitc_official_handicaps",
         status: "fetched",
@@ -529,13 +551,19 @@ Deno.serve(async (req: Request) => {
         retrievedAt,
         pageTitle: titleMatch ? strip(titleMatch[1]) : null,
         pageHeadings: headings,
+        raceSections,
+        raceSectionCount: raceSections.length,
+        tableCount: tables.length,
         tableRowCount: tableRows.length,
         candidateRunnerRowCount: runnerRows.length,
         runnerRows,
         pageText: pageText.slice(0, 120_000),
         evidenceVerified: false,
-        verification: "source_fetched_structured_rows_pending_field_mapping",
-        note: "Official RWITC handicap archive fetched. Table rows and page text are retained as source evidence for field mapping; rows are not yet identity-verified or eligible for scoring. Handicap weights/ratings and terms-race entries must remain distinct.",
+        verification: raceSections.length === 7
+          ? "seven_race_headings_detected_field_mapping_pending"
+          : "source_fetched_race_structure_requires_review",
+        note: "Official RWITC pre-race handicaps endpoint fetched. Race headings and table rows are retained with table/row positions. Horse identity, race association, draw, weight and rating remain unverified until exact row layout and column labels are validated. Terms-race entries and missing values remain distinct; no selections are produced.",
+      };
       };
     } catch (error) {
       return { sourceId: "rwitc_official_handicaps", status: "fetch_error",
