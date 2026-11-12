@@ -485,12 +485,12 @@ Deno.serve(async (req: Request) => {
         .replace(/&nbsp;|&#160;/gi, " ").replace(/&amp;/gi, "&")
         .replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'")
         .replace(/&lt;/gi, "<").replace(/&gt;/gi, ">")
-        .replace(/&#(\\d+);/g, (_m, n) => String.fromCodePoint(Number(n)))
-        .replace(/&#x([\\da-f]+);/gi, (_m, n) => String.fromCodePoint(parseInt(n, 16)));
-      const strip = (value: string) => decode(value.replace(/<script\\b[\\s\\S]*?<\\/script>/gi, " ")
-        .replace(/<style\\b[\\s\\S]*?<\\/style>/gi, " ")
-        .replace(/<[^>]+>/g, " ").replace(/\\s+/g, " ").trim());
-      const titleMatch = html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);
+        .replace(/&#(\d+);/g, (_m, n) => String.fromCodePoint(Number(n)))
+        .replace(/&#x([\da-f]+);/gi, (_m, n) => String.fromCodePoint(parseInt(n, 16)));
+      const strip = (value: string) => decode(value.replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+        .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+        .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
+      const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
       const pageText = strip(html);
       const looksLikeHandicaps = /handicaps/i.test(pageText) &&
         /royal western india turf club|rwitc/i.test(pageText);
@@ -504,19 +504,19 @@ Deno.serve(async (req: Request) => {
       }
 
       const headings: string[] = [];
-      for (const match of html.matchAll(/<h[1-6]\\b[^>]*>([\\s\\S]*?)<\\/h[1-6]>/gi)) {
+      for (const match of html.matchAll(/<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/gi)) {
         const heading = strip(match[1]);
         if (heading) headings.push(heading);
       }
       const tableRows: Array<{ cells: string[]; rowText: string }> = [];
-      for (const rowMatch of html.matchAll(/<tr\\b[^>]*>([\\s\\S]*?)<\\/tr>/gi)) {
-        const cells = [...rowMatch[1].matchAll(/<t[dh]\\b[^>]*>([\\s\\S]*?)<\\/t[dh]>/gi)]
+      for (const rowMatch of html.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)) {
+        const cells = [...rowMatch[1].matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)]
           .map((cell) => strip(cell[1])).filter(Boolean);
         if (cells.length) tableRows.push({ cells, rowText: cells.join(" | ") });
       }
       const runnerRows = tableRows.filter((row) =>
         row.cells.length >= 5 && row.cells.some((cell) => /[A-Z]{3}/i.test(cell)) &&
-        row.cells.some((cell) => /\\d/.test(cell))
+        row.cells.some((cell) => /\d/.test(cell))
       );
       return {
         sourceId: "rwitc_official_handicaps",
