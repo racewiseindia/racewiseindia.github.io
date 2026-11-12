@@ -24,6 +24,8 @@ const FACTOR_SOURCES: Record<string, string[]> = {
   jockeyPerformance: ["official_club", "licensed_provider"],
   trainerPerformance: ["official_club", "licensed_provider"],
   jockeyTrainerCombination: ["official_club", "licensed_provider"],
+  raceIncidents: ["official_club", "indiarace", "licensed_provider"],
+  officialRatingMovement: ["official_club", "indiarace"],
   headToHead: ["official_club", "indiarace", "licensed_provider"],
   paceAndRunningStyle: ["official_club", "licensed_provider"],
   drawAssessment: ["official_club", "licensed_provider"],
