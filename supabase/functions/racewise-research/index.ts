@@ -495,12 +495,12 @@ Deno.serve(async (req: Request) => {
         };
       }
       const plain = html
-        .replace(/<script\\b[\\s\\S]*?<\\/script>/gi, " ")
-        .replace(/<style\\b[\\s\\S]*?<\\/style>/gi, " ")
+        .replace(/<script\b[\s\\S]*?<\/script>/gi, " ")
+        .replace(/<style\b[\s\\S]*?<\/style>/gi, " ")
         .replace(/<[^>]+>/g, " ")
         .replace(/&nbsp;|&#160;/gi, " ")
         .replace(/&amp;/gi, "&")
-        .replace(/\\s+/g, " ")
+        .replace(/\s+/g, " ")
         .toLowerCase();
       const dateForms = [
         `${day}/${String(month).padStart(2, "0")}/${year}`,
