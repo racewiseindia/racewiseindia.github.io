@@ -41,7 +41,7 @@
     handicapAssessment: ["official_club"]
   };
 
-  function build(meeting) {
+  function build(meeting, registry) {
     if (!meeting || !Array.isArray(meeting.races)) {
       return { valid: false, error: "No extracted meeting is available." };
     }
@@ -50,7 +50,10 @@
     meeting.races.forEach(function (race) {
       (race.runners || []).forEach(function (runner) {
         FACTORS.forEach(function (factor) {
-          (FACTOR_SOURCES[factor] || []).forEach(function (sourceId) {
+          const registrySources = registry && registry.factorMapping && registry.factorMapping[factor];
+          const sourcesForFactor = Array.isArray(registrySources) && registrySources.length
+            ? registrySources : (FACTOR_SOURCES[factor] || []);
+          sourcesForFactor.forEach(function (sourceId) {
             tasks.push({
               raceNumber: race.raceNumber,
               horseName: runner.horseName || null,
@@ -76,7 +79,11 @@
         return n + (race.runners || []).length;
       }, 0),
       taskCount: tasks.length,
-      sourceCatalog: SOURCE_CATALOG,
+      registeredSourceCount: registry && Array.isArray(registry.sources) ? registry.sources.length : SOURCE_CATALOG.length,
+      sourceMode: registry ? "all_registered_factor_sources" : "fallback_source_list",
+      sourceCatalog: registry && Array.isArray(registry.sources)
+        ? registry.sources.map(function (source) { return { id: source.id, name: source.name, type: source.type, status: source.automation || "adapter_required" }; })
+        : SOURCE_CATALOG,
       factors: FACTORS,
       tasks: tasks,
       policy: {
