@@ -42,6 +42,7 @@
   };
 
   function build(meeting, registry) {
+    registry = registry || window.RACEWISE_SOURCE_REGISTRY || null;
     if (!meeting || !Array.isArray(meeting.races)) {
       return { valid: false, error: "No extracted meeting is available." };
     }
