@@ -70,6 +70,34 @@
       "priority": 1
     },
     {
+      "id": "rwitc_official",
+      "name": "Royal Western India Turf Club official website",
+      "url": "https://www.rwitc.com/",
+      "datedEndpoints": {
+        "handicaps": "https://www.rwitc.com/new/erp_handcaps.php?date={YYYY-MM-DD}",
+        "userProvidedHandicapsRoute": "https://www.rwitc.com/race_details?type=handicaps&date={YYYY-MM-DD}"
+      },
+      "type": "primary_racing_authority",
+      "centres": [
+        "Pune",
+        "Mumbai"
+      ],
+      "useFor": [
+        "fixtures",
+        "handicaps",
+        "acceptances",
+        "declarations",
+        "racecards",
+        "results",
+        "trackwork",
+        "ratings",
+        "horse_performance_profiles"
+      ],
+      "access": "public_pages; automate only where permitted; respect club terms and rate limits",
+      "automation": "dated_handicaps_adapter_added; other_endpoints_pending",
+      "priority": 1
+    },
+    {
       "id": "licensed_data_providers",
       "name": "Licensed racing data providers",
       "url": null,
@@ -132,7 +160,8 @@
     "trackwork": [
       "btc_official",
       "indiarace",
-      "race_club_authorities"
+      "race_club_authorities",
+      "rwitc_official"
     ],
     "classAndOpposition": [
       "btc_official",
@@ -152,12 +181,14 @@
     "courseSuitability": [
       "btc_official",
       "race_club_authorities",
-      "indiarace"
+      "indiarace",
+      "rwitc_official"
     ],
     "goingSuitability": [
       "race_club_authorities",
       "weather_observations",
-      "licensed_data_providers"
+      "licensed_data_providers",
+      "rwitc_official"
     ],
     "jockeyPerformance": [
       "btc_official",
@@ -184,11 +215,13 @@
     "drawAssessment": [
       "btc_official",
       "race_club_authorities",
-      "licensed_data_providers"
+      "licensed_data_providers",
+      "rwitc_official"
     ],
     "handicapAssessment": [
       "btc_official",
-      "race_club_authorities"
+      "race_club_authorities",
+      "rwitc_official"
     ]
   },
   "requiredPipeline": [
