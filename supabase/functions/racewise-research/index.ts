@@ -495,8 +495,8 @@ Deno.serve(async (req: Request) => {
         };
       }
       const plain = html
-        .replace(/<script\b[\s\\S]*?<\/script>/gi, " ")
-        .replace(/<style\b[\s\\S]*?<\/style>/gi, " ")
+        .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+        .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
         .replace(/<[^>]+>/g, " ")
         .replace(/&nbsp;|&#160;/gi, " ")
         .replace(/&amp;/gi, "&")
