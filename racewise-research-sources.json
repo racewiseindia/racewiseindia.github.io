@@ -10,7 +10,20 @@
     "unverifiedValues": "quarantined_not_scored",
     "identityMatching": "officialHorseId_preferred; otherwise exact_name_plus_pedigree_and_context; ambiguous_matches_require_review",
     "neverInferIndividualHorseTimeFromRaceTime": true,
-    "noSelectionsUntilEvidenceThresholdMet": true
+    "noSelectionsUntilEvidenceThresholdMet": true,
+    "crossSourceVerification": true,
+    "authorityByFactType": {
+      "fixtures": "official_racing_club",
+      "declarations_and_withdrawals": "official_racing_club",
+      "handicaps_and_official_ratings": "official_racing_club",
+      "results_and_stewards_incidents": "official_racing_club",
+      "trackwork": "official_club_when_published_then_independent_publisher_cross_check",
+      "jockey_trainer_statistics": "source_with_complete_defined_sample_and_verified_runner_or_person_identity",
+      "pedigree": "authorised_studbook_or_verified_pedigree_record",
+      "weather": "authoritative_observation_provider"
+    },
+    "conflicts": "retain_each_source_record; compare timestamps and authority; flag disagreement; never silently choose or merge",
+    "sourceHealth": "test each registered source independently for reachability, relevant page discovery, date coverage, data availability, freshness and access permission; unavailable is not evidence of no record"
   },
   "sources": [
     {
@@ -45,9 +58,12 @@
         "past_performance",
         "results",
         "pedigree_display",
-        "trackwork_where_published"
+        "trackwork_where_published",
+        "pedigree",
+        "jockey_statistics_where_published",
+        "trainer_statistics_where_published"
       ],
-      "access": "public pages; verify terms and permitted reuse before automated collection",
+      "access": "public pages; verify terms, permissions, access limits and permitted automated reuse before collection",
       "automation": "adapter_required",
       "priority": 2
     },
@@ -144,6 +160,170 @@
       "access": "public_or_licensed_access_to_be_confirmed",
       "automation": "adapter_required",
       "priority": 3
+    },
+    {
+      "id": "hyderabad_race_club",
+      "name": "Hyderabad Race Club",
+      "url": "https://www.hydraces.com/",
+      "type": "primary_racing_authority",
+      "useFor": [
+        "fixtures",
+        "racecards",
+        "declarations",
+        "handicaps",
+        "ratings",
+        "results",
+        "trackwork",
+        "incidents",
+        "jockey_statistics",
+        "trainer_statistics"
+      ],
+      "access": "public pages; verify terms, permissions, access limits and permitted automated reuse before collection",
+      "automation": "adapter_required",
+      "priority": 1
+    },
+    {
+      "id": "bangalore_turf_club",
+      "name": "Bangalore Turf Club",
+      "url": "https://bangaloreraces.com/",
+      "type": "primary_racing_authority",
+      "useFor": [
+        "fixtures",
+        "racecards",
+        "declarations",
+        "handicaps",
+        "ratings",
+        "results",
+        "trackwork",
+        "incidents",
+        "jockey_statistics",
+        "trainer_statistics"
+      ],
+      "access": "public pages; verify terms, permissions, access limits and permitted automated reuse before collection",
+      "automation": "adapter_required",
+      "priority": 1
+    },
+    {
+      "id": "royal_calcutta_turf_club",
+      "name": "Royal Calcutta Turf Club",
+      "url": "https://www.rctconline.com/",
+      "type": "primary_racing_authority",
+      "useFor": [
+        "fixtures",
+        "racecards",
+        "declarations",
+        "handicaps",
+        "ratings",
+        "results",
+        "trackwork",
+        "incidents",
+        "jockey_statistics",
+        "trainer_statistics"
+      ],
+      "access": "public pages; verify terms, permissions, access limits and permitted automated reuse before collection",
+      "automation": "adapter_required",
+      "priority": 1
+    },
+    {
+      "id": "madras_race_club",
+      "name": "Madras Race Club",
+      "url": "https://madrasraceclub.com/",
+      "type": "primary_racing_authority",
+      "useFor": [
+        "fixtures",
+        "racecards",
+        "declarations",
+        "handicaps",
+        "ratings",
+        "results",
+        "trackwork",
+        "incidents",
+        "jockey_statistics",
+        "trainer_statistics"
+      ],
+      "access": "public pages; verify terms, permissions, access limits and permitted automated reuse before collection",
+      "automation": "adapter_required",
+      "priority": 1
+    },
+    {
+      "id": "mysore_race_club",
+      "name": "Mysore Race Club",
+      "url": "https://mysoreraceclub.com/",
+      "type": "primary_racing_authority",
+      "useFor": [
+        "fixtures",
+        "racecards",
+        "declarations",
+        "handicaps",
+        "ratings",
+        "results",
+        "trackwork",
+        "incidents",
+        "jockey_statistics",
+        "trainer_statistics"
+      ],
+      "access": "public pages; verify terms, permissions, access limits and permitted automated reuse before collection",
+      "automation": "adapter_required",
+      "priority": 1
+    },
+    {
+      "id": "bolrace",
+      "name": "BOL Race",
+      "url": "https://www.bolrace.com/",
+      "type": "racing_information_publisher",
+      "useFor": [
+        "racecards_where_published",
+        "runner_details",
+        "past_performance_where_published",
+        "results_where_published"
+      ],
+      "access": "public pages; verify terms, permissions, access limits and permitted automated reuse before collection",
+      "automation": "adapter_required",
+      "priority": 2
+    },
+    {
+      "id": "original_vel_racing",
+      "name": "Original Vel Racing",
+      "url": "https://originalvelracing.com/",
+      "type": "racing_information_publisher",
+      "useFor": [
+        "racecards_where_published",
+        "runner_details",
+        "past_performance_where_published",
+        "results_where_published"
+      ],
+      "access": "public pages; verify terms, permissions, access limits and permitted automated reuse before collection",
+      "automation": "adapter_required",
+      "priority": 2
+    },
+    {
+      "id": "racing_pulse",
+      "name": "Racing Pulse",
+      "url": "https://www.racingpulse.in/",
+      "type": "racing_information_publisher",
+      "useFor": [
+        "racecards_where_published",
+        "runner_details",
+        "past_performance_where_published",
+        "results_where_published"
+      ],
+      "access": "public pages; verify terms, permissions, access limits and permitted automated reuse before collection",
+      "automation": "adapter_required",
+      "priority": 2
+    },
+    {
+      "id": "telegraph_horse_racing",
+      "name": "The Telegraph horse racing",
+      "url": "https://www.telegraphindia.com/sports/horse-racing/",
+      "type": "media_publisher",
+      "useFor": [
+        "race_reports",
+        "race_incidents_where_reported",
+        "results_where_reported"
+      ],
+      "access": "public pages; verify terms, permissions, access limits and permitted automated reuse before collection",
+      "automation": "adapter_required",
+      "priority": 2
     }
   ],
   "factorMapping": {
@@ -244,18 +424,20 @@
     ]
   },
   "requiredPipeline": [
-    "parse_and_validate_race_card",
-    "resolve_runner_identity",
-    "discover_sources_for_each_runner_and_race",
+    "validate_registered_source_health_and_permissions",
+    "discover_relevant_pages_and_feeds_from_every_registered_source",
     "fetch_only_permitted_public_or_authorised_records",
-    "normalise_units_names_dates_centres_and_distances",
-    "deduplicate_and_reconcile_conflicts",
-    "retain_source_provenance_and_retrieval_timestamp",
-    "derive_only_supported_metrics",
+    "parse_race_card_and_reconcile_meeting_race_and_runner_identity",
+    "collect_trackwork_ratings_incidents_jockey_trainer_and_all_other_factor_records",
+    "cross_verify_each_record_across_independent_sources",
+    "rank_source_authority_by_fact_type_and_record_freshness",
+    "normalise_deduplicate_and_flag_conflicts_without_silent_overwrite",
+    "retain_source_provenance_retrieval_timestamp_and_raw_record_reference",
+    "derive_only_supported_metrics_and_statistics_with_sample_sizes",
     "calculate_factor_coverage_and_uncertainty",
-    "rank_only_when_threshold_met",
-    "publish_first_second_choice_and_explanation",
+    "rank_only_when_evidence_threshold_met",
+    "publish_best_supported_selections_with_reason_and_source_links",
     "retain_pre_race_snapshot_for_later_audit"
   ],
-  "status": "registry_only_backend_connectors_not_yet_implemented"
+  "status": "source_registry_expanded; cross_source_verification_policy_defined; live_connectors_and_verification_pipeline_pending"
 }
