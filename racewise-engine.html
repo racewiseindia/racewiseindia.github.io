@@ -249,6 +249,12 @@ footer strong { color:var(--gold); }
     <div id="meetingDiscoveryOutput" class="status" role="status" aria-live="polite" style="margin-top:12px;">Select a date and centres, then start discovery. This does not yet fetch race cards or perform horse research.</div>
   </section>
 
+  <section class="panel" id="sourceVerificationPanel">
+    <h2>Source Network & Cross-Verification</h2>
+    <p class="note">RaceWise loads the complete registered Racing Resources list and uses each factor's source mapping when preparing horse-by-horse research. A registered link is not treated as a working data connector or verified evidence.</p>
+    <div id="sourceVerificationStatus" class="status" role="status" aria-live="polite">Loading registered source network…</div>
+  </section>
+
   <section class="panel">
     <h2>01 — Upload Race Card</h2>
     <p class="note">
@@ -1724,6 +1730,25 @@ if (analyseHistoryBtn) {
   });
 })();
 </script>
+  <script src="racewise-source-verifier.js?v=20261112a"></script>
+  <script>
+  (function () {
+    const output = document.getElementById("sourceVerificationStatus");
+    fetch("racewise-research-sources.json?v=20261112a", {cache:"no-store"})
+      .then(function (response) { if (!response.ok) throw new Error("Source registry HTTP " + response.status); return response.json(); })
+      .then(function (registry) {
+        window.RACEWISE_SOURCE_REGISTRY = registry;
+        const sources = Array.isArray(registry.sources) ? registry.sources : [];
+        const active = sources.filter(function (s) { return String(s.automation || "").includes("adapter") && !String(s.automation).includes("not_connected"); }).length;
+        output.textContent = "REGISTERED SOURCES: " + sources.length +
+          "\\nFACTOR MAPPINGS: " + Object.keys(registry.factorMapping || {}).length +
+          "\\nSOURCE VERIFIER: " + (window.RACEWISE_SOURCE_VERIFIER ? "LOADED" : "NOT LOADED") +
+          "\\nCONNECTOR STATUS: " + active + " source entries have adapter notes; this is not proof of live connectivity." +
+          "\\nResearch queue will use the registered source mappings. Live retrieval, permission checks and record-level verification remain separate steps.";
+      })
+      .catch(function (error) { output.textContent = "Source registry could not be loaded: " + error.message + ". The queue will use its fallback source list."; });
+  })();
+  </script>
   <script src="racewise-research-queue.js?v=20261111a"></script>
   <script src="race-card-preview.js?v=20261111n"></script>
 </body>
