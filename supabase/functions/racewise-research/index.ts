@@ -546,6 +546,24 @@ Deno.serve(async (req: Request) => {
   // The page may render its calendar client-side; absence of a date in the
   // fetched HTML is therefore unresolved, never treated as proof of no fixture.
   async function discoverPuneMeetingFixture(raceDate: string) {
+    // Prefer the dated official handicaps archive already linked in RaceWise Resources.
+    // A successful dated pre-race archive is direct evidence of a Pune meeting date.
+    const handicapArchive = await fetchRwItcHandicaps(raceDate);
+    if (handicapArchive.status === "fetched") {
+      return {
+        centre: "Pune",
+        status: "fixture_listed_official_handicaps",
+        fixtureFound: true,
+        raceCount: null,
+        raceCardStatus: "handicaps_fetched_race_card_pending",
+        pageUrl: handicapArchive.pageUrl,
+        retrievedAt: handicapArchive.retrievedAt,
+        sourceMethod: "official_rwItc_dated_pre_race_handicaps_archive",
+        handicapArchive,
+        evidenceVerified: false,
+        note: "The dated official RWITC pre-race handicaps archive was fetched successfully. This confirms a dated meeting handicap publication; race count, final declarations and runner identity still require separate validation."
+      };
+    }
     const pageUrl = "https://www.rwitc.com/calendar.php";
     const retrievedAt = new Date().toISOString();
     const [year, month, day] = raceDate.split("-").map(Number);
