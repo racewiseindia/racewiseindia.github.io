@@ -458,6 +458,90 @@ Deno.serve(async (req: Request) => {
     };
   }
 
+  // RWITC official pre-race handicaps archive adapter.
+  // Uses the club's dated archive route; raw source rows are retained for review.
+  async function fetchRwItcHandicaps(raceDate: string) {
+    const pageUrl = `https://www.rwitc.com/new/erp_handcaps.php?date=${encodeURIComponent(raceDate)}`;
+    const retrievedAt = new Date().toISOString();
+    try {
+      const response = await fetch(pageUrl, {
+        method: "GET",
+        redirect: "follow",
+        headers: { "Accept": "text/html" },
+        signal: AbortSignal.timeout(12_000),
+      });
+      if (!response.ok) {
+        return { sourceId: "rwitc_official_handicaps", status: "source_error",
+          pageUrl, httpStatus: response.status, retrievedAt, evidenceVerified: false,
+          races: [], runnerRows: [], note: "RWITC handicap archive could not be retrieved." };
+      }
+      const html = await response.text();
+      if (html.length > 4_000_000) {
+        return { sourceId: "rwitc_official_handicaps", status: "page_too_large",
+          pageUrl, retrievedAt, evidenceVerified: false, races: [], runnerRows: [],
+          note: "RWITC handicap archive exceeded the safe parsing limit." };
+      }
+      const decode = (value: string) => value
+        .replace(/&nbsp;|&#160;/gi, " ").replace(/&amp;/gi, "&")
+        .replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'")
+        .replace(/&lt;/gi, "<").replace(/&gt;/gi, ">")
+        .replace(/&#(\\d+);/g, (_m, n) => String.fromCodePoint(Number(n)))
+        .replace(/&#x([\\da-f]+);/gi, (_m, n) => String.fromCodePoint(parseInt(n, 16)));
+      const strip = (value: string) => decode(value.replace(/<script\\b[\\s\\S]*?<\\/script>/gi, " ")
+        .replace(/<style\\b[\\s\\S]*?<\\/style>/gi, " ")
+        .replace(/<[^>]+>/g, " ").replace(/\\s+/g, " ").trim());
+      const titleMatch = html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);
+      const pageText = strip(html);
+      const looksLikeHandicaps = /handicaps/i.test(pageText) &&
+        /royal western india turf club|rwitc/i.test(pageText);
+      if (!response.url.includes("rwitc.com") || !looksLikeHandicaps ||
+          /404|page not found/i.test(titleMatch ? strip(titleMatch[1]) : "")) {
+        return { sourceId: "rwitc_official_handicaps", status: "content_unrecognised",
+          pageUrl: response.url, requestedUrl: pageUrl, retrievedAt,
+          pageTitle: titleMatch ? strip(titleMatch[1]) : null,
+          evidenceVerified: false, races: [], runnerRows: [],
+          note: "The response did not match a recognisable official RWITC handicaps page; no race or runner data was accepted." };
+      }
+
+      const headings: string[] = [];
+      for (const match of html.matchAll(/<h[1-6]\\b[^>]*>([\\s\\S]*?)<\\/h[1-6]>/gi)) {
+        const heading = strip(match[1]);
+        if (heading) headings.push(heading);
+      }
+      const tableRows: Array<{ cells: string[]; rowText: string }> = [];
+      for (const rowMatch of html.matchAll(/<tr\\b[^>]*>([\\s\\S]*?)<\\/tr>/gi)) {
+        const cells = [...rowMatch[1].matchAll(/<t[dh]\\b[^>]*>([\\s\\S]*?)<\\/t[dh]>/gi)]
+          .map((cell) => strip(cell[1])).filter(Boolean);
+        if (cells.length) tableRows.push({ cells, rowText: cells.join(" | ") });
+      }
+      const runnerRows = tableRows.filter((row) =>
+        row.cells.length >= 5 && row.cells.some((cell) => /[A-Z]{3}/i.test(cell)) &&
+        row.cells.some((cell) => /\\d/.test(cell))
+      );
+      return {
+        sourceId: "rwitc_official_handicaps",
+        status: "fetched",
+        pageUrl: response.url,
+        requestedUrl: pageUrl,
+        httpStatus: response.status,
+        retrievedAt,
+        pageTitle: titleMatch ? strip(titleMatch[1]) : null,
+        pageHeadings: headings,
+        tableRowCount: tableRows.length,
+        candidateRunnerRowCount: runnerRows.length,
+        runnerRows,
+        pageText: pageText.slice(0, 120_000),
+        evidenceVerified: false,
+        verification: "source_fetched_structured_rows_pending_field_mapping",
+        note: "Official RWITC handicap archive fetched. Table rows and page text are retained as source evidence for field mapping; rows are not yet identity-verified or eligible for scoring. Handicap weights/ratings and terms-race entries must remain distinct.",
+      };
+    } catch (error) {
+      return { sourceId: "rwitc_official_handicaps", status: "fetch_error",
+        pageUrl, retrievedAt, evidenceVerified: false, races: [], runnerRows: [],
+        note: error instanceof Error ? error.message : "RWITC handicap archive fetch failed." };
+    }
+  }
+
   // RWITC official Racing Fixtures page adapter for Pune.
   // The page may render its calendar client-side; absence of a date in the
   // fetched HTML is therefore unresolved, never treated as proof of no fixture.
@@ -537,6 +621,30 @@ Deno.serve(async (req: Request) => {
         note: error instanceof Error ? error.message : "RWITC fixture lookup failed. Fixture status remains unresolved.",
       };
     }
+  }
+
+  if (payload?.action === "fetch_rwItc_handicaps") {
+    const raceDate = String((payload as any).raceDate ?? "");
+    const centre = String((payload as any).centre ?? "Pune").trim().toLowerCase();
+    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(raceDate) || centre !== "pune") {
+      return json({ error: "Provide a valid raceDate (YYYY-MM-DD) and centre: Pune." }, 400, origin);
+    }
+    const sourceCheck = await fetchRwItcHandicaps(raceDate);
+    return json({
+      ok: sourceCheck.status === "fetched",
+      action: "fetch_rwItc_handicaps",
+      centre: "Pune",
+      raceDate,
+      sourceCheck,
+      safeguards: {
+        officialSourceOnly: true,
+        rawRowsPreserved: true,
+        runnerIdentityVerified: false,
+        evidenceVerified: false,
+        databaseWrites: false,
+        selectionsProduced: false
+      }
+    }, sourceCheck.status === "fetched" ? 200 : 502, origin);
   }
 
   const meeting = payload?.meeting;
