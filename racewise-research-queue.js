@@ -18,7 +18,7 @@
     "recentForm", "speedAndTiming", "trackwork", "classAndOpposition",
     "distanceAndStamina", "pedigree", "courseSuitability", "goingSuitability",
     "jockeyPerformance", "trainerPerformance", "jockeyTrainerCombination",
-    "headToHead", "paceAndRunningStyle", "drawAssessment", "handicapAssessment"
+    "raceIncidents", "officialRatingMovement", "headToHead", "paceAndRunningStyle", "drawAssessment", "handicapAssessment"
   ];
 
   const FACTOR_SOURCES = {
@@ -36,6 +36,8 @@
     headToHead: ["official_club", "indiarace", "licensed_provider"],
     paceAndRunningStyle: ["official_club", "licensed_provider"],
     drawAssessment: ["official_club", "licensed_provider"],
+    raceIncidents: ["official_club", "indiarace", "licensed_provider"],
+    officialRatingMovement: ["official_club", "indiarace"],
     handicapAssessment: ["official_club"]
   };
 
