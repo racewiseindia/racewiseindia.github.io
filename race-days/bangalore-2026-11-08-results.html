@@ -64,45 +64,43 @@ nav a:hover {
   }
 }
 
-/* RACEWISE INDIA — CINEMATIC RESULTS PAGE STANDARD */
-.rw-cinematic-header{position:relative;isolation:isolate;min-height:clamp(230px,31vw,330px);display:flex;flex-direction:column;justify-content:flex-end;padding:12px 3% 0;background:linear-gradient(180deg,rgba(5,16,32,.18),rgba(5,16,32,.55)),url("../hero-racing.jpg") center 42%/cover no-repeat;border-bottom:1px solid #d7b46a}
-.rw-cinematic-header .brand{position:absolute;top:17px;left:3%;z-index:2;display:flex;align-items:center;text-decoration:none;color:#d7b46a;font-size:20px;font-weight:800;letter-spacing:1px}
-.rw-cinematic-header .brand img{display:block;width:clamp(145px,22vw,210px);height:auto;object-fit:contain}
-.rw-cinematic-header nav{position:relative;z-index:3;display:flex;align-items:stretch;justify-content:space-between;flex-wrap:nowrap;gap:0;width:100%;margin:0;padding:5px 2px;background:rgba(4,17,36,.94);border-top:1px solid rgba(215,180,106,.9);border-bottom:1px solid rgba(215,180,106,.9)}
-.rw-cinematic-header nav a{display:flex;flex:1 1 0;min-width:0;align-items:center;justify-content:center;text-align:center;color:#f0d69d;text-decoration:none;font-size:clamp(9px,.9vw,12px);font-weight:700;line-height:1.25;padding:9px 4px}
-.rw-cinematic-header nav a+a{border-left:1px solid rgba(215,180,106,.65)}
-.rw-cinematic-header nav a:hover{background:rgba(215,180,106,.1);color:#fff}
-.rw-cinematic-hero{position:relative;min-height:190px;display:flex;align-items:center;padding:32px max(6%,calc((100% - 1100px)/2));background:linear-gradient(90deg,rgba(5,15,30,.97),rgba(5,15,30,.76)),url("../hero-racing.jpg") center 55%/cover no-repeat;border-bottom:1px solid #d7b46a}
-.rw-cinematic-hero .eyebrow{color:#d7b46a;font-size:12px;font-weight:850;letter-spacing:2.5px;text-transform:uppercase}
-.rw-cinematic-hero h1{color:#f5f1e8;font-size:clamp(32px,5.5vw,52px);line-height:1.08;margin:9px 0}
-.rw-cinematic-hero p{color:#d2d9e3;margin:8px 0 0;max-width:700px}
-@media(max-width:620px){
- .rw-cinematic-header{min-height:210px;padding:8px 0 0;background-position:57% center}
- .rw-cinematic-header .brand{top:12px;left:4%}.rw-cinematic-header .brand img{width:165px;max-width:56vw}
- .rw-cinematic-header nav{padding:4px 1px}
- .rw-cinematic-header nav a{font-size:clamp(7px,2vw,10px);padding:7px 1px;overflow-wrap:anywhere}
- .rw-cinematic-hero{min-height:165px;padding:26px 6%;background-position:57% center}
+
+/* Exact home-page cinematic header and navigation treatment */
+.rw-cinematic-header{position:relative;isolation:isolate;min-height:clamp(245px,34vw,370px);display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;gap:0;padding:16px 3% 0;border:0;background:linear-gradient(90deg,rgba(5,16,32,.35),rgba(5,16,32,.08)),linear-gradient(180deg,rgba(5,16,32,.12),rgba(5,16,32,.38)),url("../hero-racing.jpg") center 42%/cover no-repeat}
+.rw-cinematic-header>.brand{position:absolute;top:18px;left:3%;z-index:2;display:flex;align-self:flex-start;justify-content:flex-start;width:auto;margin:0;padding:0;text-decoration:none}
+.rw-cinematic-header>.brand img{display:block;width:clamp(145px,23vw,220px)!important;max-width:55vw;height:auto;object-fit:contain}
+.rw-cinematic-header nav{position:relative;z-index:3;display:flex;align-items:stretch;justify-content:space-between;flex-wrap:nowrap;gap:0;width:100%;margin:0;padding:5px 2px;overflow:visible;background:rgba(4,17,36,.94);border-top:1px solid rgba(215,180,106,.9);border-bottom:1px solid rgba(215,180,106,.9)}
+.rw-cinematic-header nav a{display:flex;flex:1 1 0;min-width:0;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#f0d69d!important;font-size:clamp(9px,.88vw,12px);font-weight:650;letter-spacing:0;line-height:1.2;text-align:center;white-space:nowrap;padding:7px 3px;text-decoration:none}
+.rw-cinematic-header nav a+a{border-left:1px solid rgba(215,180,106,.72)}
+.rw-cinematic-header nav a::before{display:block;color:#d7b46a;font-family:Georgia,serif;font-size:15px;line-height:1;content:"◆"}
+.rw-cinematic-header nav a:nth-child(1)::before{content:"✦"}
+.rw-cinematic-header nav a:nth-child(2)::before{content:"⌕"}
+.rw-cinematic-header nav a:nth-child(3)::before{content:"♞"}
+.rw-cinematic-header nav a:nth-child(4)::before{content:"⚑"}
+.rw-cinematic-header nav a:nth-child(5)::before{content:"◈"}
+.rw-cinematic-header nav a:nth-child(6)::before{content:"✓"}
+.rw-cinematic-header nav a:nth-child(7)::before{content:"✧"}
+.rw-cinematic-header nav a:hover{color:#fff!important;background:rgba(215,180,106,.09)}
+@media(max-width:600px){
+.rw-cinematic-header{min-height:215px;padding:10px 0 0;background-position:57% center}
+.rw-cinematic-header>.brand{top:12px;left:4%}.rw-cinematic-header>.brand img{width:170px!important;max-width:58vw}
+.rw-cinematic-header nav{padding:4px 1px;overflow:visible}
+.rw-cinematic-header nav a{flex:1 1 0;font-size:clamp(7px,2.05vw,10px);letter-spacing:-.2px;padding:7px 1px;white-space:normal;overflow-wrap:anywhere}
+.rw-cinematic-header nav a::before{font-size:12px}
 }
-
-
-.rw-cinematic-header nav a{gap:5px;white-space:normal}
-.rw-cinematic-header nav a span{display:inline-block;color:#d7b46a;font-size:14px;font-weight:900;line-height:1;flex:0 0 auto}
-@media(max-width:620px){.rw-cinematic-header nav a{flex-direction:column;gap:4px;font-size:8px;padding:7px 1px}.rw-cinematic-header nav a span{font-size:13px}}
-
 </style>
 </head>
 <body>
 <header class="rw-cinematic-header">
-<a class="brand" href="../index.html"><img src="https://raw.githubusercontent.com/racewiseindia/racewiseindia.github.io/main/BD3FBD67-3641-4C4B-A7C4-65B776CDC953.png" alt="RaceWise India official logo"></a>
+<a class="brand" href="../index.html"><img src="https://raw.githubusercontent.com/racewiseindia/racewiseindia.github.io/main/BD3FBD67-3641-4C4B-A7C4-65B776CDC953.png" alt="RaceWise India Official Logo"></a>
 <nav aria-label="Main navigation">
-<a href="../index.html"><span aria-hidden="true">⌂</span> Home</a>
-<a href="../index.html#study"><span aria-hidden="true">◎</span> Our Study</a>
-<a href="../index.html#automatic-analysis"><span aria-hidden="true">⚙</span> Automatic Analysis</a>
-<a href="../archive.html"><span aria-hidden="true">▤</span> Race Day Archive</a>
-<a href="../results-archive.html"><span aria-hidden="true">🏆</span> Results Archive</a>
-<a href="../index.html#racing-resources"><span aria-hidden="true">◇</span> Resources</a>
-<a href="../index.html#standards"><span aria-hidden="true">✓</span> Standards</a>
-<a href="../index.html#about"><span aria-hidden="true">ⓘ</span> About</a>
+<a href="../index.html#study">Our Study</a>
+<a href="../index.html#automatic-analysis">Automatic Race Analysis</a>
+<a href="../archive.html">Race Day Archive</a>
+<a href="../results-archive.html">Results Archive</a>
+<a href="../index.html#racing-resources">Racing Resources</a>
+<a href="../index.html#standards">Our Standards</a>
+<a href="../index.html#about">About Us</a>
 </nav></header>
 <section class="rw-cinematic-hero"><div><div class="eyebrow">RACEWISE INDIA · OFFICIAL RESULTS & PERFORMANCE REVIEW</div><h1>Bangalore Race Meeting</h1><p>8 November 2026 · Eight races · Official results and RaceWise performance review</p></div></section>
 <main>
