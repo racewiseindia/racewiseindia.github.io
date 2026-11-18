@@ -62,6 +62,9 @@ main{padding:26px 5% 44px}.card{padding:21px}
 
 /* Keep the mobile wordmark in the upper-right sky area, clear of the lead horse */
 @media(max-width:600px){.site-header .header-banner{top:4px!important;right:3%!important;left:auto!important;width:43%!important;max-width:43%!important;padding:3px 0 4px!important;border-top:1px solid #d7b46a;border-bottom:1px solid #d7b46a;text-align:center!important}.site-header .header-banner::before{font-size:clamp(15px,4vw,19px)!important;letter-spacing:1.5px!important;line-height:1!important}.site-header .header-banner::after{font-size:clamp(8px,2.1vw,10px)!important;letter-spacing:2px!important;margin-top:2px!important;line-height:1!important}}
+
+/* Remove decorative rules that visually collide on narrow screens */
+@media(max-width:600px){.site-header .header-banner{border-top:0!important;border-bottom:0!important;padding-top:3px!important;padding-bottom:3px!important}}
 </style>
 <style id="racewise-floating-logo-style">#racewise-floating-logo{position:fixed;right:18px;bottom:18px;z-index:99999;display:block;width:clamp(76px,10vw,116px);height:auto;padding:0;margin:0;border:0;border-radius:0;background:transparent;box-shadow:none;line-height:0;text-decoration:none}#racewise-floating-logo img{display:block;width:100%;height:auto;max-width:none;object-fit:contain;border:0;border-radius:0;background:transparent;box-shadow:none}@media(max-width:600px){#racewise-floating-logo{right:10px;bottom:12px;width:76px}}</style>
 </head><body>
