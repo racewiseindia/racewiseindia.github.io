@@ -32,6 +32,47 @@ h1{font-family:Georgia,serif;font-weight:500;font-size:clamp(34px,6vw,62px);line
 footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-size:11px;text-align:center}
 @media(max-width:760px){.centres{grid-template-columns:repeat(3,1fr)}.meetings{grid-template-columns:1fr}.meeting:nth-child(odd){border-right:0}.sources{grid-template-columns:1fr 1fr}.hero{padding:54px 16px 42px}.section-title{display:block}.section-title p{margin-top:5px}}
 @media(max-width:420px){.meeting{grid-template-columns:55px 1fr auto;padding:12px 10px;gap:8px}.date{font-size:19px}.courses{font-size:12px}.tag{font-size:8px;padding:4px}.sources{grid-template-columns:1fr}}
+ 
+/* RaceWise cinematic calendar refinement */
+.hero{min-height:390px;display:flex;flex-direction:column;align-items:center;justify-content:center;background-image:linear-gradient(90deg,rgba(4,13,27,.94),rgba(8,23,45,.48),rgba(4,13,27,.94)),url('hero-racing.jpg');background-position:center 43%;background-size:cover}
+.hero:after{content:"";position:absolute;inset:12px;border:1px solid rgba(215,180,106,.22);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.kicker{display:inline-flex;align-items:center;gap:12px}.kicker:before,.kicker:after{content:"";display:block;width:34px;height:1px;background:var(--gold)}
+h1{letter-spacing:2px;text-shadow:0 8px 25px rgba(0,0,0,.5)}
+.stats{gap:0;max-width:680px;width:100%;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:17px 0}
+.stat{flex:1;min-width:105px}.stat+.stat{border-left:1px solid var(--line)}
+.centres{grid-template-columns:repeat(6,minmax(0,1fr))}
+.centre{position:relative;overflow:hidden;min-height:68px;display:flex;align-items:center;justify-content:center;font-weight:700;letter-spacing:1.2px;background:linear-gradient(145deg,rgba(28,55,84,.9),rgba(9,25,46,.96));transition:transform .2s,border-color .2s,background .2s}
+.centre:before{content:"✦";position:absolute;top:5px;left:8px;color:rgba(215,180,106,.45);font-size:10px}
+.centre:hover{transform:translateY(-3px);border-color:var(--gold);background:#193657}
+.map-panel{position:relative;margin:28px 0 8px;padding:24px;border:1px solid var(--line);background:radial-gradient(ellipse at 50% 40%,rgba(34,65,96,.55),rgba(8,23,45,.95) 70%);overflow:hidden}
+.map-panel:before{content:"RACEWISE INDIA";position:absolute;right:20px;top:15px;color:rgba(215,180,106,.12);font:clamp(22px,4vw,46px) Georgia,serif;letter-spacing:5px}
+.map-title{position:relative;z-index:2;color:var(--gold);font:24px Georgia,serif;margin:0 0 4px}.map-sub{position:relative;z-index:2;color:var(--muted);font-size:11px;margin:0 0 12px}
+.india-map{display:block;width:min(620px,100%);height:auto;margin:0 auto;overflow:visible}
+.india-map .land{fill:rgba(215,180,106,.08);stroke:rgba(215,180,106,.62);stroke-width:2;stroke-linejoin:round}
+.india-map .state-line{fill:none;stroke:rgba(215,180,106,.18);stroke-width:1;stroke-dasharray:3 5}
+.india-map .route{stroke:rgba(215,180,106,.3);stroke-width:1.4;stroke-dasharray:4 5;fill:none}
+.india-map .pin{fill:var(--gold);stroke:#fff0c9;stroke-width:2}
+.india-map .halo{fill:rgba(215,180,106,.12)}
+.india-map text{fill:var(--cream);font:12px Arial,sans-serif;letter-spacing:.7px}
+.india-map .label{fill:var(--gold);font-weight:bold;font-size:13px}
+.map-legend{display:flex;justify-content:center;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:10px;margin-top:4px}
+.map-legend span:before{content:"◆";color:var(--gold);margin-right:7px}
+.month-nav{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0 20px}
+.month-nav a{border:1px solid var(--line);padding:8px 15px;color:var(--gold);font-size:11px;letter-spacing:1.3px;text-transform:uppercase;background:rgba(18,43,73,.55)}
+.month-nav a:hover{background:var(--gold);color:var(--navy)}
+.month{border-radius:2px;overflow:hidden}
+.month-head{background:linear-gradient(90deg,rgba(215,180,106,.13),transparent)}
+.meeting{transition:background .18s}.meeting:hover{background:rgba(215,180,106,.055)}
+.date{font-size:25px}
+.tag{border-radius:2px;font-weight:700}
+.tag.scheduled{background:rgba(215,180,106,.09)}
+.tag.listed{color:#e6c98f;border-style:dashed}
+.feature{line-height:1.45}
+.note{line-height:1.65}
+.sources .source{transition:border-color .2s,transform .2s}.sources .source:hover{border-color:var(--gold);transform:translateY(-2px)}
+@media(max-width:760px){.hero{min-height:340px}.centres{grid-template-columns:repeat(3,1fr)}.map-panel{padding:17px 12px}.map-panel:before{font-size:22px;right:10px;top:10px}.section{padding:28px 0}.month-head{padding:14px}.meeting{padding:13px 12px}}
+@media(max-width:420px){.hero{min-height:315px;padding:44px 12px 34px}.kicker{font-size:9px;letter-spacing:2px}.stats{margin-top:20px;padding:12px 0}.stat strong{font-size:22px}.stat span{font-size:8px;letter-spacing:1px}.map-title{font-size:21px}.india-map text{font-size:11px}.month-nav a{padding:7px 11px}}
 </style>
 </head>
 <body>
@@ -39,6 +80,22 @@ footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-s
 <header class="hero"><div class="kicker">The Indian Turf · 2026 Season</div><h1>THE NATIONAL<br><span>RACING CALENDAR</span></h1><p class="intro">A single national view of the announced and currently listed race meetings across India's established racing centres. Select a meeting date as your starting point for the season's racing story.</p><div class="stats"><div class="stat"><strong>06</strong><span>Racing Centres</span></div><div class="stat"><strong>Nov–Dec</strong><span>Season Window</span></div><div class="stat"><strong>2026</strong><span>Calendar Year</span></div></div></header>
 <main class="wrap">
 <section class="section"><div class="section-title"><h2>The Six Racing Centres</h2><p>One national calendar · Six established venues</p></div><div class="centres"><div class="centre">Bangalore</div><div class="centre">Hyderabad</div><div class="centre">Kolkata</div><div class="centre">Mumbai</div><div class="centre">Mysore</div><div class="centre">Pune</div></div></section>
+<section class="map-panel" aria-label="Map of India's six racing centres">
+<h2 class="map-title">The Indian Racing Circuit</h2><p class="map-sub">Six established centres connected in one national racing calendar</p>
+<svg class="india-map" viewBox="0 0 560 520" role="img" aria-label="Stylised map of India showing Mumbai, Pune, Bangalore, Mysore, Hyderabad and Kolkata">
+<path class="land" d="M206 28 L239 40 259 57 292 62 315 84 344 93 360 119 390 126 404 148 429 158 441 181 429 204 445 224 428 247 410 255 399 278 379 290 372 316 351 330 346 356 325 374 316 403 295 426 282 457 265 482 249 462 238 435 221 412 208 384 192 361 182 334 163 314 151 287 132 266 119 241 101 222 113 199 99 177 117 156 124 129 151 114 163 89 184 73 190 49 Z"/>
+<path class="state-line" d="M147 151 L226 174 313 170 393 187 M128 220 L225 231 333 220 424 231 M158 288 L242 275 353 284 M193 354 L278 337 364 324 M216 112 L236 202 239 280 265 390"/>
+<path class="route" d="M177 212 L215 259 L240 316 L256 341 L310 257 L404 178"/>
+<path class="route" d="M177 212 L310 257 L404 178"/>
+<g><circle class="halo" cx="177" cy="212" r="14"/><circle class="pin" cx="177" cy="212" r="5"/><text class="label" x="93" y="207">MUMBAI</text></g>
+<g><circle class="halo" cx="193" cy="230" r="12"/><circle class="pin" cx="193" cy="230" r="4"/><text x="104" y="246">PUNE</text></g>
+<g><circle class="halo" cx="240" cy="316" r="14"/><circle class="pin" cx="240" cy="316" r="5"/><text class="label" x="165" y="310">BENGALURU</text></g>
+<g><circle class="halo" cx="253" cy="342" r="12"/><circle class="pin" cx="253" cy="342" r="4"/><text x="268" y="354">MYSORE</text></g>
+<g><circle class="halo" cx="310" cy="257" r="14"/><circle class="pin" cx="310" cy="257" r="5"/><text class="label" x="322" y="253">HYDERABAD</text></g>
+<g><circle class="halo" cx="404" cy="178" r="14"/><circle class="pin" cx="404" cy="178" r="5"/><text class="label" x="418" y="174">KOLKATA</text></g>
+</svg><div class="map-legend"><span>West · Mumbai & Pune</span><span>South · Bangalore & Mysore</span><span>Deccan · Hyderabad</span><span>East · Kolkata</span></div>
+</section>
+<nav class="month-nav" aria-label="Jump to month"><a href="#november">November 2026 ↓</a><a href="#december">December 2026 ↓</a></nav>
 <section class="section">
 <div class="section-title"><h2>November 2026</h2><p>Meeting dates listed up to 30 November</p></div>
 <div class="month"><div class="month-head"><h3>November</h3><span>Race meetings · 2026</span></div><div class="meetings">
@@ -51,7 +108,7 @@ footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-s
 <div class="meeting"><div class="date">16<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag past">Completed</span></div>
 <div class="meeting"><div class="date">17<small>TUE</small></div><div><div class="courses">Kolkata</div><div class="feature">Autumn Meeting · 3rd Day</div></div><span class="tag past">Completed</span></div>
 <div class="meeting"><div class="date">18<small>WED</small></div><div><div class="courses">Mysore</div><div class="feature">Listed as Winter Meeting · Day 1; club fixture notice not located</div></div><span class="tag">Listed</span></div>
-<div class="meeting"><div class="date">20<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 4th Day · Bangalore Turf Club Trophy</div></div><span class="tag">Scheduled</span></div>
+<div class="meeting"><div class="date">20<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 4th Day · Bangalore Turf Club Trophy</div></div><span class="tag scheduled">Scheduled</span></div>
 <div class="meeting"><div class="date">21<small>SAT</small></div><div><div class="courses">Kolkata</div><div class="feature">Autumn Meeting · 4th Day · Mayfowl Cup</div></div><span class="tag">Scheduled</span></div>
 <div class="meeting"><div class="date">22<small>SUN</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag">Scheduled</span></div>
 <div class="meeting"><div class="date">23<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag">Scheduled</span></div>
