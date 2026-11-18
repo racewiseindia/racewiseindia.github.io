@@ -87,6 +87,31 @@ footer strong{color:var(--gold)}
  header nav a{font-size:7.5px;padding-left:1px;padding-right:1px}
  header nav a::before{font-size:11px}
 }
+
+/* Final layout safeguards: keep brand, wordmark, navigation and floating mark separate */
+header{min-height:clamp(255px,32vw,350px)}
+header>.brand{z-index:5}
+header>.header-banner{z-index:4}
+header nav{position:relative;z-index:6}
+header nav a{overflow:hidden;text-overflow:clip}
+.mobile-header-caption{position:relative;z-index:6}
+#racewise-floating-logo{position:fixed!important;right:16px!important;bottom:16px!important;z-index:40!important;width:clamp(58px,7vw,82px)!important;max-width:82px!important;pointer-events:auto!important}
+#racewise-floating-logo img{display:block!important;width:100%!important;height:auto!important;object-fit:contain!important;filter:drop-shadow(0 3px 8px rgba(0,0,0,.65))}
+@media(max-width:700px){
+ header{min-height:225px;padding-top:0}
+ header>.brand{top:12px;left:12px;width:clamp(105px,29vw,132px)}
+ header>.header-banner{top:16px;right:12px;width:44%;max-width:190px}
+ header nav{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:stretch}
+ header nav a{min-width:0;min-height:56px;padding:6px 1px;white-space:normal;overflow-wrap:anywhere;font-size:clamp(7px,1.9vw,9px);line-height:1.08}
+ header nav a::before{font-size:12px}
+ header nav a+a{border-left:1px solid rgba(215,180,106,.65)}
+ .mobile-header-caption{padding:8px 6px;font-size:9px;letter-spacing:.8px}
+ #racewise-floating-logo{right:10px!important;bottom:12px!important;width:62px!important}
+}
+@media(max-width:350px){
+ header nav a{font-size:7px}
+ header nav a::before{font-size:10px}
+}
 </style>
 
 </head>
@@ -111,14 +136,14 @@ footer strong{color:var(--gold)}
     <div class="header-banner">RACEWISE INDIA<span>STUDY EVERY RACE. UNDERSTAND EVERY RUNNER.</span></div>
 
      <nav aria-label="Main navigation">
-      <a href="#study">Our Study</a>
-      <a href="#automatic-analysis">Automatic Race Analysis</a>
-      <a href="archive.html">Race Studies</a>
-      <a href="calendar.html">Racing Calendar</a>
-      <a href="results-archive.html">Results Archive</a>
-      <a href="#racing-resources">Racing Resources</a>
-      <a href="#standards">Our Standards</a>
-      </nav>
+      <a href="#study">Study</a>
+      <a href="#automatic-analysis">Analysis</a>
+      <a href="archive.html">Race Days</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="results-archive.html">Results</a>
+      <a href="#racing-resources">Resources</a>
+      <a href="#standards">Standards</a>
+    </nav>
 <div class="mobile-header-caption">STUDY EVERY RACE. UNDERSTAND EVERY RUNNER.</div>
   </header>
 
@@ -321,5 +346,6 @@ footer strong{color:var(--gold)}
     <strong>RACEWISE INDIA</strong><br>
     Study Every Race. Understand Every Runner.<br>
     Independent research project · Information and analysis only
-  </footer></body>
+  </footer>
+  <script src="/floating-logo.js?v=2" defer></script></body>
 </html>
