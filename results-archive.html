@@ -52,6 +52,38 @@ main{padding:26px 5% 44px}.card{padding:21px}
 @media(max-width:600px){.page-hero:after{right:5%;opacity:.35}}
 </style>
 <style id="racewise-floating-logo-style">#racewise-floating-logo{position:fixed;right:18px;bottom:18px;z-index:99999;display:block;width:clamp(76px,10vw,116px);height:auto;padding:0;margin:0;border:0;border-radius:0;background:transparent;box-shadow:none;line-height:0;text-decoration:none}#racewise-floating-logo img{display:block;width:100%;height:auto;max-width:none;object-fit:contain;border:0;border-radius:0;background:transparent;box-shadow:none}@media(max-width:600px){#racewise-floating-logo{right:10px;bottom:12px;width:76px}}</style>
+
+<style id="racewise-desktop-layout-repair">
+@media (min-width: 601px) {
+  .site-header {
+    min-height: clamp(270px, 29vw, 350px);
+    padding: 0;
+    align-items: stretch;
+    justify-content: flex-end;
+  }
+  .site-header .brand {
+    top: 0;
+    left: 0;
+    right: auto;
+    width: auto;
+    max-width: 100%;
+    margin: 0;
+  }
+  .site-header .brand img {
+    width: clamp(170px, 18vw, 215px);
+    max-width: 32vw;
+  }
+  .site-header nav {
+    width: 100%;
+    margin: 0;
+  }
+  main {
+    width: min(100% - 64px, 1200px);
+    margin-inline: auto;
+  }
+}
+</style>
+
 </head><body>
 <header class="site-header">
 <a class="brand" href="index.html"><img src="https://raw.githubusercontent.com/racewiseindia/racewiseindia.github.io/main/BD3FBD67-3641-4C4B-A7C4-65B776CDC953.png" alt="RaceWise India official logo"></a>
