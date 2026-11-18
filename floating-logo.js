@@ -98,7 +98,7 @@
   universalHeaderStyle.textContent = `
   /* Apply the same desktop header geometry to every public page with a branded header. */
   @media (min-width:601px) {
-    body > header:has(> .brand) {
+    body > header:has(> .brand):has(> nav) {
       position:relative;
       isolation:isolate;
       min-height:clamp(245px,28vw,340px);
@@ -110,7 +110,7 @@
       background-position:center 42%;
       background-size:cover;
     }
-    body > header:has(> .brand) > .brand {
+    body > header:has(> .brand):has(> nav) > .brand {
       position:absolute !important;
       top:0 !important;
       left:0 !important;
@@ -125,7 +125,7 @@
       padding:0 !important;
       gap:clamp(10px,1.5vw,18px) !important;
     }
-    body > header:has(> .brand) > .brand img {
+    body > header:has(> .brand):has(> nav) > .brand img {
       display:block;
       width:clamp(160px,18vw,220px) !important;
       max-width:25vw !important;
@@ -133,7 +133,7 @@
       object-fit:contain;
       flex:0 1 auto;
     }
-    body > header:has(> .brand) > nav {
+    body > header:has(> .brand):has(> nav) > nav {
       position:relative;
       z-index:5;
       display:flex;
@@ -146,7 +146,7 @@
       margin:0;
       padding:5px 2px;
     }
-    body > header:has(> .brand) > nav a {
+    body > header:has(> .brand):has(> nav) > nav a {
       display:flex;
       flex:1 1 0;
       min-width:0;
