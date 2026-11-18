@@ -93,6 +93,77 @@
   `;
   document.head.appendChild(responsiveStyle);
 
+  var universalHeaderStyle = document.createElement("style");
+  universalHeaderStyle.id = "racewise-universal-desktop-header";
+  universalHeaderStyle.textContent = `
+  /* Apply the same desktop header geometry to every public page with a branded header. */
+  @media (min-width:601px) {
+    body > header:has(> .brand) {
+      position:relative;
+      isolation:isolate;
+      min-height:clamp(245px,28vw,340px);
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-end;
+      align-items:stretch;
+      padding:16px 0 0;
+      background-position:center 42%;
+      background-size:cover;
+    }
+    body > header:has(> .brand) > .brand {
+      position:absolute !important;
+      top:0 !important;
+      left:0 !important;
+      right:auto !important;
+      z-index:4;
+      display:flex !important;
+      align-items:flex-start !important;
+      justify-content:flex-start !important;
+      width:auto !important;
+      max-width:calc(100% - 24px) !important;
+      margin:0 !important;
+      padding:0 !important;
+      gap:clamp(10px,1.5vw,18px) !important;
+    }
+    body > header:has(> .brand) > .brand img {
+      display:block;
+      width:clamp(160px,18vw,220px) !important;
+      max-width:25vw !important;
+      height:auto !important;
+      object-fit:contain;
+      flex:0 1 auto;
+    }
+    body > header:has(> .brand) > nav {
+      position:relative;
+      z-index:5;
+      display:flex;
+      flex:0 0 auto;
+      align-items:stretch;
+      justify-content:space-evenly;
+      flex-wrap:nowrap;
+      gap:0;
+      width:100%;
+      margin:0;
+      padding:5px 2px;
+    }
+    body > header:has(> .brand) > nav a {
+      display:flex;
+      flex:1 1 0;
+      min-width:0;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      white-space:normal;
+      overflow-wrap:anywhere;
+      font-size:clamp(9px,.85vw,12px);
+      line-height:1.2;
+      padding:8px 4px;
+    }
+  }
+  `;
+  document.head.appendChild(universalHeaderStyle);
+
+
   if (document.getElementById("racewise-floating-logo")) return;
   var link = document.createElement("a");
   link.id = "racewise-floating-logo";
