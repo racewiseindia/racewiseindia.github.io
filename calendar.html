@@ -67,6 +67,14 @@ h1{letter-spacing:2px;text-shadow:0 8px 25px rgba(0,0,0,.5)}
 .date{font-size:25px}
 .tag{border-radius:2px;font-weight:700}
 .tag.scheduled{background:rgba(215,180,106,.09)}
+.tag.official{color:#f2d99f;border-color:rgba(215,180,106,.75);background:rgba(215,180,106,.12)}
+.tag.listed{color:#b9c6d6;border-style:dashed;border-color:rgba(185,198,214,.45)}
+.map-caption{margin:2px 0 0;text-align:center;color:var(--muted);font-size:10px;letter-spacing:.4px}
+.calendar-intro{display:grid;grid-template-columns:1.3fr 1fr;gap:14px;margin:8px 0 18px}
+.calendar-intro article{border:1px solid var(--line);background:linear-gradient(135deg,rgba(18,43,73,.78),rgba(8,23,45,.9));padding:16px 18px}
+.calendar-intro h3{font:20px Georgia,serif;color:var(--gold);margin:0 0 6px}
+.calendar-intro p{font-size:12px;color:var(--muted);margin:0}
+@media(max-width:760px){.calendar-intro{grid-template-columns:1fr}.map-caption{font-size:9px}}
 .tag.listed{color:#e6c98f;border-style:dashed}
 .feature{line-height:1.45}
 .note{line-height:1.65}
@@ -93,9 +101,9 @@ h1{letter-spacing:2px;text-shadow:0 8px 25px rgba(0,0,0,.5)}
 <g><circle class="halo" cx="253" cy="342" r="12"/><circle class="pin" cx="253" cy="342" r="4"/><text x="268" y="354">MYSORE</text></g>
 <g><circle class="halo" cx="310" cy="257" r="14"/><circle class="pin" cx="310" cy="257" r="5"/><text class="label" x="322" y="253">HYDERABAD</text></g>
 <g><circle class="halo" cx="404" cy="178" r="14"/><circle class="pin" cx="404" cy="178" r="5"/><text class="label" x="418" y="174">KOLKATA</text></g>
-</svg><div class="map-legend"><span>West · Mumbai & Pune</span><span>South · Bangalore & Mysore</span><span>Deccan · Hyderabad</span><span>East · Kolkata</span></div>
+</svg><p class="map-caption">Schematic locator · positions are indicative and not intended for navigation or distance measurement</p><div class="map-legend"><span>West · Mumbai & Pune</span><span>South · Bangalore & Mysore</span><span>Deccan · Hyderabad</span><span>East · Kolkata</span></div>
 </section>
-<nav class="month-nav" aria-label="Jump to month"><a href="#november">November 2026 ↓</a><a href="#december">December 2026 ↓</a></nav>
+<section class="calendar-intro" aria-label="Calendar guide"><article><h3>Race days, across India</h3><p>Follow the season across six established racing centres. Each date carries a source-status label, distinguishing club-published fixtures from dates carried by the consolidated fixture listing.</p></article><article><h3>How to read the dates</h3><p><b style="color:var(--gold)">Club fixture</b> = checked against an official club schedule. <b style="color:#bac6d5">Listed</b> = present in the consolidated fixture feed, but not independently matched to an accessible club notice.</p></article></section><nav class="month-nav" aria-label="Jump to month"><a href="#november">November 2026 ↓</a><a href="#december">December 2026 ↓</a></nav>
 <section class="section" id="november">
 <div class="section-title"><h2>November 2026</h2><p>Meeting dates listed up to 30 November</p></div>
 <div class="month"><div class="month-head"><h3>November</h3><span>Race meetings · 2026</span></div><div class="meetings">
@@ -108,15 +116,15 @@ h1{letter-spacing:2px;text-shadow:0 8px 25px rgba(0,0,0,.5)}
 <div class="meeting"><div class="date">16<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag past">Completed</span></div>
 <div class="meeting"><div class="date">17<small>TUE</small></div><div><div class="courses">Kolkata</div><div class="feature">Autumn Meeting · 3rd Day</div></div><span class="tag past">Completed</span></div>
 <div class="meeting"><div class="date">18<small>WED</small></div><div><div class="courses">Mysore</div><div class="feature">Listed as Winter Meeting · Day 1; club fixture notice not located</div></div><span class="tag">Listed</span></div>
-<div class="meeting"><div class="date">20<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 4th Day · Bangalore Turf Club Trophy</div></div><span class="tag scheduled">Scheduled</span></div>
-<div class="meeting"><div class="date">21<small>SAT</small></div><div><div class="courses">Kolkata</div><div class="feature">Autumn Meeting · 4th Day · Mayfowl Cup</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">22<small>SUN</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">23<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag">Scheduled</span></div>
+<div class="meeting"><div class="date">20<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 4th Day · Bangalore Turf Club Trophy</div></div><span class="tag listed">Listed</span></div>
+<div class="meeting"><div class="date">21<small>SAT</small></div><div><div class="courses">Kolkata</div><div class="feature">Autumn Meeting · 4th Day · Mayfowl Cup</div></div><span class="tag official">Club fixture</span></div>
+<div class="meeting"><div class="date">22<small>SUN</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag listed">Listed</span></div>
+<div class="meeting"><div class="date">23<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag listed">Listed</span></div>
 <div class="meeting"><div class="date">25<small>WED</small></div><div><div class="courses">Mysore</div><div class="feature">Listed as Winter Meeting · Day 2; club fixture notice not located</div></div><span class="tag">Listed</span></div>
-<div class="meeting"><div class="date">27<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 5th Day</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">28<small>SAT</small></div><div><div class="courses">Bangalore · Kolkata</div><div class="feature">Bangalore 6th Day · 1000 Guineas (Grade II); Kolkata 5th Day · 1000 Guineas (Grade III)</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">29<small>SUN</small></div><div><div class="courses">Hyderabad · Mumbai</div><div class="feature">Hyderabad Winter Meeting · Mumbai Meeting opening day</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">30<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag">Scheduled</span></div>
+<div class="meeting"><div class="date">27<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 5th Day</div></div><span class="tag listed">Listed</span></div>
+<div class="meeting"><div class="date">28<small>SAT</small></div><div><div class="courses">Bangalore · Kolkata</div><div class="feature">Bangalore 6th Day · 1000 Guineas (Grade II); Kolkata 5th Day · 1000 Guineas (Grade III)</div></div><span class="tag official">Club fixture</span></div>
+<div class="meeting"><div class="date">29<small>SUN</small></div><div><div class="courses">Hyderabad · Mumbai</div><div class="feature">Hyderabad Winter Meeting · Mumbai Meeting opening day</div></div><span class="tag listed">Listed</span></div>
+<div class="meeting"><div class="date">30<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag listed">Listed</span></div>
 </div></div>
 <div class="note"><strong style="color:var(--gold)">Kolkata notice:</strong> The 7 November opening day is marked cancelled in the club's official 2026–27 fixture calendar. It is intentionally not shown as a meeting. Mysore's 18 and 25 November dates appear in the current consolidated fixture listing; the club's accessible notice page currently shows only its Monsoon 2026 fixture notice, so these two entries are labelled “Listed”, not club-verified.</div>
 </section>
@@ -124,27 +132,27 @@ h1{letter-spacing:2px;text-shadow:0 8px 25px rgba(0,0,0,.5)}
 <div class="section-title"><h2>December 2026</h2><p>Published fixture listings · subject to official revision</p></div>
 <div class="month"><div class="month-head"><h3>December</h3><span>Race meetings · 2026</span></div><div class="meetings">
 <div class="meeting"><div class="date">02<small>WED</small></div><div><div class="courses">Mysore</div><div class="feature">Listed · Winter Meeting Day 3</div></div><span class="tag">Listed</span></div>
-<div class="meeting"><div class="date">04<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 7th Day · Ashoka Chakra Cup</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">05<small>SAT</small></div><div><div class="courses">Kolkata</div><div class="feature">Christmas Meeting · 1st Day · 2000 Guineas (Grade II)</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">06<small>SUN</small></div><div><div class="courses">Hyderabad · Mumbai</div><div class="feature">Hyderabad Winter Meeting · Mumbai Meeting</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">07<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag">Scheduled</span></div>
+<div class="meeting"><div class="date">04<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 7th Day · Ashoka Chakra Cup</div></div><span class="tag listed">Listed</span></div>
+<div class="meeting"><div class="date">05<small>SAT</small></div><div><div class="courses">Kolkata</div><div class="feature">Christmas Meeting · 1st Day · 2000 Guineas (Grade II)</div></div><span class="tag official">Club fixture</span></div>
+<div class="meeting"><div class="date">06<small>SUN</small></div><div><div class="courses">Hyderabad · Mumbai</div><div class="feature">Hyderabad Winter Meeting · Mumbai Meeting</div></div><span class="tag listed">Listed</span></div>
+<div class="meeting"><div class="date">07<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag listed">Listed</span></div>
 <div class="meeting"><div class="date">09<small>WED</small></div><div><div class="courses">Mysore</div><div class="feature">Listed · Winter Meeting Day 4</div></div><span class="tag">Listed</span></div>
-<div class="meeting"><div class="date">10<small>THU</small></div><div><div class="courses">Mumbai</div><div class="feature">Mumbai Meeting</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">11<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 8th Day</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">12<small>SAT</small></div><div><div class="courses">Bangalore · Kolkata</div><div class="feature">Bangalore 9th Day · 2000 Guineas (Grade II); Kolkata 2nd Christmas Day · Gold Cup (Grade II)</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">13<small>SUN</small></div><div><div class="courses">Hyderabad · Mumbai</div><div class="feature">Hyderabad Winter Meeting · Mumbai Meeting</div></div><span class="tag">Scheduled</span></div>
+<div class="meeting"><div class="date">10<small>THU</small></div><div><div class="courses">Mumbai</div><div class="feature">Mumbai Meeting</div></div><span class="tag listed">Listed</span></div>
+<div class="meeting"><div class="date">11<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 8th Day</div></div><span class="tag official">Club fixture</span></div>
+<div class="meeting"><div class="date">12<small>SAT</small></div><div><div class="courses">Bangalore · Kolkata</div><div class="feature">Bangalore 9th Day · 2000 Guineas (Grade II); Kolkata 2nd Christmas Day · Gold Cup (Grade II)</div></div><span class="tag official">Club fixture</span></div>
+<div class="meeting"><div class="date">13<small>SUN</small></div><div><div class="courses">Hyderabad · Mumbai</div><div class="feature">Hyderabad Winter Meeting · Mumbai Meeting</div></div><span class="tag listed">Listed</span></div>
 <div class="meeting"><div class="date">16<small>WED</small></div><div><div class="courses">Mysore</div><div class="feature">Listed · Winter Meeting Day 5</div></div><span class="tag">Listed</span></div>
-<div class="meeting"><div class="date">18<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 10th Day</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">19<small>SAT</small></div><div><div class="courses">Kolkata</div><div class="feature">Christmas Meeting · 3rd Day · Oaks</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">20<small>SUN</small></div><div><div class="courses">Mumbai</div><div class="feature">Mumbai Meeting</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">21<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">22<small>TUE</small></div><div><div class="courses">Kolkata</div><div class="feature">Christmas Meeting · 4th Day</div></div><span class="tag">Scheduled</span></div>
+<div class="meeting"><div class="date">18<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 10th Day</div></div><span class="tag listed">Listed</span></div>
+<div class="meeting"><div class="date">19<small>SAT</small></div><div><div class="courses">Kolkata</div><div class="feature">Christmas Meeting · 3rd Day · Oaks</div></div><span class="tag official">Club fixture</span></div>
+<div class="meeting"><div class="date">20<small>SUN</small></div><div><div class="courses">Mumbai</div><div class="feature">Mumbai Meeting</div></div><span class="tag listed">Listed</span></div>
+<div class="meeting"><div class="date">21<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag listed">Listed</span></div>
+<div class="meeting"><div class="date">22<small>TUE</small></div><div><div class="courses">Kolkata</div><div class="feature">Christmas Meeting · 4th Day</div></div><span class="tag official">Club fixture</span></div>
 <div class="meeting"><div class="date">23<small>WED</small></div><div><div class="courses">Mysore</div><div class="feature">Listed · Winter Meeting Day 6</div></div><span class="tag">Listed</span></div>
-<div class="meeting"><div class="date">24<small>THU</small></div><div><div class="courses">Mumbai</div><div class="feature">Mumbai Meeting</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">25<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 11th Day · Chief Minister's Trophy</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">26<small>SAT</small></div><div><div class="courses">Kolkata</div><div class="feature">Christmas Meeting · 5th Day · Army Cup</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">27<small>SUN</small></div><div><div class="courses">Mumbai</div><div class="feature">Mumbai Meeting</div></div><span class="tag">Scheduled</span></div>
-<div class="meeting"><div class="date">28<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag">Scheduled</span></div>
+<div class="meeting"><div class="date">24<small>THU</small></div><div><div class="courses">Mumbai</div><div class="feature">Mumbai Meeting</div></div><span class="tag listed">Listed</span></div>
+<div class="meeting"><div class="date">25<small>FRI</small></div><div><div class="courses">Bangalore</div><div class="feature">Winter Meeting · 11th Day · Chief Minister's Trophy</div></div><span class="tag official">Club fixture</span></div>
+<div class="meeting"><div class="date">26<small>SAT</small></div><div><div class="courses">Kolkata</div><div class="feature">Christmas Meeting · 5th Day · Army Cup</div></div><span class="tag official">Club fixture</span></div>
+<div class="meeting"><div class="date">27<small>SUN</small></div><div><div class="courses">Mumbai</div><div class="feature">Mumbai Meeting</div></div><span class="tag listed">Listed</span></div>
+<div class="meeting"><div class="date">28<small>MON</small></div><div><div class="courses">Hyderabad</div><div class="feature">Winter Meeting</div></div><span class="tag listed">Listed</span></div>
 <div class="meeting"><div class="date">30<small>WED</small></div><div><div class="courses">Mysore</div><div class="feature">Listed · Winter Meeting Day 7</div></div><span class="tag">Listed</span></div>
 </div></div>
 <div class="note"><strong style="color:var(--gold)">Reading the calendar:</strong> “Scheduled” denotes a date shown in a club's official fixture/prospectus or meeting material. “Listed” denotes a date present in the current consolidated racing fixture feed where a matching club fixture notice was not available to verify. Pune's 2026 meeting prospectus ends on 15 November, so no Pune December meeting is shown. Dates may be amended by the relevant club; this page will be updated when an official notice is issued.</div>
@@ -159,5 +167,5 @@ h1{letter-spacing:2px;text-shadow:0 8px 25px rgba(0,0,0,.5)}
 </div>
 </section>
 </main>
-<footer><div class="wrap">RACEWISE INDIA · NATIONAL RACING CALENDAR 2026<br>Calendar compiled 18 November 2026 · Dates are subject to official club announcements and amendments.</div></footer>
+<footer><div class="wrap">RACEWISE INDIA · NATIONAL RACING CALENDAR 2026<br>Calendar checked 18 November 2026 · Dates are subject to official club announcements and amendments.</div></footer>
 </body></html>
