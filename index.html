@@ -26,10 +26,10 @@ header>.brand{position:absolute;top:5px;left:3%;z-index:2;display:flex;align-sel
 header>.brand img{display:block;width:clamp(145px,23vw,220px)!important;max-width:55vw;height:auto;object-fit:contain}
 header>.brand{align-items:center;gap:clamp(12px,2.2vw,25px);max-width:94%}
 header>.brand img{width:clamp(145px,20vw,205px)!important;max-width:48vw}
-.brand-wordmark{display:flex;flex-direction:column;justify-content:center;gap:5px;min-width:0;text-shadow:0 2px 12px rgba(0,0,0,.72)}
+.brand-wordmark{display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0;max-width:min(42vw,390px);text-shadow:0 2px 12px rgba(0,0,0,.72)}
 .brand-name{font-family:Georgia,"Times New Roman",serif;font-size:clamp(25px,4.1vw,49px);font-weight:700;letter-spacing:clamp(2px,.55vw,6px);line-height:1.02;color:#f4e3b8;white-space:nowrap}
 .brand-name span{color:#d7b46a}
-.brand-tagline{font-family:Arial,sans-serif;font-size:clamp(7px,.92vw,10px);font-weight:700;letter-spacing:clamp(1px,.22vw,2.3px);line-height:1.4;color:#f5f1e8;white-space:nowrap}
+.brand-tagline{font-family:Arial,sans-serif;font-size:clamp(7px,.82vw,9px);font-weight:700;letter-spacing:clamp(.7px,.16vw,1.7px);line-height:1.3;color:#f5f1e8;white-space:normal;max-width:100%;text-wrap:balance}
 
 header nav{position:relative;z-index:3;display:flex;align-items:stretch;justify-content:space-between;flex-wrap:nowrap;gap:0;width:100%;margin:0;padding:5px 2px;overflow:visible;background:rgba(4,17,36,.94);border-top:1px solid rgba(215,180,106,.9);border-bottom:1px solid rgba(215,180,106,.9)}
 header nav a{display:flex;flex:1 1 0;min-width:0;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#f0d69d!important;font-size:clamp(9px,.88vw,12px);font-weight:650;letter-spacing:0;line-height:1.2;text-align:center;white-space:nowrap;padding:7px 3px}
@@ -64,7 +64,7 @@ section{padding:55px 7%}
 footer{padding:28px 6%;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid #293a51}footer strong{color:var(--gold)}
 @media(max-width:600px){
 header{min-height:215px;padding:10px 0 0;background-position:57% center}
-header>.brand{top:4px;left:4%;gap:9px;max-width:92%}header>.brand img{width:clamp(104px,32vw,150px)!important;max-width:39vw}.brand-name{font-size:clamp(20px,6vw,29px);letter-spacing:1.5px}.brand-tagline{font-size:clamp(6px,1.75vw,8px);letter-spacing:.65px;white-space:normal;max-width:48vw}
+header>.brand{top:4px;left:4%;gap:9px;max-width:92%}header>.brand img{width:clamp(104px,32vw,150px)!important;max-width:39vw}.brand-name{font-size:clamp(20px,6vw,29px);letter-spacing:1.5px}.brand-wordmark{max-width:49vw;gap:3px}.brand-tagline{font-size:clamp(6px,1.55vw,7.5px);letter-spacing:.35px;line-height:1.2;white-space:normal;max-width:100%}
 header nav{padding:4px 1px;overflow:visible}header nav a{flex:1 1 0;font-size:clamp(7px,2.05vw,10px);letter-spacing:-.2px;padding:7px 1px;white-space:normal;overflow-wrap:anywhere}header nav a::before{font-size:12px}
 .hero{padding:35px 5% 38px;background-position:57% center}
 .hero h1{font-size:clamp(29px,8vw,39px);margin:10px auto}
