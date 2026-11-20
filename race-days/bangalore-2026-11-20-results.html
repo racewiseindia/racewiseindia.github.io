@@ -18,7 +18,7 @@ main{max-width:1000px;margin:auto;padding:28px 5% 55px}
 .notice,.card{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:7px;padding:18px;margin:18px 0}
 .notice{color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
 .stat{background:#08172d;padding:13px;border:1px solid var(--line);border-radius:6px;color:var(--muted);font-size:13px}
-.stat strong{display:block;color:var(--gold);font-size:27px}
+.stat strong{display:block;color:var(--gold);font-size:27px}.stat.metric-amber strong{color:#f0c76e}.stat.metric-green strong{color:#55df83}.stat.metric-blue strong{color:#78baff}.stat.metric-red strong{color:#ff8585}.won{color:#55df83;font-weight:800}
 .race{padding:15px 0;border-bottom:1px solid var(--line)}.race:last-child{border:0}
 .small{font-size:12px;color:var(--muted)}.tag{color:var(--gold);font-weight:700}
 ul{padding-left:22px}li{margin:5px 0}
@@ -32,11 +32,11 @@ footer{text-align:center;padding:22px;border-top:1px solid var(--gold);color:var
 <main>
 <div class="notice"><strong style="color:var(--gold)">COMPLETE RESULTS REVIEW — ALL 8 RACES.</strong> The final RaceWise selections are reproduced exactly as published before the meeting. Official results are compared against all four ranked selections; reserves are reported separately. No pre-race selection has been changed.</div>
 <section class="card"><h2>Final performance · all 8 races</h2><div class="stats">
-<div class="stat"><strong>3 / 8</strong>First choices that won</div>
-<div class="stat"><strong>7 / 8</strong>Winners covered by our four ranked selections</div>
-<div class="stat"><strong>14 / 32</strong>Ranked selections in the official top three</div>
-<div class="stat"><strong>7 / 8</strong>Races with at least one ranked selection in the top three</div>
-<div class="stat"><strong>2 / 2</strong>Day’s Best selections that won</div>
+<div class="stat metric-amber"><strong>3 / 8</strong>First choices that won</div>
+<div class="stat metric-green"><strong>7 / 8</strong>Winners covered by our four ranked selections</div>
+<div class="stat metric-blue"><strong>14 / 32</strong>Ranked selections in the official top three</div>
+<div class="stat metric-green"><strong>7 / 8</strong>Races with at least one ranked selection in the top three</div>
+<div class="stat metric-green"><strong>2 / 2</strong>Day’s Best selections that won</div>
 </div><p class="small">The four ranked selections are scored separately from the reserve. “Winner covered” means the official winner appeared anywhere in our published top four. These are selection-performance measures, not betting returns.</p></section>
 <section class="card"><h2>Race-by-race comparison</h2>
 <div class="race"><div class="gold">RACE 1 · THE PHAR LAP PLATE DIV-II · 1100M</div><p><strong>RaceWise:</strong> Routing Run (1st) · Cyrus The Great (2nd) · Mandalay (3rd) · Nimbus Speed (4th). <strong>Reserve:</strong> Strong And Light.</p><p><strong>Official top four:</strong> 1 Routing Run · 2 Mandalay · 3 Cyrus The Great · 4 First Choice.</p><p><strong>Review:</strong> Routing Run won as our 1st Choice. Mandalay and Cyrus The Great also filled 2nd and 3rd. Strong And Light finished 5th; Nimbus Speed was withdrawn.</p></div>
@@ -48,7 +48,7 @@ footer{text-align:center;padding:22px;border-top:1px solid var(--gold);color:var
 <div class="race"><div class="gold">RACE 7 · THE SMARTY JONES PLATE · 1200M</div><p><strong>RaceWise:</strong> Jersey King (1st) · Felisa (2nd) · Irish Coffee (3rd) · Don Carlos (4th). <strong>Reserve:</strong> N R I Ace.</p><p><strong>Official top four:</strong> 1 Irish Coffee · 2 Jersey King · 3 Crosswater · 4 Felisa.</p><p><strong>Review:</strong> Irish Coffee won as our 3rd Choice; Jersey King finished 2nd and Felisa 4th. Don Carlos finished 6th; Reserve N R I Ace finished 8th.</p></div>
 <div class="race"><div class="gold">RACE 8 · THE SHIVANASAMUDRA FALLS PLATE DIV-I · 1300M</div><p><strong>RaceWise:</strong> Astraeus (1st) · Ashwa New York (2nd) · Hyperdrive (3rd) · Jumeira (4th). <strong>Reserve:</strong> Srivalli.</p><p><strong>Official top four:</strong> 1 Astraeus · 2 Srivalli · 3 Cosmic Queen · 4 Hyperdrive.</p><p><strong>Review:</strong> Astraeus won as our 1st Choice and Day’s Best. Hyperdrive finished 4th; Reserve Srivalli finished 2nd. Ashwa New York did not complete (DNC).</p></div>
 </section>
-<section class="card"><h2>Day’s Best · final review</h2><p><strong>Day’s Best — Money Bags · Race 6:</strong> Won as our 1st Choice.</p><p><strong>Second Day’s Best — Astraeus · Race 8:</strong> Won as our 1st Choice.</p><p class="small">Both designated Day’s Best selections won. No dividend or return claim is made here.</p></section>
+<section class="card"><h2>Day’s Best · final review</h2><p><strong>Day’s Best — Money Bags · Race 6:</strong> <span class="won">WON — 1st Choice.</span></p><p><strong>Second Day’s Best — Astraeus · Race 8:</strong> <span class="won">WON — 1st Choice.</span></p><p class="small">Both designated Day’s Best selections won. No dividend or return claim is made here.</p></section>
 <section class="card"><h2>What the results reveal · analysis audit</h2>
 <p><strong>Seven winners appeared in our ranked top four:</strong> Routing Run (R1, 1st), Knotty Spirit (R3, 3rd), Zobel (R4, 4th), Knotty Emperor (R5, 2nd), Money Bags (R6, 1st), Irish Coffee (R7, 3rd) and Astraeus (R8, 1st).</p>
 <p><strong>One winner was identified only as Reserve:</strong> Ebotse won Race 2. This must not be counted as a top-four hit.</p>
