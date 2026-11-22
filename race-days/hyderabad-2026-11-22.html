@@ -110,6 +110,12 @@ header>.header-banner span{display:none}.mobile-header-caption{display:block;wid
 @media(min-width:601px) and (max-width:999px){main{max-width:980px;width:94%;padding:30px 20px}.race-blocks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
 @media(max-width:600px){main{padding:24px 5% 52px}.race-blocks{display:block}.race-selection{margin:14px 0}}
 
+
+/* Fix desktop scrolling: information panel must flow with page content */
+@media(min-width:1000px){
+ main>section:nth-of-type(2){position:static!important;top:auto!important;align-self:start}
+}
+
 </style><style id="racewise-race-block-layout">
 .race-blocks{display:grid;grid-template-columns:1fr;gap:15px;margin-top:18px}
 .race-selection{padding:17px 18px;background:linear-gradient(145deg,#112849,#0a1b32);border:1px solid rgba(215,180,106,.55);border-radius:7px}
