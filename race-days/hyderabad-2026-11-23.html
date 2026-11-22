@@ -89,6 +89,27 @@ header>.header-banner span{display:none}.mobile-header-caption{display:block;wid
 @media(max-width:600px){header>.header-banner{border-top:0!important;border-bottom:0!important;padding-top:3px!important;padding-bottom:3px!important}}
 
 #racewise-floating-logo{position:fixed;right:18px;bottom:18px;z-index:99999;display:block;width:clamp(76px,10vw,116px);height:auto;padding:0;margin:0;border:0;border-radius:0;background:transparent;box-shadow:none;line-height:0;text-decoration:none}#racewise-floating-logo img{display:block;width:100%;height:auto;max-width:none;object-fit:contain;border:0;border-radius:0;background:transparent;box-shadow:none}@media(max-width:600px){#racewise-floating-logo{right:10px;bottom:12px;width:76px}}
+
+/* RaceWise desktop editorial layout — 23 Nov meeting */
+@media(min-width:1000px){
+ main{width:min(96%,1460px);max-width:1460px;margin:0 auto;padding:42px 28px 84px;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;row-gap:18px;align-items:start;position:relative}
+ main>.eyebrow,main>h1,main>p.muted{grid-column:1/-1}
+ main>.eyebrow{margin-left:4px}
+ main>h1{font-size:clamp(42px,4vw,58px);margin:0 0 2px;max-width:none;letter-spacing:-1.2px}
+ main>p.muted{margin:0 0 10px;font-size:15px}
+ main>section:nth-of-type(1){grid-column:1/-1;margin:0}
+ main>section:nth-of-type(2){grid-column:1/9;margin:0}
+ main>section:nth-of-type(3){grid-column:9/-1;margin:0}
+ main>.panel{padding:27px 30px;border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.18)}
+ .facts{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+ .fact{padding:18px;min-height:90px}
+ main>section:nth-of-type(2) .button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin:12px 10px 0 0;padding:12px 17px}
+ main>section:nth-of-type(3){position:relative;overflow:hidden;min-height:100%}
+ main>section:nth-of-type(3)::after{content:"RACEWISE INDIA";display:block;margin-top:28px;padding-top:18px;border-top:1px solid rgba(215,180,106,.3);color:rgba(215,180,106,.72);font:700 13px Georgia,serif;letter-spacing:3px}
+}
+@media(min-width:601px) and (max-width:999px){main{max-width:980px;width:94%;padding:30px 20px}.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){main{padding:24px 5% 52px}}
+
 </style></head><body><header>
 <a class="brand" href="../index.html"><img src="https://raw.githubusercontent.com/racewiseindia/racewiseindia.github.io/main/BD3FBD67-3641-4C4B-A7C4-65B776CDC953.png" alt="RaceWise India Official Logo"></a>
 <div class="header-banner">RACEWISE INDIA<span>STUDY EVERY RACE. UNDERSTAND EVERY RUNNER.</span></div>
